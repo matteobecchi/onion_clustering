@@ -1,5 +1,8 @@
 """onion-clustering for univariate time-series."""
 
+# Author: Becchi Matteo <bechmath@gmail.com>
+# Reference: https://www.pnas.org/doi/abs/10.1073/pnas.2403771121
+
 from typing import Union
 
 import numpy as np
@@ -9,70 +12,76 @@ from onion_clustering._internal.main import main as onion_inner
 
 
 def onion_uni(
-    matrix: np.ndarray,
+    X: np.ndarray,
     bins: Union[str, int] = "auto",
     number_of_sigmas: float = 2.0,
 ):
-    """Perform onion clustering from data array.
+    """
+    Performs onion clustering from data array 'X'.
 
-    References:
-        https://www.pnas.org/doi/abs/10.1073/pnas.2403771121
+    Parameters
+    ----------
+    X : ndarray of shape (n_particles * n_windows, tau_window)
+        The raw data.
 
-    Parameters:
-        matrix:
-            Shape (n_particles * n_windows, tau_window). The values of the signal for each particle at each frame.
+    bins : int, default="auto"
+        The number of bins used for the construction of the histograms.
+        Can be an integer value, or "auto".
+        If "auto", the default of numpy.histogram_bin_edges is used
+        (see https://numpy.org/doc/stable/reference/generated/
+        numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
 
-        bins (default = "auto"):
-            The number of bins used for the construction of the histograms.
-            Can be an integer value, or "auto".
-            If "auto", the default of numpy.histogram_bin_edges is used
-            (see https://numpy.org/doc/stable/reference/generated/
-            numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
+    number_of_sigmas : float, default=2.0
+        Sets the thresholds for classifing a signal window inside a state:
+        the window is contained in the state if it is entirely contained
+        inside number_of_sigma * state.sigms times from state.mean.
 
-        number_of_sigmas (default = 2.0):
-            Sets the thresholds for classifing a signal window inside a state:
-            the window is contained in the state if it is entirely contained
-            inside number_of_sigma * state.sigms times from state.mean.
+    Returns
+    -------
+    states_list : List[StateUni]
+        The list of the identified states.
 
-    Returns:
-        - List of the identified states.
-        - np.ndarray of shape (n_particles, n_frames). Cluster labels for each point. Unclassified points are given the label -1.
+    labels : ndarray of shape (n_particles * n_windows,)
+        Cluster labels for each point. Unclassified points are given
+        the label -1.
     """
 
     est = OnionUni(
         bins=bins,
         number_of_sigmas=number_of_sigmas,
     )
-    est.fit(matrix)
+    est.fit(X)
 
     return est.state_list_, est.labels_
 
 
 class OnionUni(BaseEstimator, ClusterMixin):
-    """Perform onion clustering from data array.
+    """
 
-    References:
-        https://www.pnas.org/doi/abs/10.1073/pnas.2403771121
+    Performs onion clustering from data array.
 
-    Parameters:
-        bins (default = "auto"):
-            The number of bins used for the construction of the histograms. Can be an integer value, or "auto".
-            If "auto", the default of numpy.histogram_bin_edges is used
-            (see https://numpy.org/doc/stable/reference/generated/
-            numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
+    Parameters
+    ----------
+    bins : int, default="auto"
+        The number of bins used for the construction of the histograms.
+        Can be an integer value, or "auto".
+        If "auto", the default of numpy.histogram_bin_edges is used
+        (see https://numpy.org/doc/stable/reference/generated/
+        numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
 
-        number_of_sigma (default = 2.0):
-            Sets the thresholds for classifing a signal window inside a state:
-            the window is contained in the state if it is entirely contained
-            inside number_of_sigma * state.sigms times from state.mean.
+    number_of_sigmas : float, default=2.0
+        Sets the thresholds for classifing a signal window inside a state:
+        the window is contained in the state if it is entirely contained
+        inside number_of_sigma * state.sigms times from state.mean.
 
-    Attributes:
-        state_list_:
-            List of the identified states.
+    Attributes
+    ----------
+    state_list_ : List[StateUni]
+        List of the identified states.
 
-        labels_:
-            np.ndarray of shape (n_particles, n_frames). Cluster labels
-            for each point. Unclassified points are given the label -1.
+    labels_: ndarray of shape (n_particles * n_windows,)
+        Cluster labels for each point. Unclassified points are given
+        the label -1.
     """
 
     def __init__(
@@ -86,12 +95,14 @@ class OnionUni(BaseEstimator, ClusterMixin):
     def fit(self, X, y=None):
         """Perform onion clustering from data array.
 
-        Parameters:
-            X:
-                np.ndarray of shape (n_particles * n_windows, tau_window).
-                The values of the signal for each particle at each frame.
+        Parameters
+        ----------
+        X : ndarray of shape (n_particles * n_windows, tau_window)
+            The raw data.
 
-        Returns:
+        Returns
+        -------
+        self : object
             A fitted instance of self.
         """
         X = self._validate_data(X, accept_sparse=False)
@@ -128,13 +139,16 @@ class OnionUni(BaseEstimator, ClusterMixin):
     def fit_predict(self, X, y=None):
         """Compute clusters from a data matrix and predict labels.
 
-        Parameters:
-            X:
-                np.ndarray of shape (n_particles * n_windows, tau_window).
-                The values of the signal for each particle at each frame.
+        Parameters
+        ----------
+        X : ndarray of shape (n_particles * n_windows, tau_window)
+            The raw data.
 
-        Returns:
-            np.ndarray of shape (n_particles * n_windows,). Cluster labels. Unclassified points are given the label -1.
+        Returns
+        -------
+        labels_: ndarray of shape (n_particles * n_windows,)
+            Cluster labels for each point. Unclassified points are given
+            the label -1.
         """
         return self.fit(X).labels_
 
