@@ -99,7 +99,7 @@ class OnionMulti(BaseEstimator, ClusterMixin):
 
         Parameters
         ----------
-        X : ndarray of shape (n_particles * n_windows, tau_window *n_features)
+        X : ndarray of shape (n_particles * n_windows, tau_window * n_features)
             The raw data.
 
         Returns
@@ -149,7 +149,7 @@ class OnionMulti(BaseEstimator, ClusterMixin):
 
         Parameters
         ----------
-        X : ndarray of shape (n_particles * n_windows, tau_window *n_features)
+        X : ndarray of shape (n_particles * n_windows, tau_window * n_features)
             The raw data.
 
         Returns
