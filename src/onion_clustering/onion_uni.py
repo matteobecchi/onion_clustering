@@ -57,7 +57,6 @@ def onion_uni(
 
 class OnionUni(BaseEstimator, ClusterMixin):
     """
-
     Performs onion clustering from data array.
 
     Parameters
@@ -93,7 +92,7 @@ class OnionUni(BaseEstimator, ClusterMixin):
         self.number_of_sigmas = number_of_sigmas
 
     def fit(self, X, y=None):
-        """Perform onion clustering from data array.
+        """Performs onion clustering from data array.
 
         Parameters
         ----------
@@ -137,7 +136,7 @@ class OnionUni(BaseEstimator, ClusterMixin):
         return self
 
     def fit_predict(self, X, y=None):
-        """Compute clusters from a data matrix and predict labels.
+        """Computes clusters from a data matrix and predict labels.
 
         Parameters
         ----------

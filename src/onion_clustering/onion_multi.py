@@ -1,5 +1,8 @@
 """onion-clustering for multivariate time-series."""
 
+# Author: Becchi Matteo <bechmath@gmail.com>
+# Reference: https://www.pnas.org/doi/abs/10.1073/pnas.2403771121
+
 from typing import Union
 
 import numpy as np
@@ -9,78 +12,76 @@ from onion_clustering._internal.main_2d import main as onion_inner
 
 
 def onion_multi(
-    matrix: np.ndarray,
+    X: np.ndarray,
     ndims: int = 2,
     bins: Union[str, int] = "auto",
     number_of_sigmas: float = 2.0,
 ):
-    """Perform onion clustering from data array.
+    """
+    Performs onion clustering from data array.
 
-    References:
-        https://www.pnas.org/doi/abs/10.1073/pnas.2403771121
+    Parameters
+    ----------
+    X : ndarray of shape (n_particles * n_windows, tau_window * n_features)
+        The raw data.
 
-    Parameters:
-        matrix:
-            np.ndarray of shape (dims, n_particles, n_frames). The values of the signal for each particle at each frame.
+    bins : int, default="auto"
+        The number of bins used for the construction of the histograms.
+        Can be an integer value, or "auto".
+        If "auto", the default of numpy.histogram_bin_edges is used
+        (see https://numpy.org/doc/stable/reference/generated/
+        numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
 
-        ndims (default = 2):
-            Number of components. Must be 2 or 3.
+    number_of_sigmas : float, default=2.0
+        Sets the thresholds for classifing a signal window inside a state:
+        the window is contained in the state if it is entirely contained
+        inside number_of_sigma * state.sigms times from state.mean.
 
-        bins (default = "auto"):
-            The number of bins used for the construction of the histograms.
-            Can be an integer value, or "auto".
-            If "auto", the default of numpy.histogram_bin_edges is used
-            (see https://numpy.org/doc/stable/reference/generated/
-            numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
+    Returns
+    -------
+    states_list : List[StateMulti]
+        The list of the identified states.
 
-        number_of_sigmas (default = 2.0):
-            Sets the thresholds for classifing a signal window inside a state:
-            the window is contained in the state if it is entirely contained
-            inside number_of_sigma * state.sigms times from state.mean.
-
-    Returns:
-        - List of the identified states.
-
-        - np.ndarray of shape (n_particles, n_frames). Cluster labels for each point. Unclassified points are given the label -1.
+    labels : ndarray of shape (n_particles * n_windows,)
+        Cluster labels for each point. Unclassified points are given
+        the label -1.
     """
 
     est = OnionMulti(
         bins=bins,
         number_of_sigmas=number_of_sigmas,
     )
-    est.fit(matrix)
+    est.fit(X)
 
     return est.state_list_, est.labels_
 
 
 class OnionMulti(BaseEstimator, ClusterMixin):
-    """Perform onion clustering from data array.
+    """
+    Performs onion clustering from data array.
 
-    References:
-        https://www.pnas.org/doi/abs/10.1073/pnas.2403771121
+    Parameters
+    ----------
+    bins : int, default="auto"
+        The number of bins used for the construction of the histograms.
+        Can be an integer value, or "auto".
+        If "auto", the default of numpy.histogram_bin_edges is used
+        (see https://numpy.org/doc/stable/reference/generated/
+        numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
 
-    Parameters:
-        ndims (default = 2):
-            Number of components. Must be 2 or 3.
+    number_of_sigmas : float, default=2.0
+        Sets the thresholds for classifing a signal window inside a state:
+        the window is contained in the state if it is entirely contained
+        inside number_of_sigma * state.sigms times from state.mean.
 
-        bins (default = "auto"):
-            The number of bins used for the construction of the histograms.
-            Can be an integer value, or "auto".
-            If "auto", the default of numpy.histogram_bin_edges is used
-            (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
+    Attributes
+    ----------
+    state_list_ : List[StateMulti]
+        List of the identified states.
 
-        number_of_sigmas (default = 2.0):
-            Sets the thresholds for classifing a signal window inside a state:
-            the window is contained in the state if it is entirely contained
-            inside number_of_sigma * state.sigms times from state.mean.
-
-    Attributes:
-        state_list_:
-            List of the identified states.
-
-        labels_:
-            np.ndarray of shape (n_particles, n_frames). Cluster labels for each point.
-            Unclassified points are given the label -1.
+    labels_: ndarray of shape (n_particles * n_windows,)
+        Cluster labels for each point. Unclassified points are given
+        the label -1.
     """
 
     def __init__(
@@ -94,14 +95,17 @@ class OnionMulti(BaseEstimator, ClusterMixin):
         self.number_of_sigmas = number_of_sigmas
 
     def fit(self, X, y=None):
-        """Perform onion clustering from data array.
+        """Performs onion clustering from data array.
 
-        Parameters:
-            X:
-                ndarray of shape (n_particles, n_frames). The values of the signal for each particle at each frame.
+        Parameters
+        ----------
+        X : ndarray of shape (n_particles * n_windows, tau_window *n_features)
+            The raw data.
 
-        Returns:
-            Returns a fitted instance of self.
+        Returns
+        -------
+        self : object
+            A fitted instance of self.
         """
         X = self._validate_data(X, accept_sparse=False)
 
@@ -141,14 +145,18 @@ class OnionMulti(BaseEstimator, ClusterMixin):
         return self
 
     def fit_predict(self, X, y=None):
-        """Compute clusters from a data matrix and predict labels.
+        """Computes clusters from a data matrix and predict labels.
 
-        Parameters:
-            X:
-                ndarray of shape (n_particles, n_frames). The values of the signal for each particle at each frame.
+        Parameters
+        ----------
+        X : ndarray of shape (n_particles * n_windows, tau_window *n_features)
+            The raw data.
 
-        Returns:
-            np.ndarray of shape (n_samples,). Cluster labels. Unclassified points are given the label -1.
+        Returns
+        -------
+        labels_: ndarray of shape (n_particles * n_windows,)
+            Cluster labels for each point. Unclassified points are given
+            the label -1.
         """
         return self.fit(X).labels_
 
