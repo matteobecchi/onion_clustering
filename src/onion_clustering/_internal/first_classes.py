@@ -23,6 +23,9 @@ class StateUni:
     area : float
         Area below the Gaussian.
 
+    r_2 : float
+        Coefficient of determination of the Gaussian fit.
+
     Attributes
     ----------
 
@@ -39,11 +42,12 @@ class StateUni:
         Upper thrashold of the state.
     """
 
-    def __init__(self, mean: float, sigma: float, area: float):
+    def __init__(self, mean: float, sigma: float, area: float, r_2: float):
         self.mean = mean
         self.sigma = sigma
         self.area = area
         self.peak = area / sigma / np.sqrt(np.pi)
+        self.r_2 = r_2
         self.perc = 0.0
         self.th_inf = [mean - 2.0 * sigma, -1]
         self.th_sup = [mean + 2.0 * sigma, -1]

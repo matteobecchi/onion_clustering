@@ -24,7 +24,6 @@ from onion_clustering._internal.functions import (
     set_final_states,
 )
 
-OUTPUT_FILE = "onion_clustering_log.txt"
 AREA_MAX_OVERLAP = 0.8
 
 
@@ -225,7 +224,7 @@ def gauss_fit_max(
 
     fit_param = [min_id0, min_id1, max_ind, flat_m.size]
     fit_data = [bins, counts]
-    flag_min, r_2_min, popt_min, perr_min = perform_gauss_fit(
+    flag_min, r_2_min, popt_min, _ = perform_gauss_fit(
         fit_param, fit_data, "Min"
     )
 
@@ -238,40 +237,27 @@ def gauss_fit_max(
 
     fit_param = [half_id0, half_id1, max_ind, flat_m.size]
     fit_data = [bins, counts]
-    flag_half, r_2_half, popt_half, perr_half = perform_gauss_fit(
+    flag_half, r_2_half, popt_half, _ = perform_gauss_fit(
         fit_param, fit_data, "Half"
     )
 
     r_2 = r_2_min
     if flag_min == 1 and flag_half == 0:
         popt = popt_min
-        perr = perr_min
     elif flag_min == 0 and flag_half == 1:
         popt = popt_half
-        perr = perr_half
         r_2 = r_2_half
     elif flag_min * flag_half == 1:
         if r_2_min >= r_2_half:
             popt = popt_min
-            perr = perr_min
         else:
             popt = popt_half
-            perr = perr_half
             r_2 = r_2_half
     else:
         return None
 
-    state = StateUni(popt[0], popt[1], popt[2])
+    state = StateUni(popt[0], popt[1], popt[2], r_2)
     state.build_boundaries(par.number_of_sigmas)
-
-    with open(OUTPUT_FILE, "a", encoding="utf-8") as dump:
-        print(
-            f"\tmu = {state.mean:.4f} ({perr[0]:.4f}), "
-            f"sigma = {state.sigma:.4f} ({perr[1]:.4f}), "
-            f"area = {state.area:.4f} ({perr[2]:.4f})",
-            file=dump,
-        )
-        print(f"\tFit r2 = {r_2}", file=dump)
 
     return state
 
@@ -341,13 +327,6 @@ def find_stable_trj(
     else:
         window_fraction = counter / tmp_labels.size
 
-    with open(OUTPUT_FILE, "a", encoding="utf-8") as dump:
-        print(
-            f"\tFraction of windows in state {lim + 1}"
-            f" = {window_fraction:.3}",
-            file=dump,
-        )
-
     env_0 = True
     if len(m2_array) == 0:
         env_0 = False
@@ -413,7 +392,7 @@ def fit_local_maxima(
 
         fit_param = [min_id0, min_id1, m_ind, flat_m.size]
         fit_data = [bins, counts]
-        flag_min, r_2_min, popt_min, perr_min = perform_gauss_fit(
+        flag_min, r_2_min, popt_min, _ = perform_gauss_fit(
             fit_param, fit_data, "Min"
         )
 
@@ -426,40 +405,27 @@ def fit_local_maxima(
 
         fit_param = [half_id0, half_id1, m_ind, flat_m.size]
         fit_data = [bins, counts]
-        flag_half, r_2_half, popt_half, perr_half = perform_gauss_fit(
+        flag_half, r_2_half, popt_half, _ = perform_gauss_fit(
             fit_param, fit_data, "Half"
         )
 
         r_2 = r_2_min
         if flag_min == 1 and flag_half == 0:
             popt = popt_min
-            perr = perr_min
         elif flag_min == 0 and flag_half == 1:
             popt = popt_half
-            perr = perr_half
             r_2 = r_2_half
         elif flag_min * flag_half == 1:
             if r_2_min >= r_2_half:
                 popt = popt_min
-                perr = perr_min
             else:
                 popt = popt_half
-                perr = perr_half
                 r_2 = r_2_half
         else:
             continue
 
-        state = StateUni(popt[0], popt[1], popt[2])
+        state = StateUni(popt[0], popt[1], popt[2], r_2)
         state.build_boundaries(par.number_of_sigmas)
-
-        with open(OUTPUT_FILE, "a", encoding="utf-8") as dump:
-            print(
-                f"\tmu = {state.mean:.4f} ({perr[0]:.4f}), "
-                f"sigma = {state.sigma:.4f} ({perr[1]:.4f}), "
-                f"area = {state.area:.4f} ({perr[2]:.4f})",
-                file=dump,
-            )
-            print(f"\tFit r2 = {r_2}", file=dump)
 
         m_clean = cl_ob.data.matrix
 
@@ -479,13 +445,6 @@ def fit_local_maxima(
             return None, None, None, None
         else:
             window_fraction = counter / tmp_labels.size
-
-        with open(OUTPUT_FILE, "a", encoding="utf-8") as dump:
-            print(
-                f"\tFraction of windows in state {lim + 1}"
-                f" = {window_fraction:.3}",
-                file=dump,
-            )
 
         one_last_state = True
         if len(m2_array) == 0:
@@ -543,17 +502,8 @@ def iterative_search(
     env_0 = False
 
     while True:
-        with open(OUTPUT_FILE, "a", encoding="utf-8") as dump:
-            print(f"- Iteration {iteration_id - 1}", file=dump)
         state = gauss_fit_max(m_copy, cl_ob.par)
-
         if state is None:
-            with open(OUTPUT_FILE, "a", encoding="utf-8") as dump:
-                print(
-                    "- Iterations interrupted because "
-                    "fit does not converge.",
-                    file=dump,
-                )
             break
 
         m_next, counter, env_0 = find_stable_trj(
@@ -570,11 +520,6 @@ def iterative_search(
             )
 
             if counter == 0 or state is None:
-                with open(OUTPUT_FILE, "a", encoding="utf-8") as dump:
-                    print(
-                        "- Iterations interrupted because last state is empty.",
-                        file=dump,
-                    )
                 break
 
         state.perc = counter
@@ -601,33 +546,25 @@ def full_output_analysis(cl_ob: ClusteringObject1D):
     cl_ob : ClusteringObject1D
         The clustering object.
     """
-
-    with open(OUTPUT_FILE, "a", encoding="utf-8") as dump:
-        print(
-            f"* Complete analysis, tau_window = {cl_ob.par.tau_w}\n", file=dump
-        )
     cl_ob, tmp_labels, _ = iterative_search(cl_ob)
 
-    if len(cl_ob.state_list) == 0:
-        with open(OUTPUT_FILE, "a", encoding="utf-8") as dump:
-            print("* No possible classification was found.", file=dump)
+    if len(cl_ob.state_list) > 0:
+        list_of_states, tmp_labels = set_final_states(
+            cl_ob.state_list,
+            tmp_labels,
+            AREA_MAX_OVERLAP,
+        )
 
-    list_of_states, tmp_labels = set_final_states(
-        cl_ob.state_list,
-        tmp_labels,
-        AREA_MAX_OVERLAP,
-    )
+        cl_ob.data.labels, cl_ob.state_list = max_prob_assignment(
+            list_of_states,
+            cl_ob.data.matrix,
+            tmp_labels,
+            cl_ob.data.range,
+            cl_ob.par.tau_w,
+            cl_ob.par.number_of_sigmas,
+        )
 
-    cl_ob.data.labels, cl_ob.state_list = max_prob_assignment(
-        list_of_states,
-        cl_ob.data.matrix,
-        tmp_labels,
-        cl_ob.data.range,
-        cl_ob.par.tau_w,
-        cl_ob.par.number_of_sigmas,
-    )
-
-    cl_ob.data.labels = cl_ob.create_all_the_labels()
+        cl_ob.data.labels = cl_ob.create_all_the_labels()
 
 
 def main(
