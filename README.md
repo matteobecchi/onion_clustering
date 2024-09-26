@@ -7,7 +7,7 @@ Author: Matteo Becchi
 This version of onion clustering is meant to be used as an external library, and complyies with the scikit-learn format. If you are looking for the standalone onion clustering version, you can find it at https://github.com/matteobecchi/timeseries_analysis. However, be aware that the standalone version has been last updated on September, 2024 and is no longer supported or mantained. We reccomand using this version. 
 
 ## Usage
-Install the package using `pip install onion-clustering`. 
+Install the package using ???. 
 
 The `examples/` folder contains an example of usage. From this folder, download the example files as reported in the script `example_script_uni.py` and then run it with `python3 example_script_uni.py`. 
 
