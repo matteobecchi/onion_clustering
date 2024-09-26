@@ -63,6 +63,8 @@ def test_output_files(setup_test_environment):
         # Call your code to generate the output files
         tmp = OnionMulti()
         tmp.fit_predict(reshaped_input_data)
+        _ = tmp.get_params()
+        tmp.set_params()
 
         _, labels = onion_multi(reshaped_input_data)
 
