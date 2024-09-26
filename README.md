@@ -17,4 +17,6 @@ The `examples/` folder contains an example of usage. From this folder, download 
 `scikit-learn`
 
 ## Aknowledgements
-Thanks to Andrew Tarzia for all the help with the code formatting and documentation, and to Domiziano Doria, Chiara Lionello and Simone Martino for the beta-testing. 
+We developed this code when working in the Pavan group, https://www.gmpavanlab.com/. Thanks to Andrew Tarzia for all the help with the code formatting and documentation, and to Domiziano Doria, Chiara Lionello and Simone Martino for the beta-testing. 
+
+The work was funded by the European Union and ERC under projects DYNAPOL and the NextGenerationEU project, CAGEX. 
