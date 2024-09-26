@@ -1,4 +1,14 @@
-matplotlib
 numpy
-plotly
 scipy
+scikit-learn
+
+[dev]
+mypy
+pytest
+pytest-cov
+sphinx
+sphinx-copybutton
+build
+twine
+furo
+numba

@@ -7,9 +7,10 @@ from typing import List, Tuple
 import numpy as np
 import scipy.optimize
 import scipy.signal
-from onion_clustering._internal.first_classes import StateMulti, StateUni
 from scipy.integrate import quad
 from scipy.optimize import OptimizeWarning
+
+from onion_clustering._internal.first_classes import StateMulti, StateUni
 
 
 def moving_average(data: np.ndarray, window: int) -> np.ndarray:

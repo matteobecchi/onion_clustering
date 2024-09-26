@@ -8,6 +8,9 @@ from typing import List, Tuple, Union
 
 import numpy as np
 import scipy.signal
+from scipy.optimize import OptimizeWarning
+from scipy.stats import gaussian_kde
+
 from onion_clustering._internal.classes import ClusteringObject1D
 from onion_clustering._internal.first_classes import (
     Parameters,
@@ -20,8 +23,6 @@ from onion_clustering._internal.functions import (
     relabel_states,
     set_final_states,
 )
-from scipy.optimize import OptimizeWarning
-from scipy.stats import gaussian_kde
 
 OUTPUT_FILE = "onion_clustering_log.txt"
 AREA_MAX_OVERLAP = 0.8

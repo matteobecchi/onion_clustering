@@ -2,6 +2,7 @@ import os
 
 import numpy as np
 import pytest
+
 from onion_clustering.onion_multi import OnionMulti, onion_multi
 
 

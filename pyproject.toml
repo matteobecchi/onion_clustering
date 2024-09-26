@@ -13,6 +13,7 @@ maintainers = [
 dependencies = [
   "numpy",
   "scipy",
+  "scikit-learn",
 ]
 requires-python = "<3.11,>=3.9"
 readme = "README.md"
@@ -57,6 +58,7 @@ module = [
     'onion_clustering.*',
     'sklearn.base',
     'scipy.*',
+    'plotly.*',
     'sklearn.utils.estimator_checks',
 ]
 ignore_missing_imports = true

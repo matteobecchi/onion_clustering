@@ -6,6 +6,7 @@ See the documentation for all the details.
 from typing import List, Tuple, Union
 
 import numpy as np
+
 from onion_clustering._internal.classes import ClusteringObject2D
 from onion_clustering._internal.first_classes import (
     MultiData,

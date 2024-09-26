@@ -5,6 +5,7 @@ Contains the classes used for storing the clustering data.
 from typing import List, Union
 
 import numpy as np
+
 from onion_clustering._internal.first_classes import (
     MultiData,
     Parameters,

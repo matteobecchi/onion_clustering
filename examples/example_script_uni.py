@@ -13,6 +13,7 @@ from example_plots import (
     plot_state_populations,
     plot_time_res_analysis,
 )
+
 from onion_clustering.onion_uni import onion_uni
 
 #############################################################################
