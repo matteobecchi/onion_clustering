@@ -46,6 +46,7 @@ def test_output_files(setup_test_environment):
 
     wrong_arr_1 = rng.normal((3, 3, 3))
     wrong_arr_2 = rng.normal((1, 10))
+    wrong_arr_3 = rng.normal((3, 3)) + 1.0j * rng.normal((3, 3))
 
     with tempfile.TemporaryDirectory() as _:
         # Call your code to generate the output files
@@ -59,7 +60,7 @@ def test_output_files(setup_test_environment):
             _, _ = onion_uni(wrong_arr_1)
             _, _ = onion_uni(wrong_arr_2)
             _, _ = onion_uni(wrong_arr_2.T)
-            _, _ = onion_uni(reshaped_input_data + 1.0j * reshaped_input_data)
+            _, _ = onion_uni(wrong_arr_3)
 
         _, labels = onion_uni(reshaped_input_data)
 
