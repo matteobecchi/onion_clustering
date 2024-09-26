@@ -1,4 +1,7 @@
+"""Pytest for onion_uni and OnionUni."""
+
 import os
+import tempfile
 
 import numpy as np
 import pytest
@@ -21,28 +24,40 @@ def setup_test_environment(tmpdir):
 # Define the actual test
 def test_output_files(setup_test_environment):
     ### Set all the analysis parameters ###
-    FILE = "water_coex_100ps_1nm_LENS.npy"
-    PATH_TO_INPUT_DATA = "/Users/mattebecchi/00_signal_analysis/data/" + FILE
-    N_WINDOWS = 50
+    N_PARTICLES = 5
+    N_STEPS = 1000
+    TAU_WINDOW = 10
 
-    input_data = np.load(PATH_TO_INPUT_DATA)
-    reshaped_input_data = np.reshape(input_data, (2048 * N_WINDOWS, -1))
+    ## Create the input data ###
+    rng = np.random.default_rng(12345)
+    random_walk = []
+    for _ in range(N_PARTICLES):
+        tmp = [0.0]
+        for _ in range(N_STEPS - 1):
+            d_x = rng.normal()
+            x_new = tmp[-1] + d_x
+            tmp.append(x_new)
+        random_walk.append(tmp)
 
-    # Call your code to generate the output files
-    tmp = OnionUni()
-    tmp.fit_predict(reshaped_input_data)
-
-    _, labels = onion_uni(reshaped_input_data)
-
-    # Define the paths to the expected output files
-    original_dir = (
-        "/Users/mattebecchi/00_signal_analysis/timeseries_analysis/test/"
+    n_windows = int(N_STEPS / TAU_WINDOW)
+    reshaped_input_data = np.reshape(
+        np.array(random_walk), (N_PARTICLES * n_windows, -1)
     )
-    expected_output_path = original_dir + "output_uni/labels.npy"
 
-    # np.save(expected_output_path, labels)
+    with tempfile.TemporaryDirectory() as _:
+        # Call your code to generate the output files
+        tmp = OnionUni()
+        tmp.fit_predict(reshaped_input_data)
 
-    # Compare the contents of the expected and actual output
-    expected_output = np.load(expected_output_path)
-    print(np.sum(expected_output != labels) / labels.size)
-    assert np.allclose(expected_output, labels)
+        _, labels = onion_uni(reshaped_input_data)
+
+        # Define the paths to the expected output files
+        original_dir = "/Users/mattebecchi/onion_clustering/test/"
+        expected_output_path = original_dir + "output_uni/labels.npy"
+
+        # np.save(expected_output_path, labels)
+
+        # Compare the contents of the expected and actual output
+        expected_output = np.load(expected_output_path)
+        print(np.sum(expected_output != labels) / labels.size)
+        assert np.allclose(expected_output, labels)

@@ -1,4 +1,7 @@
+"""Pytest for onion_multi and OnionMulti."""
+
 import os
+import tempfile
 
 import numpy as np
 import pytest
@@ -21,32 +24,55 @@ def setup_test_environment(tmpdir):
 # Define the actual test
 def test_output_files(setup_test_environment):
     ### Set all the analysis parameters ###
-    FILE = "data/synthetic_2D/3D_synthetic_data.npy"
-    PATH_TO_INPUT_DATA = "/Users/mattebecchi/00_signal_analysis/" + FILE
-    N_WINDOWS = 1000
-    BINS = 50
+    N_PARTICLES = 5
+    N_STEPS = 1000
+    TAU_WINDOW = 10
 
-    input_data = np.load(PATH_TO_INPUT_DATA)
+    ## Create the input data ###
+    rng = np.random.default_rng(12345)
+    random_walk_x = []
+    random_walk_y = []
+    for _ in range(N_PARTICLES):
+        tmp_x, tmp_y = [0.0], [0.0]
+        for _ in range(N_STEPS - 1):
+            d_x = rng.normal()
+            x_new = tmp_x[-1] + d_x
+            tmp_x.append(x_new)
+            d_y = rng.normal()
+            y_new = tmp_y[-1] + d_y
+            tmp_y.append(y_new)
+        random_walk_x.append(tmp_x)
+        random_walk_y.append(tmp_y)
 
-    reshaped_data = np.reshape(input_data, (2 * N_WINDOWS, 2 * 10))
+    n_windows = int(N_STEPS / TAU_WINDOW)
 
-    # Call your code to generate the output files
-    tmp = OnionMulti(bins=BINS)
-    tmp.fit_predict(reshaped_data)
-
-    _, labels = onion_multi(
-        reshaped_data,
-        bins=BINS,
+    reshaped_input_data_x = np.reshape(
+        np.array(random_walk_x), (N_PARTICLES * n_windows, -1)
+    )
+    reshaped_input_data_y = np.reshape(
+        np.array(random_walk_y), (N_PARTICLES * n_windows, -1)
+    )
+    reshaped_input_data = np.array(
+        [
+            np.concatenate((tmp, reshaped_input_data_y[i]))
+            for i, tmp in enumerate(reshaped_input_data_x)
+        ]
     )
 
-    # Define the paths to the expected output files
-    original_dir = (
-        "/Users/mattebecchi/00_signal_analysis/timeseries_analysis/test/"
-    )
-    expected_output_path = original_dir + "output_multi/labels.npy"
+    with tempfile.TemporaryDirectory() as _:
+        # Call your code to generate the output files
+        tmp = OnionMulti()
+        tmp.fit_predict(reshaped_input_data)
 
-    # np.save(expected_output_path, labels)
+        _, labels = onion_multi(reshaped_input_data)
 
-    # Compare the contents of the expected and actual output
-    expected_output = np.load(expected_output_path)
-    assert np.allclose(expected_output, labels)
+        # Define the paths to the expected output files
+        original_dir = "/Users/mattebecchi/onion_clustering/test/"
+        expected_output_path = original_dir + "output_multi/labels.npy"
+
+        np.save(expected_output_path, labels)
+
+        # Compare the contents of the expected and actual output
+        expected_output = np.load(expected_output_path)
+        print(np.sum(expected_output != labels) / labels.size)
+        assert np.allclose(expected_output, labels)
