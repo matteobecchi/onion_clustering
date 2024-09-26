@@ -11,10 +11,10 @@ Install the package using ???.
 
 The `examples/` folder contains an example of usage. From this folder, download the example files as reported in the script `example_script_uni.py` and then run it with `python3 example_script_uni.py`. 
 
-## Required Python 3 packages
-`numpy`
-`scipy`
-`scikit-learn`
+## Dependencies
+- [numpy](https://numpy.org)
+- scipy
+- scikit-learn
 
 ## Aknowledgements
 We developed this code when working in the Pavan group, https://www.gmpavanlab.com/. Thanks to Andrew Tarzia for all the help with the code formatting and documentation, and to Domiziano Doria, Chiara Lionello and Simone Martino for the beta-testing. 
