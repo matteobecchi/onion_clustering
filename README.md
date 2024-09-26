@@ -4,7 +4,7 @@ Code for unsupervised clustering of time-series data. Reference to https://doi.o
 Author: Matteo Becchi
 
 ## Developement history
-This version of onion clustering is meant to be used as an external library, and complyies with the scikit-learn format. If you are looking for the standalone onion clustering version, you can find it at https://github.com/matteobecchi/timeseries_analysis. However, be aware that the standalone version has been last updated on September, 2024 and is no longer supported or mantained. We reccomand using this version. 
+This version of onion clustering is meant to be used as an external library, and complies with the scikit-learn format. If you are looking for the standalone onion clustering version, you can find it at https://github.com/matteobecchi/timeseries_analysis. However, be aware that the standalone version has been last updated on September, 2024 and is no longer supported or mantained. We reccomand using this version. 
 
 ## Usage
 Install the package using ???. 
