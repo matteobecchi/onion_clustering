@@ -13,8 +13,8 @@ The `examples/` folder contains an example of usage. From this folder, download 
 
 ## Dependencies
 - [numpy](https://numpy.org)
-- scipy
-- scikit-learn
+- [scipy](https://docs.scipy.org/doc/scipy/index.html)
+- [scikit-learn](https://scikit-learn.org/stable/)
 
 ## Aknowledgements
 We developed this code when working in the Pavan group, https://www.gmpavanlab.com/. Thanks to Andrew Tarzia for all the help with the code formatting and documentation, and to Domiziano Doria, Chiara Lionello and Simone Martino for the beta-testing. 
