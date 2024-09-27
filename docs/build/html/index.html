@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="onion_clustering" href="modules.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Modules" href="modules.html" />
 
     <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
         <title>onion-clustering documentation</title>
@@ -202,7 +202,28 @@
   <p class="caption" role="heading"><span class="caption-text">onion-clustering</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">onion-clustering</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of onion-clustering</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="onion_clustering.html">onion_clustering package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="_autosummary/onion_clustering.html">onion_clustering</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of onion_clustering</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/onion_clustering.onion_multi.html">onion_clustering.onion_multi</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of onion_clustering.onion_multi</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/onion_clustering.onion_multi.onion_multi.html">onion_clustering.onion_multi.onion_multi</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/onion_clustering.onion_multi.BaseEstimator.html">onion_clustering.onion_multi.BaseEstimator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/onion_clustering.onion_multi.ClusterMixin.html">onion_clustering.onion_multi.ClusterMixin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/onion_clustering.onion_multi.OnionMulti.html">onion_clustering.onion_multi.OnionMulti</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="_autosummary/onion_clustering.onion_uni.html">onion_clustering.onion_uni</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of onion_clustering.onion_uni</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/onion_clustering.onion_uni.onion_uni.html">onion_clustering.onion_uni.onion_uni</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/onion_clustering.onion_uni.BaseEstimator.html">onion_clustering.onion_uni.BaseEstimator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/onion_clustering.onion_uni.ClusterMixin.html">onion_clustering.onion_uni.ClusterMixin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/onion_clustering.onion_uni.OnionUni.html">onion_clustering.onion_uni.OnionUni</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="classes.html">Gaussian states</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Gaussian states</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/onion_clustering._internal.first_classes.StateUni.html">onion_clustering._internal.first_classes.StateUni</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/onion_clustering._internal.first_classes.StateMulti.html">onion_clustering._internal.first_classes.StateMulti</a></li>
 </ul>
 </li>
 </ul>
@@ -250,13 +271,21 @@
 <section id="introduction">
 <h1>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">¶</a></h1>
 <div class="line-block">
-<div class="line">GitHub: <a class="reference external" href="https://github.com/matteobecchi/timeseries_analysis/tree/scikit">https://github.com/matteobecchi/timeseries_analysis/tree/scikit</a></div>
+<div class="line">GitHub: <a class="reference external" href="https://github.com/matteobecchi/onion_clustering">https://github.com/matteobecchi/onion_clustering</a></div>
 </div>
 <p><code class="xref py py-mod docutils literal notranslate"><span class="pre">onion-clustering</span></code> is a Python package for single-point time-series clustering.</p>
+<section id="development-history">
+<h2>Development history<a class="headerlink" href="#development-history" title="Link to this heading">¶</a></h2>
+<p>This version of onion clustering is meant to be used as an external library, and complies with the scikit-learn format. If you are looking for the standalone onion clustering version, you can find it at <a class="reference external" href="https://github.com/matteobecchi/timeseries_analysis">https://github.com/matteobecchi/timeseries_analysis</a>. However, be aware that the standalone version has been last updated on September, 2024 and is no longer supported or mantained. We reccomand using this version.</p>
+</section>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
 <p>To get <code class="xref py py-mod docutils literal notranslate"><span class="pre">onion-clustering</span></code>, you can install it with pip:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install onion-clustering
+</pre></div>
+</div>
+<p>The <code class="xref py py-mod docutils literal notranslate"><span class="pre">examples/</span></code> folder contains an example of usage. From this folder, download the example files as reported in the script <code class="xref py py-mod docutils literal notranslate"><span class="pre">example_script_uni.py</span></code> and then run it with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python3 example_script_uni.py
 </pre></div>
 </div>
 </section>
@@ -264,17 +293,18 @@
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
 <p>To be written.</p>
 </section>
-<section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
-<p>To be written.</p>
+<section id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>numpy (<a class="reference external" href="https://numpy.org">https://numpy.org</a>)</p></li>
+<li><p>scipy (<a class="reference external" href="https://docs.scipy.org/doc/scipy/index.html">https://docs.scipy.org/doc/scipy/index.html</a>)</p></li>
+<li><p>scikit-learn (<a class="reference external" href="https://scikit-learn.org/stable/">https://scikit-learn.org/stable/</a>)</p></li>
+</ul>
 </section>
 <section id="acknowledgements">
 <h2>Acknowledgements<a class="headerlink" href="#acknowledgements" title="Link to this heading">¶</a></h2>
-<p>We developed this code when working in the Pavan group,
-<a class="reference external" href="https://www.gmpavanlab.com/">https://www.gmpavanlab.com/</a>, whose members often provide very valuable
-feedback, which we gratefully acknowledge.</p>
-<p>The work was funded by the European Union and ERC under projects DYNAPOL and the
-NextGenerationEU project, CAGEX.</p>
+<p>We developed this code when working in the Pavan group, <a class="reference external" href="https://www.gmpavanlab.com/">https://www.gmpavanlab.com/</a>. Thanks to Andrew Tarzia for all the help with the code formatting and documentation, and to Domiziano Doria, Chiara Lionello and Simone Martino for the beta-testing.</p>
+<p>The work was funded by the European Union and ERC under projects DYNAPOL and the NextGenerationEU project, CAGEX.</p>
 </section>
 <section id="indices-and-tables">
 <h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading">¶</a></h2>
@@ -296,7 +326,7 @@ NextGenerationEU project, CAGEX.</p>
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">onion_clustering</div>
+                <div class="title">Modules</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>

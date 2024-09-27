@@ -52,7 +52,7 @@ class StateUni:
         self.th_inf = [mean - 2.0 * sigma, -1]
         self.th_sup = [mean + 2.0 * sigma, -1]
 
-    def build_boundaries(self, number_of_sigmas: float):
+    def _build_boundaries(self, number_of_sigmas: float):
         """
         Sets the thresholds to classify the data windows inside the state.
 
@@ -64,6 +64,25 @@ class StateUni:
         """
         self.th_inf = [self.mean - number_of_sigmas * self.sigma, -1]
         self.th_sup = [self.mean + number_of_sigmas * self.sigma, -1]
+
+    def get_attributes(self):
+        """
+        Returns a dictionary containing the attributes of the state.
+
+        Returns
+        -------
+        attr_list : dict
+        """
+        attr_list = {
+            "mean": self.mean,
+            "sigma": self.sigma,
+            "area": self.area,
+            "peak": self.peak,
+            "r_2": self.r_2,
+            "perc": self.perc,
+            "th": [self.th_inf, self.th_sup],
+        }
+        return attr_list
 
 
 class StateMulti:
@@ -105,7 +124,7 @@ class StateMulti:
         self.perc = 0.0
         self.axis = 2.0 * sigma
 
-    def build_boundaries(self, number_of_sigmas: float):
+    def _build_boundaries(self, number_of_sigmas: float):
         """
         Sets the thresholds to classify the data windows inside the state.
 
@@ -116,6 +135,24 @@ class StateMulti:
             How many sigmas the thresholds are far from the mean.
         """
         self.axis = number_of_sigmas * self.sigma  # Axes of the state
+
+    def get_attributes(self):
+        """
+        Returns a dictionary containing the attributes of the state.
+
+        Returns
+        -------
+        attr_list : dict
+        """
+        attr_list = {
+            "mean": self.mean,
+            "sigma": self.sigma,
+            "area": self.area,
+            "r_2": self.r_2,
+            "perc": self.perc,
+            "axis": self.axis,
+        }
+        return attr_list
 
 
 class UniData:

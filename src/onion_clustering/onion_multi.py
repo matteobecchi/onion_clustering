@@ -8,7 +8,7 @@ from typing import Union
 import numpy as np
 from sklearn.base import BaseEstimator, ClusterMixin
 
-from onion_clustering._internal.main_2d import main as onion_inner
+from onion_clustering._internal.main_2d import _main as _onion_inner
 
 
 def onion_multi(
@@ -132,7 +132,7 @@ class OnionMulti(BaseEstimator, ClusterMixin):
         if X.shape[1] != tau_window * self.ndims:
             raise ValueError("X.shape[1] not compatible with self.ndims")
 
-        cl_ob = onion_inner(
+        cl_ob = _onion_inner(
             X,
             self.ndims,
             self.bins,

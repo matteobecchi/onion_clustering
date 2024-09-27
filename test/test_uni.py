@@ -62,7 +62,9 @@ def test_output_files(setup_test_environment):
             _, _ = onion_uni(wrong_arr_2.T)
             _, _ = onion_uni(wrong_arr_3)
 
-        _, labels = onion_uni(reshaped_input_data)
+        state_list, labels = onion_uni(reshaped_input_data)
+
+        _ = state_list[0].get_attributes()
 
         # Define the paths to the expected output files
         original_dir = "/Users/mattebecchi/onion_clustering/test/"

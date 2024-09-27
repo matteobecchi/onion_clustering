@@ -196,7 +196,7 @@ def gauss_fit_max(
         sigma.append(popt[3 * dim + 1])
         area.append(popt[3 * dim + 2])
     state = StateMulti(np.array(mean), np.array(sigma), np.array(area), r_2)
-    state.build_boundaries(par.number_of_sigmas)
+    state._build_boundaries(par.number_of_sigmas)
 
     return state
 
@@ -371,7 +371,7 @@ def full_output_analysis(cl_ob: ClusteringObject2D):
     cl_ob, _ = iterative_search(cl_ob)
 
 
-def main(
+def _main(
     matrix: np.ndarray,
     ndims: int,
     bins: Union[int, str],

@@ -8,7 +8,7 @@ from typing import Union
 import numpy as np
 from sklearn.base import BaseEstimator, ClusterMixin
 
-from onion_clustering._internal.main import main as onion_inner
+from onion_clustering._internal.main import _main as _onion_inner
 
 
 def onion_uni(
@@ -28,8 +28,7 @@ def onion_uni(
         The number of bins used for the construction of the histograms.
         Can be an integer value, or "auto".
         If "auto", the default of numpy.histogram_bin_edges is used
-        (see https://numpy.org/doc/stable/reference/generated/
-        numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
+        (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
 
     number_of_sigmas : float, default=2.0
         Sets the thresholds for classifing a signal window inside a state:
@@ -124,7 +123,7 @@ class OnionUni(BaseEstimator, ClusterMixin):
 
         X = X.copy()  # copy to avoid in-place modification
 
-        cl_ob = onion_inner(
+        cl_ob = _onion_inner(
             X,
             self.bins,
             self.number_of_sigmas,

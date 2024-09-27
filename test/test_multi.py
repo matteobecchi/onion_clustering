@@ -66,7 +66,9 @@ def test_output_files(setup_test_environment):
         _ = tmp.get_params()
         tmp.set_params()
 
-        _, labels = onion_multi(reshaped_input_data)
+        state_list, labels = onion_multi(reshaped_input_data)
+
+        _ = state_list[0].get_attributes()
 
         # Define the paths to the expected output files
         original_dir = "/Users/mattebecchi/onion_clustering/test/"

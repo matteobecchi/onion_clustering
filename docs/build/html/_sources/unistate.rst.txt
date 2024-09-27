@@ -1,0 +1,7 @@
+class UniState
+==============
+
+.. automodule:: onion_clustering._internal.first_classes
+   :members:
+   :undoc-members:
+   :show-inheritance:

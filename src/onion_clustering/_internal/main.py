@@ -257,7 +257,7 @@ def gauss_fit_max(
         return None
 
     state = StateUni(popt[0], popt[1], popt[2], r_2)
-    state.build_boundaries(par.number_of_sigmas)
+    state._build_boundaries(par.number_of_sigmas)
 
     return state
 
@@ -425,7 +425,7 @@ def fit_local_maxima(
             continue
 
         state = StateUni(popt[0], popt[1], popt[2], r_2)
-        state.build_boundaries(par.number_of_sigmas)
+        state._build_boundaries(par.number_of_sigmas)
 
         m_clean = cl_ob.data.matrix
 
@@ -567,7 +567,7 @@ def full_output_analysis(cl_ob: ClusteringObject1D):
         cl_ob.data.labels = cl_ob.create_all_the_labels()
 
 
-def main(
+def _main(
     matrix: np.ndarray,
     bins: Union[int, str],
     number_of_sigmas: float,

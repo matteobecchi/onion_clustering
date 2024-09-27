@@ -201,7 +201,24 @@
   <p class="caption" role="heading"><span class="caption-text">onion-clustering</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../modules.html">onion-clustering</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of onion-clustering</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../onion_clustering.html">onion_clustering package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../_autosummary/onion_clustering.html">onion_clustering</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of onion_clustering</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../_autosummary/onion_clustering.onion_multi.html">onion_clustering.onion_multi</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of onion_clustering.onion_multi</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/onion_clustering.onion_multi.onion_inner.html">onion_clustering.onion_multi.onion_inner</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/onion_clustering.onion_multi.onion_multi.html">onion_clustering.onion_multi.onion_multi</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/onion_clustering.onion_multi.BaseEstimator.html">onion_clustering.onion_multi.BaseEstimator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/onion_clustering.onion_multi.ClusterMixin.html">onion_clustering.onion_multi.ClusterMixin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/onion_clustering.onion_multi.OnionMulti.html">onion_clustering.onion_multi.OnionMulti</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../_autosummary/onion_clustering.onion_uni.html">onion_clustering.onion_uni</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of onion_clustering.onion_uni</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/onion_clustering.onion_uni.onion_uni.html">onion_clustering.onion_uni.onion_uni</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/onion_clustering.onion_uni.BaseEstimator.html">onion_clustering.onion_uni.BaseEstimator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/onion_clustering.onion_uni.ClusterMixin.html">onion_clustering.onion_uni.ClusterMixin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/onion_clustering.onion_uni.OnionUni.html">onion_clustering.onion_uni.OnionUni</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -241,84 +258,91 @@
           <h1>Source code for onion_clustering.onion_uni</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;onion-clustering for univariate time-series.&quot;&quot;&quot;</span>
 
+<span class="c1"># Author: Becchi Matteo &lt;bechmath@gmail.com&gt;</span>
+<span class="c1"># Reference: https://www.pnas.org/doi/abs/10.1073/pnas.2403771121</span>
+
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">ClusterMixin</span>
 
-<span class="kn">from</span> <span class="nn">onion_clustering._internal.main</span> <span class="kn">import</span> <span class="n">main</span> <span class="k">as</span> <span class="n">onion_inner</span>
+<span class="kn">from</span> <span class="nn">onion_clustering._internal.main</span> <span class="kn">import</span> <span class="n">_main</span> <span class="k">as</span> <span class="n">_onion_inner</span>
 
 
 <div class="viewcode-block" id="onion_uni">
-<a class="viewcode-back" href="../../onion_clustering.html#onion_clustering.onion_uni.onion_uni">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/onion_clustering.onion_uni.onion_uni.html#onion_clustering.onion_uni.onion_uni">[docs]</a>
 <span class="k">def</span> <span class="nf">onion_uni</span><span class="p">(</span>
-    <span class="n">matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">bins</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
     <span class="n">number_of_sigmas</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform onion clustering from data array.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Performs onion clustering from data array &#39;X&#39;.</span>
 
-<span class="sd">    References:</span>
-<span class="sd">        https://www.pnas.org/doi/abs/10.1073/pnas.2403771121</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X : ndarray of shape (n_particles * n_windows, tau_window)</span>
+<span class="sd">        The raw data.</span>
 
-<span class="sd">    Parameters:</span>
-<span class="sd">        matrix:</span>
-<span class="sd">            Shape (n_particles * n_windows, tau_window). The values of the signal for each particle at each frame.</span>
+<span class="sd">    bins : int, default=&quot;auto&quot;</span>
+<span class="sd">        The number of bins used for the construction of the histograms.</span>
+<span class="sd">        Can be an integer value, or &quot;auto&quot;.</span>
+<span class="sd">        If &quot;auto&quot;, the default of numpy.histogram_bin_edges is used</span>
+<span class="sd">        (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).</span>
 
-<span class="sd">        bins (default = &quot;auto&quot;):</span>
-<span class="sd">            The number of bins used for the construction of the histograms.</span>
-<span class="sd">            Can be an integer value, or &quot;auto&quot;.</span>
-<span class="sd">            If &quot;auto&quot;, the default of numpy.histogram_bin_edges is used</span>
-<span class="sd">            (see https://numpy.org/doc/stable/reference/generated/</span>
-<span class="sd">            numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).</span>
+<span class="sd">    number_of_sigmas : float, default=2.0</span>
+<span class="sd">        Sets the thresholds for classifing a signal window inside a state:</span>
+<span class="sd">        the window is contained in the state if it is entirely contained</span>
+<span class="sd">        inside number_of_sigma * state.sigms times from state.mean.</span>
 
-<span class="sd">        number_of_sigmas (default = 2.0):</span>
-<span class="sd">            Sets the thresholds for classifing a signal window inside a state:</span>
-<span class="sd">            the window is contained in the state if it is entirely contained</span>
-<span class="sd">            inside number_of_sigma * state.sigms times from state.mean.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    states_list : List[StateUni]</span>
+<span class="sd">        The list of the identified states.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        - List of the identified states.</span>
-<span class="sd">        - np.ndarray of shape (n_particles, n_frames). Cluster labels for each point. Unclassified points are given the label -1.</span>
+<span class="sd">    labels : ndarray of shape (n_particles * n_windows,)</span>
+<span class="sd">        Cluster labels for each point. Unclassified points are given</span>
+<span class="sd">        the label -1.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">est</span> <span class="o">=</span> <span class="n">OnionUni</span><span class="p">(</span>
         <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span>
         <span class="n">number_of_sigmas</span><span class="o">=</span><span class="n">number_of_sigmas</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">est</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
+    <span class="n">est</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">est</span><span class="o">.</span><span class="n">state_list_</span><span class="p">,</span> <span class="n">est</span><span class="o">.</span><span class="n">labels_</span></div>
 
 
 
 <div class="viewcode-block" id="OnionUni">
-<a class="viewcode-back" href="../../onion_clustering.html#onion_clustering.onion_uni.OnionUni">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/onion_clustering.onion_uni.OnionUni.html#onion_clustering.onion_uni.OnionUni">[docs]</a>
 <span class="k">class</span> <span class="nc">OnionUni</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">ClusterMixin</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform onion clustering from data array.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Performs onion clustering from data array.</span>
 
-<span class="sd">    References:</span>
-<span class="sd">        https://www.pnas.org/doi/abs/10.1073/pnas.2403771121</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    bins : int, default=&quot;auto&quot;</span>
+<span class="sd">        The number of bins used for the construction of the histograms.</span>
+<span class="sd">        Can be an integer value, or &quot;auto&quot;.</span>
+<span class="sd">        If &quot;auto&quot;, the default of numpy.histogram_bin_edges is used</span>
+<span class="sd">        (see https://numpy.org/doc/stable/reference/generated/</span>
+<span class="sd">        numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).</span>
 
-<span class="sd">    Parameters:</span>
-<span class="sd">        bins (default = &quot;auto&quot;):</span>
-<span class="sd">            The number of bins used for the construction of the histograms. Can be an integer value, or &quot;auto&quot;.</span>
-<span class="sd">            If &quot;auto&quot;, the default of numpy.histogram_bin_edges is used</span>
-<span class="sd">            (see https://numpy.org/doc/stable/reference/generated/</span>
-<span class="sd">            numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).</span>
+<span class="sd">    number_of_sigmas : float, default=2.0</span>
+<span class="sd">        Sets the thresholds for classifing a signal window inside a state:</span>
+<span class="sd">        the window is contained in the state if it is entirely contained</span>
+<span class="sd">        inside number_of_sigma * state.sigms times from state.mean.</span>
 
-<span class="sd">        number_of_sigma (default = 2.0):</span>
-<span class="sd">            Sets the thresholds for classifing a signal window inside a state:</span>
-<span class="sd">            the window is contained in the state if it is entirely contained</span>
-<span class="sd">            inside number_of_sigma * state.sigms times from state.mean.</span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    state_list_ : List[StateUni]</span>
+<span class="sd">        List of the identified states.</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        state_list_:</span>
-<span class="sd">            List of the identified states.</span>
-
-<span class="sd">        labels_:</span>
-<span class="sd">            np.ndarray of shape (n_particles, n_frames). Cluster labels</span>
-<span class="sd">            for each point. Unclassified points are given the label -1.</span>
+<span class="sd">    labels_: ndarray of shape (n_particles * n_windows,)</span>
+<span class="sd">        Cluster labels for each point. Unclassified points are given</span>
+<span class="sd">        the label -1.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -330,16 +354,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">number_of_sigmas</span> <span class="o">=</span> <span class="n">number_of_sigmas</span>
 
 <div class="viewcode-block" id="OnionUni.fit">
-<a class="viewcode-back" href="../../onion_clustering.html#onion_clustering.onion_uni.OnionUni.fit">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/onion_clustering.onion_uni.OnionUni.html#onion_clustering.onion_uni.OnionUni.fit">[docs]</a>
     <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform onion clustering from data array.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs onion clustering from data array.</span>
 
-<span class="sd">        Parameters:</span>
-<span class="sd">            X:</span>
-<span class="sd">                np.ndarray of shape (n_particles * n_windows, tau_window).</span>
-<span class="sd">                The values of the signal for each particle at each frame.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : ndarray of shape (n_particles * n_windows, tau_window)</span>
+<span class="sd">            The raw data.</span>
 
-<span class="sd">        Returns:</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self : object</span>
 <span class="sd">            A fitted instance of self.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">accept_sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -362,7 +388,7 @@
 
         <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># copy to avoid in-place modification</span>
 
-        <span class="n">cl_ob</span> <span class="o">=</span> <span class="n">onion_inner</span><span class="p">(</span>
+        <span class="n">cl_ob</span> <span class="o">=</span> <span class="n">_onion_inner</span><span class="p">(</span>
             <span class="n">X</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">number_of_sigmas</span><span class="p">,</span>
@@ -375,23 +401,26 @@
 
 
 <div class="viewcode-block" id="OnionUni.fit_predict">
-<a class="viewcode-back" href="../../onion_clustering.html#onion_clustering.onion_uni.OnionUni.fit_predict">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/onion_clustering.onion_uni.OnionUni.html#onion_clustering.onion_uni.OnionUni.fit_predict">[docs]</a>
     <span class="k">def</span> <span class="nf">fit_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute clusters from a data matrix and predict labels.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes clusters from a data matrix and predict labels.</span>
 
-<span class="sd">        Parameters:</span>
-<span class="sd">            X:</span>
-<span class="sd">                np.ndarray of shape (n_particles * n_windows, tau_window).</span>
-<span class="sd">                The values of the signal for each particle at each frame.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : ndarray of shape (n_particles * n_windows, tau_window)</span>
+<span class="sd">            The raw data.</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            np.ndarray of shape (n_particles * n_windows,). Cluster labels. Unclassified points are given the label -1.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        labels_: ndarray of shape (n_particles * n_windows,)</span>
+<span class="sd">            Cluster labels for each point. Unclassified points are given</span>
+<span class="sd">            the label -1.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">labels_</span></div>
 
 
 <div class="viewcode-block" id="OnionUni.get_params">
-<a class="viewcode-back" href="../../onion_clustering.html#onion_clustering.onion_uni.OnionUni.get_params">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/onion_clustering.onion_uni.OnionUni.html#onion_clustering.onion_uni.OnionUni.get_params">[docs]</a>
     <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;bins&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">,</span>
@@ -400,7 +429,7 @@
 
 
 <div class="viewcode-block" id="OnionUni.set_params">
-<a class="viewcode-back" href="../../onion_clustering.html#onion_clustering.onion_uni.OnionUni.set_params">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/onion_clustering.onion_uni.OnionUni.html#onion_clustering.onion_uni.OnionUni.set_params">[docs]</a>
     <span class="k">def</span> <span class="nf">set_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
