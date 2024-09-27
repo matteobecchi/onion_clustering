@@ -56,7 +56,7 @@ TMP_LIST = np.geomspace(2, 499, num=20, dtype=int)
 TAU_WINDOWS = [x for i, x in enumerate(TMP_LIST) if x not in TMP_LIST[:i]]
 
 tra = np.zeros((len(TAU_WINDOWS), 3))  # List of number of states and
-                                       # ENV0 population for each tau_window
+# ENV0 population for each tau_window
 list_of_pop = []  # List of the states' population for each tau_window
 
 for i, tau_window in enumerate(TAU_WINDOWS):

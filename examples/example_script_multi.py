@@ -61,7 +61,7 @@ TAU_WINDOWS_LIST = np.geomspace(3, 10000, 20, dtype=int)
 # n_frames = input_data.shape[2]
 
 tra = np.zeros((len(TAU_WINDOWS_LIST), 3))  # List of number of states and
-                                       # ENV0 population for each tau_window
+# ENV0 population for each tau_window
 pop_list = []  # List of the states' population for each tau_window
 
 for i, tau_window in enumerate(TAU_WINDOWS_LIST):
