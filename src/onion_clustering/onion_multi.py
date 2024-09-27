@@ -29,8 +29,7 @@ def onion_multi(
         The number of bins used for the construction of the histograms.
         Can be an integer value, or "auto".
         If "auto", the default of numpy.histogram_bin_edges is used
-        (see https://numpy.org/doc/stable/reference/generated/
-        numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
+        (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
 
     number_of_sigmas : float, default=2.0
         Sets the thresholds for classifing a signal window inside a state:
@@ -66,8 +65,7 @@ class OnionMulti(BaseEstimator, ClusterMixin):
         The number of bins used for the construction of the histograms.
         Can be an integer value, or "auto".
         If "auto", the default of numpy.histogram_bin_edges is used
-        (see https://numpy.org/doc/stable/reference/generated/
-        numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
+        (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
 
     number_of_sigmas : float, default=2.0
         Sets the thresholds for classifing a signal window inside a state:

@@ -278,8 +278,7 @@
 <li><p><strong>bins</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>, </em><em>default=&quot;auto&quot;</em>) – The number of bins used for the construction of the histograms.
 Can be an integer value, or “auto”.
 If “auto”, the default of numpy.histogram_bin_edges is used
-(see <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/">https://numpy.org/doc/stable/reference/generated/</a>
-numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).</p></li>
+(see <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges">https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges</a>).</p></li>
 <li><p><strong>number_of_sigmas</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a><em>, </em><em>default=2.0</em>) – Sets the thresholds for classifing a signal window inside a state:
 the window is contained in the state if it is entirely contained
 inside number_of_sigma * state.sigms times from state.mean.</p></li>
@@ -320,11 +319,11 @@ the label -1.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#onion_clustering.onion_multi.OnionMulti.fit_predict" title="onion_clustering.onion_multi.OnionMulti.fit_predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_predict</span></code></a></p></td>
 <td><p>Computes clusters from a data matrix and predict labels.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#onion_clustering.onion_multi.OnionMulti.get_params" title="onion_clustering.onion_multi.OnionMulti.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a></p></td>
-<td><p>Get parameters for this estimator.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#onion_clustering.onion_multi.OnionMulti.set_params" title="onion_clustering.onion_multi.OnionMulti.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a></p></td>
-<td><p>Set the parameters of this estimator.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -360,45 +359,6 @@ the label -1.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>ndarray of shape (n_particles * n_windows,)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="onion_clustering.onion_multi.OnionMulti.get_params">
-<span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/onion_clustering/onion_multi.html#OnionMulti.get_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#onion_clustering.onion_multi.OnionMulti.get_params" title="Link to this definition">¶</a></dt>
-<dd><p>Get parameters for this estimator.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>deep</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a><em>, </em><em>default=True</em>) – If True, will return the parameters for this estimator and
-contained subobjects that are estimators.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>params</strong> – Parameter names mapped to their values.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)">dict</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="onion_clustering.onion_multi.OnionMulti.set_params">
-<span class="sig-name descname"><span class="pre">set_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/onion_clustering/onion_multi.html#OnionMulti.set_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#onion_clustering.onion_multi.OnionMulti.set_params" title="Link to this definition">¶</a></dt>
-<dd><p>Set the parameters of this estimator.</p>
-<p>The method works on simple estimators as well as on nested objects
-(such as <code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline</span></code>). The latter have
-parameters of the form <code class="docutils literal notranslate"><span class="pre">&lt;component&gt;__&lt;parameter&gt;</span></code> so that it’s
-possible to update each component of a nested object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>**params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – Estimator parameters.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>self</strong> – Estimator instance.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>estimator instance</p>
 </dd>
 </dl>
 </dd></dl>
@@ -468,8 +428,6 @@ possible to update each component of a nested object.</p>
 <li><a class="reference internal" href="#onion_clustering.onion_multi.OnionMulti.labels_"><code class="docutils literal notranslate"><span class="pre">OnionMulti.labels_</span></code></a></li>
 <li><a class="reference internal" href="#onion_clustering.onion_multi.OnionMulti.fit"><code class="docutils literal notranslate"><span class="pre">OnionMulti.fit()</span></code></a></li>
 <li><a class="reference internal" href="#onion_clustering.onion_multi.OnionMulti.fit_predict"><code class="docutils literal notranslate"><span class="pre">OnionMulti.fit_predict()</span></code></a></li>
-<li><a class="reference internal" href="#onion_clustering.onion_multi.OnionMulti.get_params"><code class="docutils literal notranslate"><span class="pre">OnionMulti.get_params()</span></code></a></li>
-<li><a class="reference internal" href="#onion_clustering.onion_multi.OnionMulti.set_params"><code class="docutils literal notranslate"><span class="pre">OnionMulti.set_params()</span></code></a></li>
 </ul>
 </li>
 </ul>

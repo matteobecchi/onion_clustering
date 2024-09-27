@@ -26,6 +26,7 @@ extensions = [
 autosummary_imported_members = True
 
 autodoc_typehints = "description"
+autodoc_inherit_docstrings = False
 autodoc_member_order = "groupwise"
 autoclass_content = "class"
 

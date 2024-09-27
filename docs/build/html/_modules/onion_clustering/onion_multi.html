@@ -220,6 +220,11 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../classes.html">Gaussian states</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Gaussian states</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/onion_clustering._internal.first_classes.StateUni.html">onion_clustering._internal.first_classes.StateUni</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/onion_clustering._internal.first_classes.StateMulti.html">onion_clustering._internal.first_classes.StateMulti</a></li>
+</ul>
+</li>
 </ul>
 
 </div>
@@ -288,8 +293,7 @@
 <span class="sd">        The number of bins used for the construction of the histograms.</span>
 <span class="sd">        Can be an integer value, or &quot;auto&quot;.</span>
 <span class="sd">        If &quot;auto&quot;, the default of numpy.histogram_bin_edges is used</span>
-<span class="sd">        (see https://numpy.org/doc/stable/reference/generated/</span>
-<span class="sd">        numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).</span>
+<span class="sd">        (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).</span>
 
 <span class="sd">    number_of_sigmas : float, default=2.0</span>
 <span class="sd">        Sets the thresholds for classifing a signal window inside a state:</span>
@@ -328,8 +332,7 @@
 <span class="sd">        The number of bins used for the construction of the histograms.</span>
 <span class="sd">        Can be an integer value, or &quot;auto&quot;.</span>
 <span class="sd">        If &quot;auto&quot;, the default of numpy.histogram_bin_edges is used</span>
-<span class="sd">        (see https://numpy.org/doc/stable/reference/generated/</span>
-<span class="sd">        numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).</span>
+<span class="sd">        (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).</span>
 
 <span class="sd">    number_of_sigmas : float, default=2.0</span>
 <span class="sd">        Sets the thresholds for classifing a signal window inside a state:</span>
@@ -428,23 +431,17 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">labels_</span></div>
 
 
-<div class="viewcode-block" id="OnionMulti.get_params">
-<a class="viewcode-back" href="../../_autosummary/onion_clustering.onion_multi.OnionMulti.html#onion_clustering.onion_multi.OnionMulti.get_params">[docs]</a>
     <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;ndims&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndims</span><span class="p">,</span>
             <span class="s2">&quot;bins&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">,</span>
             <span class="s2">&quot;number_of_sigmas&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_sigmas</span><span class="p">,</span>
-        <span class="p">}</span></div>
+        <span class="p">}</span>
 
-
-<div class="viewcode-block" id="OnionMulti.set_params">
-<a class="viewcode-back" href="../../_autosummary/onion_clustering.onion_multi.OnionMulti.html#onion_clustering.onion_multi.OnionMulti.set_params">[docs]</a>
     <span class="k">def</span> <span class="nf">set_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
-</div>
 
 </pre></div>
         </article>
