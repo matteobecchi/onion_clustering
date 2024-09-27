@@ -2,3 +2,4 @@ tmp_check_estimator
 test/__pycache__
 src/onion_clustering/__pycache__
 src/onion_clustering/_internal/__pycache__
+src/onion_clustering.egg-info

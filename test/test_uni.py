@@ -6,7 +6,7 @@ import tempfile
 import numpy as np
 import pytest
 
-from onion_clustering.onion_uni import OnionUni, onion_uni
+from onion_clustering import OnionUni, onion_uni
 
 
 # Define a fixture to set up the test environment

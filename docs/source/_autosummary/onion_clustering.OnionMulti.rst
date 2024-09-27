@@ -1,7 +1,7 @@
-onion\_clustering.onion\_multi.OnionMulti
-=========================================
+onion\_clustering.OnionMulti
+============================
 
-.. currentmodule:: onion_clustering.onion_multi
+.. currentmodule:: onion_clustering
 
 .. autoclass:: OnionMulti
    :members:

@@ -14,7 +14,7 @@ from plot_results import (
     plot_time_res_analysis,
 )
 
-from onion_clustering.onion_uni import onion_uni
+from onion_clustering import onion_uni
 
 #############################################################################
 ### Set all the analysis parameters ###
