@@ -1,10 +1,10 @@
 """
-Example script for running onion_uni
+Example script for running onion_uni.
 """
 
 import matplotlib.pyplot as plt
 import numpy as np
-from example_plots import (
+from plot_results import (
     plot_medoids_uni,
     plot_one_trj_uni,
     plot_output_uni,
@@ -22,19 +22,26 @@ from onion_clustering.onion_uni import onion_uni
 # to download example datasets
 PATH_TO_INPUT_DATA = "onion_example_files/data/univariate_time-series.npy"
 
-### Clustering at one specific value of time resolution ###
-TAU_WINDOW = 5
-
+### Load the input data - it's an array of shape (n_particles, n_frames)
 input_data = np.load(PATH_TO_INPUT_DATA)[:, 1:]
 n_particles = input_data.shape[0]
 n_frames = input_data.shape[1]
 
-n_windows = int(n_frames / TAU_WINDOW)
+### CLUSTERING WITH A SINGLE TIME RESOLUTION ###
+### Chose the time resolution --> the length of the windows in which the
+### time-series will be divided
+TAU_WINDOW = 5
+n_windows = int(n_frames / TAU_WINDOW)  # Number of windows
 frames_in_excess = n_frames - n_windows * TAU_WINDOW
+
+### The input array needs to be (n_parrticles * n_windows, TAU_WINDOW) because
+### each window is trerated as a single data-point
 reshaped_data = np.reshape(
     input_data[:, :-frames_in_excess], (n_particles * n_windows, TAU_WINDOW)
 )
 
+### onion_uni() returns the list of states and the label for each
+### signal window
 state_list, labels = onion_uni(reshaped_data)
 
 ### These functions are examples of how to visualize the results
@@ -44,12 +51,13 @@ plot_medoids_uni("Fig3.png", reshaped_data, labels)
 plot_state_populations("Fig4.png", n_windows, labels)
 plot_sankey("Fig5.png", labels, n_windows, [10, 20, 30, 40])
 
-### Clustering at all the possible time resolution ###
+### CLUSTERING THE WHOLE RANGE OF TIME RESOLUTIONS ###
 TMP_LIST = np.geomspace(2, 499, num=20, dtype=int)
 TAU_WINDOWS = [x for i, x in enumerate(TMP_LIST) if x not in TMP_LIST[:i]]
 
-tra = np.zeros((len(TAU_WINDOWS), 3))
-list_of_pop = []
+tra = np.zeros((len(TAU_WINDOWS), 3))  # List of number of states and
+                                       # ENV0 population for each tau_window
+list_of_pop = []  # List of the states' population for each tau_window
 
 for i, tau_window in enumerate(TAU_WINDOWS):
     n_windows = int(n_frames / tau_window)
