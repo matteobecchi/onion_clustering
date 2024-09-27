@@ -359,9 +359,9 @@ def relabel_states(
     - Creates a dictionary to map old state labels to new ones
     - Relabels the data in all_the_labels according to the new states_list
     """
-    relevant_states = [state for state in states_list if state.perc != 0.0]
+    relevant_states = [state for state in states_list if state._perc != 0.0]
 
-    relevant_states.sort(key=lambda x: x.mean)
+    relevant_states.sort(key=lambda x: x._mean)
 
     state_mapping = {
         state_index: index + 1
@@ -400,30 +400,32 @@ def find_intersection(st_0: StateUni, st_1: StateUni) -> Tuple[float, int]:
         two Gaussians exists, type 2 if it does not exist and the weighted
         average between the means is returned.
     """
-    coeff_a = st_1.sigma**2 - st_0.sigma**2
-    coeff_b = -2 * (st_0.mean * st_1.sigma**2 - st_1.mean * st_0.sigma**2)
-    tmp_c = np.log(st_0.area * st_1.sigma / st_1.area / st_0.sigma)
+    coeff_a = st_1._sigma**2 - st_0._sigma**2
+    coeff_b = -2 * (st_0._mean * st_1._sigma**2 - st_1._mean * st_0._sigma**2)
+    tmp_c = np.log(st_0._area * st_1._sigma / st_1._area / st_0._sigma)
     coeff_c = (
-        (st_0.mean * st_1.sigma) ** 2
-        - (st_1.mean * st_0.sigma) ** 2
-        - ((st_0.sigma * st_1.sigma) ** 2) * tmp_c
+        (st_0._mean * st_1._sigma) ** 2
+        - (st_1._mean * st_0._sigma) ** 2
+        - ((st_0._sigma * st_1._sigma) ** 2) * tmp_c
     )
     delta = coeff_b**2 - 4 * coeff_a * coeff_c
     if coeff_a == 0.0:
-        only_th = (st_0.mean + st_1.mean) / 2 - st_0.sigma**2 / 2 / (
-            st_1.mean - st_0.mean
-        ) * np.log(st_0.area / st_1.area)
+        only_th = (st_0._mean + st_1._mean) / 2 - st_0._sigma**2 / 2 / (
+            st_1._mean - st_0._mean
+        ) * np.log(st_0._area / st_1._area)
         return only_th, 1
     if delta >= 0:
         th_plus = (-coeff_b + np.sqrt(delta)) / (2 * coeff_a)
         th_minus = (-coeff_b - np.sqrt(delta)) / (2 * coeff_a)
-        intercept_plus = gaussian(th_plus, st_0.mean, st_0.sigma, st_0.area)
-        intercept_minus = gaussian(th_minus, st_0.mean, st_0.sigma, st_0.area)
+        intercept_plus = gaussian(th_plus, st_0._mean, st_0._sigma, st_0._area)
+        intercept_minus = gaussian(
+            th_minus, st_0._mean, st_0._sigma, st_0._area
+        )
         if intercept_plus >= intercept_minus:
             return th_plus, 1
         return th_minus, 1
-    th_aver = (st_0.mean / st_0.sigma + st_1.mean / st_1.sigma) / (
-        1 / st_0.sigma + 1 / st_1.sigma
+    th_aver = (st_0._mean / st_0._sigma + st_1._mean / st_1._sigma) / (
+        1 / st_0._sigma + 1 / st_1._sigma
     )
     return th_aver, 2
 
@@ -514,20 +516,20 @@ def final_state_settings(
     if len(list_of_states) == 0:
         return list_of_states
 
-    list_of_states[0].th_inf[0] = m_range[0]
-    list_of_states[0].th_inf[1] = 0
+    list_of_states[0]._th_inf[0] = m_range[0]
+    list_of_states[0]._th_inf[1] = 0
 
     for i in range(len(list_of_states) - 1):
         th_val, th_type = find_intersection(
             list_of_states[i], list_of_states[i + 1]
         )
-        list_of_states[i].th_sup[0] = th_val
-        list_of_states[i].th_sup[1] = th_type
-        list_of_states[i + 1].th_inf[0] = th_val
-        list_of_states[i + 1].th_inf[1] = th_type
+        list_of_states[i]._th_sup[0] = th_val
+        list_of_states[i]._th_sup[1] = th_type
+        list_of_states[i + 1]._th_inf[0] = th_val
+        list_of_states[i + 1]._th_inf[1] = th_type
 
-    list_of_states[-1].th_sup[0] = m_range[1]
-    list_of_states[-1].th_sup[1] = 0
+    list_of_states[-1]._th_sup[0] = m_range[1]
+    list_of_states[-1]._th_sup[1] = 0
 
     return list_of_states
 
@@ -577,12 +579,12 @@ def set_final_states(
             if j > i:
                 # Condition 1: area overlap
                 shared_area_1, shared_area_2 = shared_area_between_gaussians(
-                    st_1.area,
-                    st_1.mean,
-                    st_1.sigma,
-                    st_0.area,
-                    st_0.mean,
-                    st_0.sigma,
+                    st_1._area,
+                    st_1._mean,
+                    st_1._sigma,
+                    st_0._area,
+                    st_0._mean,
+                    st_0._sigma,
                 )
                 thresh = area_max_overlap
                 if shared_area_1 > thresh >= shared_area_2:
@@ -595,15 +597,15 @@ def set_final_states(
                     )
                 # Condition 2: mean proximity
                 elif (
-                    st_0.peak > st_1.peak
-                    and np.abs(st_0.mean - st_1.mean) < st_0.sigma
-                    and st_1.sigma < 2 * st_0.sigma
+                    st_0._peak > st_1._peak
+                    and np.abs(st_0._mean - st_1._mean) < st_0._sigma
+                    and st_1._sigma < 2 * st_0._sigma
                 ):
                     proposed_merge.append([j, i])
                 elif (
-                    st_1.peak > st_0.peak
-                    and np.abs(st_0.mean - st_1.mean) < st_1.sigma
-                    and st_0.sigma < 2 * st_1.sigma
+                    st_1._peak > st_0._peak
+                    and np.abs(st_0._mean - st_1._mean) < st_1._sigma
+                    and st_0._sigma < 2 * st_1._sigma
                 ):
                     proposed_merge.append([i, j])
 
@@ -619,7 +621,7 @@ def set_final_states(
             best_merge.append(candidate_merge[0])
         else:
             importance = [
-                list_of_states[pair[1]].perc for pair in candidate_merge
+                list_of_states[pair[1]]._perc for pair in candidate_merge
             ]
             best_merge.append(candidate_merge[np.argmax(importance)])
 
@@ -689,9 +691,9 @@ def find_max_prob_state(
     medians = np.median(windows, axis=1)
 
     # Prepare arrays for Gaussian calculations
-    means = np.array([state.mean for state in list_of_states])
-    sigmas = np.array([state.sigma for state in list_of_states])
-    areas = np.array([state.area for state in list_of_states])
+    means = np.array([state._mean for state in list_of_states])
+    sigmas = np.array([state._sigma for state in list_of_states])
+    areas = np.array([state._area for state in list_of_states])
 
     # Broadcast medians to shape (num_windows, num_states)
     medians_broadcasted = medians[:, np.newaxis]
@@ -747,7 +749,7 @@ def max_prob_assignment(
         List of the identified states, with updated percetages.
     """
     s_ranges = np.array(
-        [number_of_sigmas * state.sigma for state in list_of_states]
+        [number_of_sigmas * state._sigma for state in list_of_states]
     )
     final_labels = np.zeros(all_the_labels.shape, dtype=int)
     mask = all_the_labels > 0
@@ -771,14 +773,14 @@ def max_prob_assignment(
 
     for i, state in enumerate(list_of_states):
         num_of_points = np.sum(final_labels == i + 1)
-        state.perc = num_of_points / final_labels.size
+        state._perc = num_of_points / final_labels.size
 
     # To conform to scikit convention, noise has to be labelled "-1"
     final_labels -= 1
 
     states_to_remove = []
     for i, state in enumerate(list_of_states):
-        if state.perc == 0.0:
+        if state._perc == 0.0:
             states_to_remove.append(i)
 
     for i in states_to_remove[::-1]:
@@ -826,17 +828,17 @@ def relabel_states_2d(
     - Write the final states to text files.
     """
 
-    sorted_states = [state for state in states_list if state.perc != 0.0]
+    sorted_states = [state for state in states_list if state._perc != 0.0]
 
     # Create a dictionary to map old state labels to new ones
     state_mapping = {
         index: i + 1
         for i, index in enumerate(
-            np.argsort([-state.perc for state in sorted_states])
+            np.argsort([-state._perc for state in sorted_states])
         )
     }
 
-    sorted_states.sort(key=lambda x: x.perc, reverse=True)
+    sorted_states.sort(key=lambda x: x._perc, reverse=True)
 
     # Relabel the data in all_the_labels according to the new states_list
     mask = all_the_labels != 0  # Create a mask for non-zero elements
@@ -849,11 +851,11 @@ def relabel_states_2d(
     for i, st_0 in enumerate(sorted_states):
         for j, st_1 in enumerate(sorted_states):
             if j > i:
-                diff = np.abs(np.subtract(st_1.mean, st_0.mean))
+                diff = np.abs(np.subtract(st_1._mean, st_0._mean))
                 if np.all(
                     diff
                     < [
-                        max(st_0.sigma[k], st_1.sigma[k])
+                        max(st_0._sigma[k], st_1._sigma[k])
                         for k in range(diff.size)
                     ]
                 ):
@@ -871,7 +873,7 @@ def relabel_states_2d(
             best_merge.append(candidate_merge[0])
         else:
             importance = [
-                sorted_states[pair[1]].perc for pair in candidate_merge
+                sorted_states[pair[1]]._perc for pair in candidate_merge
             ]
             best_merge.append(candidate_merge[np.argmax(importance)])
 
@@ -914,6 +916,6 @@ def relabel_states_2d(
     # Compute the fraction of data points in each state
     for st_id, state in enumerate(updated_states):
         num_of_points = np.sum(all_the_labels == st_id + 1)
-        state.perc = num_of_points / all_the_labels.size
+        state._perc = num_of_points / all_the_labels.size
 
     return all_the_labels, updated_states

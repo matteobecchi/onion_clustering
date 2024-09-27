@@ -43,14 +43,14 @@ class StateUni:
     """
 
     def __init__(self, mean: float, sigma: float, area: float, r_2: float):
-        self.mean = mean
-        self.sigma = sigma
-        self.area = area
-        self.peak = area / sigma / np.sqrt(np.pi)
-        self.r_2 = r_2
-        self.perc = 0.0
-        self.th_inf = [mean - 2.0 * sigma, -1]
-        self.th_sup = [mean + 2.0 * sigma, -1]
+        self._mean = mean
+        self._sigma = sigma
+        self._area = area
+        self._peak = area / sigma / np.sqrt(np.pi)
+        self._r_2 = r_2
+        self._perc = 0.0
+        self._th_inf = [mean - 2.0 * sigma, -1]
+        self._th_sup = [mean + 2.0 * sigma, -1]
 
     def _build_boundaries(self, number_of_sigmas: float):
         """
@@ -62,8 +62,8 @@ class StateUni:
         number of sigmas : float
             How many sigmas the thresholds are far from the mean.
         """
-        self.th_inf = [self.mean - number_of_sigmas * self.sigma, -1]
-        self.th_sup = [self.mean + number_of_sigmas * self.sigma, -1]
+        self._th_inf = [self._mean - number_of_sigmas * self._sigma, -1]
+        self._th_sup = [self._mean + number_of_sigmas * self._sigma, -1]
 
     def get_attributes(self):
         """
@@ -74,13 +74,13 @@ class StateUni:
         attr_list : dict
         """
         attr_list = {
-            "mean": self.mean,
-            "sigma": self.sigma,
-            "area": self.area,
-            "peak": self.peak,
-            "r_2": self.r_2,
-            "perc": self.perc,
-            "th": [self.th_inf, self.th_sup],
+            "mean": self._mean,
+            "sigma": self._sigma,
+            "area": self._area,
+            "peak": self._peak,
+            "r_2": self._r_2,
+            "perc": self._perc,
+            "th": [self._th_inf, self._th_sup],
         }
         return attr_list
 
@@ -117,12 +117,12 @@ class StateMulti:
     def __init__(
         self, mean: np.ndarray, sigma: np.ndarray, area: np.ndarray, r_2: float
     ):
-        self.mean = mean
-        self.sigma = sigma
-        self.area = area
-        self.r_2 = r_2
-        self.perc = 0.0
-        self.axis = 2.0 * sigma
+        self._mean = mean
+        self._sigma = sigma
+        self._area = area
+        self._r_2 = r_2
+        self._perc = 0.0
+        self._axis = 2.0 * sigma
 
     def _build_boundaries(self, number_of_sigmas: float):
         """
@@ -134,7 +134,7 @@ class StateMulti:
         number of sigmas : float
             How many sigmas the thresholds are far from the mean.
         """
-        self.axis = number_of_sigmas * self.sigma  # Axes of the state
+        self._axis = number_of_sigmas * self._sigma  # Axes of the state
 
     def get_attributes(self):
         """
@@ -145,12 +145,12 @@ class StateMulti:
         attr_list : dict
         """
         attr_list = {
-            "mean": self.mean,
-            "sigma": self.sigma,
-            "area": self.area,
-            "r_2": self.r_2,
-            "perc": self.perc,
-            "axis": self.axis,
+            "mean": self._mean,
+            "sigma": self._sigma,
+            "area": self._area,
+            "r_2": self._r_2,
+            "perc": self._perc,
+            "axis": self._axis,
         }
         return attr_list
 

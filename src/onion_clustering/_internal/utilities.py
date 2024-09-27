@@ -309,9 +309,9 @@ def plot_cumulative_figure(
                 if k == 0:
                     for state in list_of_states:
                         ellipse = Ellipse(
-                            tuple(state.mean),
-                            state.axis[d_0],
-                            state.axis[d_1],
+                            tuple(state._mean),
+                            state._axis[d_0],
+                            state._axis[d_1],
                             color="black",
                             fill=False,
                         )
@@ -450,9 +450,9 @@ def plot_cumulative_figure(
         # Plot the Gaussian distributions of states
         for state in list_of_states:
             ellipse = Ellipse(
-                tuple(state.mean),
-                state.axis[0],
-                state.axis[1],
+                tuple(state._mean),
+                state._axis[0],
+                state._axis[1],
                 color="black",
                 fill=False,
             )

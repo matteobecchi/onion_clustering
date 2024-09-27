@@ -1,4 +1,4 @@
-Results of doctest builder run on 2024-09-27 12:32:00
+Results of doctest builder run on 2024-09-27 13:55:29
 =====================================================
 
 Document: _autosummary/onion_clustering.onion_multi.BaseEstimator

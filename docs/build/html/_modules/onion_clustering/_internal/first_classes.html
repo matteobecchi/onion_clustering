@@ -307,14 +307,14 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">area</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">r_2</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">mean</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="n">area</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">peak</span> <span class="o">=</span> <span class="n">area</span> <span class="o">/</span> <span class="n">sigma</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">r_2</span> <span class="o">=</span> <span class="n">r_2</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">perc</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">th_inf</span> <span class="o">=</span> <span class="p">[</span><span class="n">mean</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">sigma</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">th_sup</span> <span class="o">=</span> <span class="p">[</span><span class="n">mean</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">sigma</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span> <span class="o">=</span> <span class="n">mean</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span> <span class="o">=</span> <span class="n">sigma</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_area</span> <span class="o">=</span> <span class="n">area</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_peak</span> <span class="o">=</span> <span class="n">area</span> <span class="o">/</span> <span class="n">sigma</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_r_2</span> <span class="o">=</span> <span class="n">r_2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_perc</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_th_inf</span> <span class="o">=</span> <span class="p">[</span><span class="n">mean</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">sigma</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_th_sup</span> <span class="o">=</span> <span class="p">[</span><span class="n">mean</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">sigma</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">_build_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number_of_sigmas</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -326,8 +326,8 @@
 <span class="sd">        number of sigmas : float</span>
 <span class="sd">            How many sigmas the thresholds are far from the mean.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">th_inf</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">-</span> <span class="n">number_of_sigmas</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">th_sup</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">+</span> <span class="n">number_of_sigmas</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_th_inf</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_mean</span> <span class="o">-</span> <span class="n">number_of_sigmas</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_th_sup</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_mean</span> <span class="o">+</span> <span class="n">number_of_sigmas</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
 <div class="viewcode-block" id="StateUni.get_attributes">
 <a class="viewcode-back" href="../../../_autosummary/onion_clustering._internal.first_classes.StateUni.html#onion_clustering._internal.first_classes.StateUni.get_attributes">[docs]</a>
@@ -340,13 +340,13 @@
 <span class="sd">        attr_list : dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">attr_list</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span>
-            <span class="s2">&quot;sigma&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span>
-            <span class="s2">&quot;area&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="p">,</span>
-            <span class="s2">&quot;peak&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">peak</span><span class="p">,</span>
-            <span class="s2">&quot;r_2&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_2</span><span class="p">,</span>
-            <span class="s2">&quot;perc&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">perc</span><span class="p">,</span>
-            <span class="s2">&quot;th&quot;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">th_inf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">th_sup</span><span class="p">],</span>
+            <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span><span class="p">,</span>
+            <span class="s2">&quot;sigma&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span><span class="p">,</span>
+            <span class="s2">&quot;area&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_area</span><span class="p">,</span>
+            <span class="s2">&quot;peak&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_peak</span><span class="p">,</span>
+            <span class="s2">&quot;r_2&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r_2</span><span class="p">,</span>
+            <span class="s2">&quot;perc&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perc</span><span class="p">,</span>
+            <span class="s2">&quot;th&quot;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_th_inf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_th_sup</span><span class="p">],</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="n">attr_list</span></div>
 </div>
@@ -387,12 +387,12 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">area</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">r_2</span><span class="p">:</span> <span class="nb">float</span>
     <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">mean</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="n">area</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">r_2</span> <span class="o">=</span> <span class="n">r_2</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">perc</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">sigma</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span> <span class="o">=</span> <span class="n">mean</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span> <span class="o">=</span> <span class="n">sigma</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_area</span> <span class="o">=</span> <span class="n">area</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_r_2</span> <span class="o">=</span> <span class="n">r_2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_perc</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_axis</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">sigma</span>
 
     <span class="k">def</span> <span class="nf">_build_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number_of_sigmas</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -404,7 +404,7 @@
 <span class="sd">        number of sigmas : float</span>
 <span class="sd">            How many sigmas the thresholds are far from the mean.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="n">number_of_sigmas</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span>  <span class="c1"># Axes of the state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_axis</span> <span class="o">=</span> <span class="n">number_of_sigmas</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span>  <span class="c1"># Axes of the state</span>
 
 <div class="viewcode-block" id="StateMulti.get_attributes">
 <a class="viewcode-back" href="../../../_autosummary/onion_clustering._internal.first_classes.StateMulti.html#onion_clustering._internal.first_classes.StateMulti.get_attributes">[docs]</a>
@@ -417,12 +417,12 @@
 <span class="sd">        attr_list : dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">attr_list</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span>
-            <span class="s2">&quot;sigma&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span>
-            <span class="s2">&quot;area&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="p">,</span>
-            <span class="s2">&quot;r_2&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_2</span><span class="p">,</span>
-            <span class="s2">&quot;perc&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">perc</span><span class="p">,</span>
-            <span class="s2">&quot;axis&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span>
+            <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span><span class="p">,</span>
+            <span class="s2">&quot;sigma&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span><span class="p">,</span>
+            <span class="s2">&quot;area&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_area</span><span class="p">,</span>
+            <span class="s2">&quot;r_2&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r_2</span><span class="p">,</span>
+            <span class="s2">&quot;perc&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perc</span><span class="p">,</span>
+            <span class="s2">&quot;axis&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_axis</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="n">attr_list</span></div>
 </div>
