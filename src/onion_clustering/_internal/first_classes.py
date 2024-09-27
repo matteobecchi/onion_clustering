@@ -82,6 +82,9 @@ class StateMulti:
     area : np.ndarray of shape (dim,)
         Area below the Gaussians.
 
+    r_2 : float
+        Coefficient of determination of the Gaussian fit.
+
     Attributes
     ----------
 
@@ -92,10 +95,13 @@ class StateMulti:
         The thrasholds of the state.
     """
 
-    def __init__(self, mean: np.ndarray, sigma: np.ndarray, area: np.ndarray):
+    def __init__(
+        self, mean: np.ndarray, sigma: np.ndarray, area: np.ndarray, r_2: float
+    ):
         self.mean = mean
         self.sigma = sigma
         self.area = area
+        self.r_2 = r_2
         self.perc = 0.0
         self.axis = 2.0 * sigma
 

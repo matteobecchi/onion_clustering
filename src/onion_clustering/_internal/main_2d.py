@@ -21,8 +21,6 @@ from onion_clustering._internal.functions import (
     relabel_states_2d,
 )
 
-OUTPUT_FILE = "onion_clustering_log.txt"
-
 
 def all_the_input_stuff(
     matrix: np.ndarray,
@@ -188,12 +186,8 @@ def gauss_fit_max(
             popt = np.array(popt_half)
             r_2 = cumulative_r2_half
     else:
-        with open(OUTPUT_FILE, "a", encoding="utf-8") as dump:
-            print("\tWARNING: this fit is not converging.", file=dump)
         return None
     if len(popt) != m_clean.shape[2] * 3:
-        with open(OUTPUT_FILE, "a", encoding="utf-8") as dump:
-            print("\tWARNING: this fit is not converging.", file=dump)
         return None
 
     mean, sigma, area = [], [], []
@@ -201,27 +195,8 @@ def gauss_fit_max(
         mean.append(popt[3 * dim])
         sigma.append(popt[3 * dim + 1])
         area.append(popt[3 * dim + 2])
-    state = StateMulti(np.array(mean), np.array(sigma), np.array(area))
+    state = StateMulti(np.array(mean), np.array(sigma), np.array(area), r_2)
     state.build_boundaries(par.number_of_sigmas)
-
-    if m_clean.shape[2] == 2:
-        with open(OUTPUT_FILE, "a", encoding="utf-8") as dump:
-            print(
-                f"\tmu = [{popt[0]:.4f}, {popt[3]:.4f}],"
-                f" sigma = [{popt[1]:.4f}, {popt[4]:.4f}],"
-                f" area = {popt[2]:.4f}, {popt[5]:.4f}",
-                file=dump,
-            )
-            print(f"\tFit coeff r^2 = {r_2}", file=dump)
-    elif m_clean.shape[2] == 3:
-        with open(OUTPUT_FILE, "a", encoding="utf-8") as dump:
-            print(
-                f"\tmu = [{popt[0]:.4f}, {popt[3]:.4f}, {popt[6]:.4f}], "
-                f"sigma = [{popt[1]:.4f}, {popt[4]:.4f}, {popt[7]:.4f}], "
-                f"area = {popt[2]:.4f}, {popt[5]:.4f}, {popt[8]:.4f}",
-                file=dump,
-            )
-            print(f"\tFit coeff r^2 = {r_2}", file=dump)
 
     return state
 
@@ -294,13 +269,6 @@ def find_stable_trj(
     else:
         window_fraction = counter / tmp_labels.size
 
-    with open(OUTPUT_FILE, "a", encoding="utf-8") as dump:
-        print(
-            f"\tFraction of windows in state {lim + 1}"
-            f" = {window_fraction:.3}",
-            file=dump,
-        )
-
     env_0 = True
     if len(m2_array) == 0:
         env_0 = False
@@ -352,18 +320,11 @@ def iterative_search(
     states_counter = 0
     env_0 = False
     while True:
-        with open(OUTPUT_FILE, "a", encoding="utf-8") as dump:
-            print(f"- Iteration {iteration_id - 1}", file=dump)
         state = gauss_fit_max(
             m_copy, np.array(cl_ob.data.range), bins, cl_ob.par
         )
 
         if state is None:
-            with open(OUTPUT_FILE, "a", encoding="utf-8") as dump:
-                print(
-                    "- Iterations interrupted because fit does not converge.",
-                    file=dump,
-                )
             break
 
         m_new, counter, env_0 = find_stable_trj(
@@ -376,19 +337,8 @@ def iterative_search(
         states_counter += 1
         iteration_id += 1
         if counter <= 0.0:
-            with open(OUTPUT_FILE, "a", encoding="utf-8") as dump:
-                print(
-                    "- Iterations interrupted because last state is empty.",
-                    file=dump,
-                )
             break
         if m_new.size == 0:
-            with open(OUTPUT_FILE, "a", encoding="utf-8") as dump:
-                print(
-                    "- Iterations interrupted because all data "
-                    "points assigned.",
-                    file=dump,
-                )
             break
         m_copy = m_new
 
@@ -418,16 +368,7 @@ def full_output_analysis(cl_ob: ClusteringObject2D):
     - If no classification is found, return
 
     """
-    with open(OUTPUT_FILE, "a", encoding="utf-8") as dump:
-        print(
-            f"* Complete analysis, tau_window = {cl_ob.par.tau_w}\n", file=dump
-        )
-
     cl_ob, _ = iterative_search(cl_ob)
-
-    if len(cl_ob.state_list) == 0:
-        with open(OUTPUT_FILE, "a", encoding="utf-8") as dump:
-            print("* No possible classification was found.", file=dump)
 
 
 def main(
