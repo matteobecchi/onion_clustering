@@ -1,16 +1,16 @@
-Results of doctest builder run on 2024-09-27 12:19:14
+Results of doctest builder run on 2024-09-27 12:32:00
 =====================================================
-
-Document: _autosummary/onion_clustering.onion_uni.ClusterMixin
---------------------------------------------------------------
-1 items passed all tests:
-   5 tests in default
-5 tests in 1 items.
-5 passed and 0 failed.
-Test passed.
 
 Document: _autosummary/onion_clustering.onion_multi.BaseEstimator
 -----------------------------------------------------------------
+1 items passed all tests:
+   9 tests in default
+9 tests in 1 items.
+9 passed and 0 failed.
+Test passed.
+
+Document: _autosummary/onion_clustering.onion_uni.BaseEstimator
+---------------------------------------------------------------
 1 items passed all tests:
    9 tests in default
 9 tests in 1 items.
@@ -25,12 +25,12 @@ Document: _autosummary/onion_clustering.onion_multi.ClusterMixin
 5 passed and 0 failed.
 Test passed.
 
-Document: _autosummary/onion_clustering.onion_uni.BaseEstimator
----------------------------------------------------------------
+Document: _autosummary/onion_clustering.onion_uni.ClusterMixin
+--------------------------------------------------------------
 1 items passed all tests:
-   9 tests in default
-9 tests in 1 items.
-9 passed and 0 failed.
+   5 tests in default
+5 tests in 1 items.
+5 passed and 0 failed.
 Test passed.
 
 Doctest summary
