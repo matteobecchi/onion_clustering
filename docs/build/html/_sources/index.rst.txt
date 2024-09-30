@@ -4,10 +4,10 @@
 
 .. toctree::
    :hidden:
-   :caption: onion-clustering
+   :caption: tropea-clustering
    :maxdepth: 2
 
-   onion-clustering <modules>
+   tropea-clustering <modules>
    Gaussian states <classes>
 
 ============
@@ -17,7 +17,7 @@ Introduction
 | GitHub: https://github.com/matteobecchi/onion_clustering
 
 
-:mod:`.onion-clustering` is a Python package for single-point time-series clustering.
+:mod:`.tropea-clustering` (the newest version of onion-clustering) is a Python package for single-point time-series clustering.
 
 Development history
 -------------------
@@ -26,9 +26,9 @@ This version of onion clustering is meant to be used as an external library, and
 Installation
 ------------
 
-To get :mod:`.onion-clustering`, you can install it with pip::
+To get :mod:`.tropea-clustering`, you can install it with pip::
 
-  $ pip install onion-clustering
+  $ pip install tropea-clustering
 
 The :mod:`examples/` folder contains an example of usage. From this folder, download the example files as reported in the script :mod:`example_script_uni.py` and then run it with::
 
@@ -44,6 +44,10 @@ Dependencies
 - numpy (https://numpy.org)
 - scipy (https://docs.scipy.org/doc/scipy/index.html)
 - scikit-learn (https://scikit-learn.org/stable/)
+
+How to cite us
+--------------
+If you use tropea-clustering (or onion-clustering) in your work, please cite https://doi.org/10.1073/pnas.2403771121. 
 
 Acknowledgements
 ----------------

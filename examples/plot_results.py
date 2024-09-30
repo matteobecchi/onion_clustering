@@ -9,7 +9,7 @@ from matplotlib.colors import rgb2hex
 from matplotlib.patches import Ellipse
 from matplotlib.ticker import MaxNLocator
 
-from onion_clustering._internal.functions import gaussian
+from tropea_clustering._internal.functions import gaussian
 
 COLORMAP = "viridis"
 

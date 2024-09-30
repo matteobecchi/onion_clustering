@@ -6,4 +6,4 @@ Modules
   :template: module.rst
   :recursive:
 
-  onion_clustering
+  tropea_clustering

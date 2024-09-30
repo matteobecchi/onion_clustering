@@ -14,7 +14,7 @@ from plot_results import (
     plot_time_res_analysis,
 )
 
-from onion_clustering import onion_multi
+from tropea_clustering import onion_multi
 
 ##############################################################################
 ### Set all the analysis parameters ###

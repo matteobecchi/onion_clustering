@@ -3,7 +3,7 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "onion-clustering"
+name = "tropea-clustering"
 version = "1.0.0"
 description = "Code for unsupervised clustering of time-correlated data."
 # license = "MIT"
@@ -36,7 +36,7 @@ dev = [
 ]
 
 [tool.setuptools_scm]
-#write_to = "src/onion_clustering/__version__.py"
+#write_to = "src/tropea_clustering/__version__.py"
 
 [tool.black]
 line-length = 79
@@ -55,7 +55,7 @@ strict_optional = true
 
 [[tool.mypy.overrides]]
 module = [
-    'onion_clustering.*',
+    'tropea_clustering.*',
     'sklearn.base',
     'scipy.*',
     'plotly.*',

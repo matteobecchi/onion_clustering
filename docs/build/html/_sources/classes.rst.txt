@@ -6,5 +6,5 @@ Classes
   :template: class.rst
   :recursive:
 
-  onion_clustering._internal.first_classes.StateUni
-  onion_clustering._internal.first_classes.StateMulti
+  tropea_clustering._internal.first_classes.StateUni
+  tropea_clustering._internal.first_classes.StateMulti
