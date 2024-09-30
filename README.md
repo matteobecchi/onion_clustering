@@ -1,13 +1,12 @@
 # tropea_clustering
 
 <div style="display: flex; align-items: center;">
-    <img src="docs/source/_static/tropea-logo.jpg" alt="tropea-logo" width="150"/>
+    <img src="docs/source/_static/tropea-logo.jpg" alt="tropea-logo" width="150" style="margin-right: 20px;"/>
     <p>
         tropea-clustering (the newest version of onion-clustering) is a Python package for single-point time-series clustering. 
+        Author: Matteo Becchi
     </p>
 </div>
-
-Author: Matteo Becchi
 
 ## Developement history
 This version of onion clustering is meant to be used as an external library, and complies with the scikit-learn format. If you are looking for the standalone onion clustering version, you can find it at https://github.com/matteobecchi/timeseries_analysis. However, be aware that the standalone version has been last updated on September, 2024 and is no longer supported or mantained. We reccomand using this version. 
