@@ -2,6 +2,7 @@
 Contains the classes used for storing the clustering data.
 """
 
+from dataclasses import dataclass
 from typing import List, Union
 
 import numpy as np
@@ -15,6 +16,7 @@ from tropea_clustering._internal.first_classes import (
 )
 
 
+@dataclass
 class ClusteringObject:
     """
     This class contains the cluster's input and output.
@@ -35,10 +37,9 @@ class ClusteringObject:
         The number of iterations the algorithm performed.
     """
 
-    def __init__(self, par: Parameters, data: Union[UniData, MultiData]):
-        self.par = par
-        self.data = data
-        self.iterations = -1
+    par: Parameters
+    data: Union[UniData, MultiData]
+    iterations: int = -1
 
     def create_all_the_labels(self) -> np.ndarray:
         """

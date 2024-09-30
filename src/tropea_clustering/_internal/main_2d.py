@@ -321,7 +321,7 @@ def iterative_search(
     env_0 = False
     while True:
         state = gauss_fit_max(
-            m_copy, np.array(cl_ob.data.range), bins, cl_ob.par
+            m_copy, np.array(cl_ob.data.ranges), bins, cl_ob.par
         )
 
         if state is None:

@@ -67,7 +67,7 @@ def test_output_files(setup_test_environment):
         _ = state_list[0].get_attributes()
 
         # Define the paths to the expected output files
-        original_dir = "/Users/mattebecchi/onion_clustering/test/"
+        original_dir = "/home/mattebecchi/onion_clustering/test/"
         expected_output_path = original_dir + "output_uni/labels.npy"
 
         # np.save(expected_output_path, labels)

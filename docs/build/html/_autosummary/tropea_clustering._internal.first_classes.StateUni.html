@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="tropea_clustering._internal.first_classes.StateMulti" href="tropea_clustering._internal.first_classes.StateMulti.html" /><link rel="prev" title="Classes" href="../classes.html" />
 
-    <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
+    <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
         <title>tropea_clustering._internal.first_classes.StateUni - onion-clustering documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
@@ -260,7 +260,7 @@
 <h1>tropea_clustering._internal.first_classes.StateUni<a class="headerlink" href="#tropea-clustering-internal-first-classes-stateuni" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="tropea_clustering._internal.first_classes.StateUni">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tropea_clustering._internal.first_classes.</span></span><span class="sig-name descname"><span class="pre">StateUni</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/first_classes.html#StateUni"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering._internal.first_classes.StateUni" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tropea_clustering._internal.first_classes.</span></span><span class="sig-name descname"><span class="pre">StateUni</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_mean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_area</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_r_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_perc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/first_classes.html#StateUni"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering._internal.first_classes.StateUni" title="Link to this definition">¶</a></dt>
 <dd><p>Represents a unidimensional state as a Gaussian.</p>
 <p>All the parameters and information on the Gaussian states corresponding
 to the different clusters are stored within this class. The attributes can
@@ -268,16 +268,17 @@ be acessed using the get_attributes() method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mean</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Mean of the Gaussian.</p></li>
-<li><p><strong>sigma</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Rescaled standard deviation of the Gaussian.</p></li>
-<li><p><strong>area</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Area below the Gaussian.</p></li>
-<li><p><strong>r_2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Coefficient of determination of the Gaussian fit.</p></li>
+<li><p><strong>_mean</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Mean of the Gaussian.</p></li>
+<li><p><strong>_sigma</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Rescaled standard deviation of the Gaussian.</p></li>
+<li><p><strong>_area</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Area below the Gaussian.</p></li>
+<li><p><strong>_r_2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Coefficient of determination of the Gaussian fit.</p></li>
+<li><p><strong>_perc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="tropea_clustering._internal.first_classes.StateUni.peak">
-<span class="sig-name descname"><span class="pre">peak</span></span><a class="headerlink" href="#tropea_clustering._internal.first_classes.StateUni.peak" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tropea_clustering._internal.first_classes.StateUni._peak">
+<span class="sig-name descname"><span class="pre">_peak</span></span><a class="headerlink" href="#tropea_clustering._internal.first_classes.StateUni._peak" title="Link to this definition">¶</a></dt>
 <dd><p>Maximum value of the Gaussian.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -287,8 +288,8 @@ be acessed using the get_attributes() method.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="tropea_clustering._internal.first_classes.StateUni.perc">
-<span class="sig-name descname"><span class="pre">perc</span></span><a class="headerlink" href="#tropea_clustering._internal.first_classes.StateUni.perc" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tropea_clustering._internal.first_classes.StateUni._perc">
+<span class="sig-name descname"><span class="pre">_perc</span></span><a class="headerlink" href="#tropea_clustering._internal.first_classes.StateUni._perc" title="Link to this definition">¶</a></dt>
 <dd><p>Fraction of data points classified in the state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -298,35 +299,33 @@ be acessed using the get_attributes() method.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="tropea_clustering._internal.first_classes.StateUni.th_inf">
-<span class="sig-name descname"><span class="pre">th_inf</span></span><a class="headerlink" href="#tropea_clustering._internal.first_classes.StateUni.th_inf" title="Link to this definition">¶</a></dt>
-<dd><p>Lower threshold of the state. Considering the Gaussian states oreder
-with increasing values of the mean, this is the intercsection point
-(if exists) with the Gaussian before. If there is no intersection, it
-is the weighted average between the two means. The two cases are
-distinguished by the value of th_inf[1], which is “0” in the first
-case, “1” in the second. The actual threshold value is stored in
-th_inf[0].</p>
+<dt class="sig sig-object py" id="tropea_clustering._internal.first_classes.StateUni._th_inf">
+<span class="sig-name descname"><span class="pre">_th_inf</span></span><a class="headerlink" href="#tropea_clustering._internal.first_classes.StateUni._th_inf" title="Link to this definition">¶</a></dt>
+<dd><p>_th_inf[0] stores the lower threshold of the state. Considering the
+Gaussian states oreder with increasing values of the mean, this is the
+intercsection point (if exists) with the Gaussian before. If there is
+no intersection, it is the weighted average between the two means.
+The two cases are distinguished by the value of _th_inf[1], which is
+“0” in the first case, “1” in the second.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)">float</a></p>
+<dd class="field-odd"><p>ndarray of shape (2,)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="tropea_clustering._internal.first_classes.StateUni.th_sup">
-<span class="sig-name descname"><span class="pre">th_sup</span></span><a class="headerlink" href="#tropea_clustering._internal.first_classes.StateUni.th_sup" title="Link to this definition">¶</a></dt>
-<dd><p>Upper thrashold of the state. Considering the Gaussian states oreder
-with increasing values of the mean, this is the intercsection point
-(if exists) with the Gaussian after. If there is no intersection, it
-is the weighted average between the two means. The two cases are
-distinguished by the value of th_sup[1], which is “0” in the first
-case, “1” in the second. The actual threshold value is stored in
-th_sup[0].</p>
+<dt class="sig sig-object py" id="tropea_clustering._internal.first_classes.StateUni._th_sup">
+<span class="sig-name descname"><span class="pre">_th_sup</span></span><a class="headerlink" href="#tropea_clustering._internal.first_classes.StateUni._th_sup" title="Link to this definition">¶</a></dt>
+<dd><p>_th_sup[0] stores the upper threshold of the state. Considering the
+Gaussian states oreder with increasing values of the mean, this is the
+intercsection point (if exists) with the Gaussian after. If there is
+no intersection, it is the weighted average between the two means.
+The two cases are distinguished by the value of _th_sup[1], which is
+“0” in the first case, “1” in the second.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)">float</a></p>
+<dd class="field-odd"><p>ndarray of shape (2,)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -418,10 +417,10 @@ with the label “th”.</p>
             <ul>
 <li><a class="reference internal" href="#">tropea_clustering._internal.first_classes.StateUni</a><ul>
 <li><a class="reference internal" href="#tropea_clustering._internal.first_classes.StateUni"><code class="docutils literal notranslate"><span class="pre">StateUni</span></code></a><ul>
-<li><a class="reference internal" href="#tropea_clustering._internal.first_classes.StateUni.peak"><code class="docutils literal notranslate"><span class="pre">StateUni.peak</span></code></a></li>
-<li><a class="reference internal" href="#tropea_clustering._internal.first_classes.StateUni.perc"><code class="docutils literal notranslate"><span class="pre">StateUni.perc</span></code></a></li>
-<li><a class="reference internal" href="#tropea_clustering._internal.first_classes.StateUni.th_inf"><code class="docutils literal notranslate"><span class="pre">StateUni.th_inf</span></code></a></li>
-<li><a class="reference internal" href="#tropea_clustering._internal.first_classes.StateUni.th_sup"><code class="docutils literal notranslate"><span class="pre">StateUni.th_sup</span></code></a></li>
+<li><a class="reference internal" href="#tropea_clustering._internal.first_classes.StateUni._peak"><code class="docutils literal notranslate"><span class="pre">StateUni._peak</span></code></a></li>
+<li><a class="reference internal" href="#tropea_clustering._internal.first_classes.StateUni._perc"><code class="docutils literal notranslate"><span class="pre">StateUni._perc</span></code></a></li>
+<li><a class="reference internal" href="#tropea_clustering._internal.first_classes.StateUni._th_inf"><code class="docutils literal notranslate"><span class="pre">StateUni._th_inf</span></code></a></li>
+<li><a class="reference internal" href="#tropea_clustering._internal.first_classes.StateUni._th_sup"><code class="docutils literal notranslate"><span class="pre">StateUni._th_sup</span></code></a></li>
 <li><a class="reference internal" href="#tropea_clustering._internal.first_classes.StateUni.get_attributes"><code class="docutils literal notranslate"><span class="pre">StateUni.get_attributes()</span></code></a></li>
 </ul>
 </li>
