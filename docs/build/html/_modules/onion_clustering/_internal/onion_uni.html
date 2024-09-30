@@ -271,12 +271,13 @@
     <span class="n">number_of_sigmas</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Performs onion clustering from data array &#39;X&#39;.</span>
+<span class="sd">    Performs onion clustering on the data array &#39;X&#39;.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    X : ndarray of shape (n_particles * n_windows, tau_window)</span>
-<span class="sd">        The raw data.</span>
+<span class="sd">        The raw data. Notice that each signal window is considered as a</span>
+<span class="sd">        single data point.</span>
 
 <span class="sd">    bins : int, default=&quot;auto&quot;</span>
 <span class="sd">        The number of bins used for the construction of the histograms.</span>
@@ -287,15 +288,16 @@
 <span class="sd">    number_of_sigmas : float, default=2.0</span>
 <span class="sd">        Sets the thresholds for classifing a signal window inside a state:</span>
 <span class="sd">        the window is contained in the state if it is entirely contained</span>
-<span class="sd">        inside number_of_sigma * state.sigms times from state.mean.</span>
+<span class="sd">        inside number_of_sigmas * state.sigmas times from state.mean.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    states_list : List[StateUni]</span>
-<span class="sd">        The list of the identified states.</span>
+<span class="sd">        The list of the identified states. Refer to the documentation of</span>
+<span class="sd">        StateUni for accessing the information on the states.</span>
 
 <span class="sd">    labels : ndarray of shape (n_particles * n_windows,)</span>
-<span class="sd">        Cluster labels for each point. Unclassified points are given</span>
+<span class="sd">        Cluster labels for each signal window. Unclassified points are given</span>
 <span class="sd">        the label -1.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -313,7 +315,7 @@
 <a class="viewcode-back" href="../../../_autosummary/onion_clustering.OnionUni.html#onion_clustering.OnionUni">[docs]</a>
 <span class="k">class</span> <span class="nc">OnionUni</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">ClusterMixin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Performs onion clustering from data array.</span>
+<span class="sd">    Performs onion clustering on a data array.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -326,15 +328,16 @@
 <span class="sd">    number_of_sigmas : float, default=2.0</span>
 <span class="sd">        Sets the thresholds for classifing a signal window inside a state:</span>
 <span class="sd">        the window is contained in the state if it is entirely contained</span>
-<span class="sd">        inside number_of_sigma * state.sigms times from state.mean.</span>
+<span class="sd">        inside number_of_sigmas * state.sigmas times from state.mean.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    state_list_ : List[StateUni]</span>
-<span class="sd">        List of the identified states.</span>
+<span class="sd">        List of the identified states. Refer to the documentation of</span>
+<span class="sd">        StateUni for accessing the information on the states.</span>
 
 <span class="sd">    labels_: ndarray of shape (n_particles * n_windows,)</span>
-<span class="sd">        Cluster labels for each point. Unclassified points are given</span>
+<span class="sd">        Cluster labels for signal window. Unclassified points are given</span>
 <span class="sd">        the label -1.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -349,12 +352,13 @@
 <div class="viewcode-block" id="OnionUni.fit">
 <a class="viewcode-back" href="../../../_autosummary/onion_clustering.OnionUni.html#onion_clustering.OnionUni.fit">[docs]</a>
     <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs onion clustering from data array.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs onion clustering on the data array &#39;X&#39;.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        X : ndarray of shape (n_particles * n_windows, tau_window)</span>
-<span class="sd">            The raw data.</span>
+<span class="sd">            The raw data. Notice that each signal window is considered as a</span>
+<span class="sd">            single data point.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -396,32 +400,39 @@
 <div class="viewcode-block" id="OnionUni.fit_predict">
 <a class="viewcode-back" href="../../../_autosummary/onion_clustering.OnionUni.html#onion_clustering.OnionUni.fit_predict">[docs]</a>
     <span class="k">def</span> <span class="nf">fit_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes clusters from a data matrix and predict labels.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes clusters on the data array &#39;X&#39; and returns labels.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        X : ndarray of shape (n_particles * n_windows, tau_window)</span>
-<span class="sd">            The raw data.</span>
+<span class="sd">            The raw data. Notice that each signal window is considered as a</span>
+<span class="sd">            single data point.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        labels_: ndarray of shape (n_particles * n_windows,)</span>
-<span class="sd">            Cluster labels for each point. Unclassified points are given</span>
+<span class="sd">            Cluster labels for signal window. Unclassified points are given</span>
 <span class="sd">            the label -1.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">labels_</span></div>
 
 
+<div class="viewcode-block" id="OnionUni.get_params">
+<a class="viewcode-back" href="../../../_autosummary/onion_clustering.OnionUni.html#onion_clustering.OnionUni.get_params">[docs]</a>
     <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;bins&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">,</span>
             <span class="s2">&quot;number_of_sigmas&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_sigmas</span><span class="p">,</span>
-        <span class="p">}</span>
+        <span class="p">}</span></div>
 
+
+<div class="viewcode-block" id="OnionUni.set_params">
+<a class="viewcode-back" href="../../../_autosummary/onion_clustering.OnionUni.html#onion_clustering.OnionUni.set_params">[docs]</a>
     <span class="k">def</span> <span class="nf">set_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
+</div>
 
 </pre></div>
         </article>

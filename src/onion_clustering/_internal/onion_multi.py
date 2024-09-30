@@ -18,12 +18,13 @@ def onion_multi(
     number_of_sigmas: float = 2.0,
 ):
     """
-    Performs onion clustering from data array.
+    Performs onion clustering on the data array 'X'.
 
     Parameters
     ----------
     X : ndarray of shape (n_particles * n_windows, tau_window * n_features)
-        The raw data.
+        The raw data. Notice that each signal window is considered as a
+        single data point.
 
     bins : int, default="auto"
         The number of bins used for the construction of the histograms.
@@ -34,15 +35,16 @@ def onion_multi(
     number_of_sigmas : float, default=2.0
         Sets the thresholds for classifing a signal window inside a state:
         the window is contained in the state if it is entirely contained
-        inside number_of_sigma * state.sigms times from state.mean.
+        inside number_of_sigmas * state.sigmas times from state.mean.
 
     Returns
     -------
     states_list : List[StateMulti]
-        The list of the identified states.
+        The list of the identified states.Refer to the documentation of
+        StateMulti for accessing the information on the states.
 
     labels : ndarray of shape (n_particles * n_windows,)
-        Cluster labels for each point. Unclassified points are given
+        Cluster labels for each signal window. Unclassified points are given
         the label -1.
     """
 
@@ -57,7 +59,7 @@ def onion_multi(
 
 class OnionMulti(BaseEstimator, ClusterMixin):
     """
-    Performs onion clustering from data array.
+    Performs onion clustering on a data array.
 
     Parameters
     ----------
@@ -93,12 +95,13 @@ class OnionMulti(BaseEstimator, ClusterMixin):
         self.number_of_sigmas = number_of_sigmas
 
     def fit(self, X, y=None):
-        """Performs onion clustering from data array.
+        """Performs onion clustering on the data array 'X'.
 
         Parameters
         ----------
         X : ndarray of shape (n_particles * n_windows, tau_window * n_features)
-            The raw data.
+            The raw data. Notice that each signal window is considered as a
+            single data point.
 
         Returns
         -------
@@ -143,12 +146,13 @@ class OnionMulti(BaseEstimator, ClusterMixin):
         return self
 
     def fit_predict(self, X, y=None):
-        """Computes clusters from a data matrix and predict labels.
+        """Computes clusters on the data array 'X' and returns labels.
 
         Parameters
         ----------
         X : ndarray of shape (n_particles * n_windows, tau_window * n_features)
-            The raw data.
+            The raw data. Notice that each signal window is considered as a
+            single data point.
 
         Returns
         -------

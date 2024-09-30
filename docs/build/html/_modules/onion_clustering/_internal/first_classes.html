@@ -202,25 +202,15 @@
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../modules.html">onion-clustering</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of onion-clustering</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../_autosummary/onion_clustering.html">onion_clustering</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of onion_clustering</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/onion_clustering.onion_multi.html">onion_clustering.onion_multi</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of onion_clustering.onion_multi</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/onion_clustering.onion_multi.onion_multi.html">onion_clustering.onion_multi.onion_multi</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/onion_clustering.onion_multi.BaseEstimator.html">onion_clustering.onion_multi.BaseEstimator</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/onion_clustering.onion_multi.ClusterMixin.html">onion_clustering.onion_multi.ClusterMixin</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/onion_clustering.onion_multi.OnionMulti.html">onion_clustering.onion_multi.OnionMulti</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/onion_clustering.onion_uni.html">onion_clustering.onion_uni</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of onion_clustering.onion_uni</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/onion_clustering.onion_uni.onion_uni.html">onion_clustering.onion_uni.onion_uni</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/onion_clustering.onion_uni.BaseEstimator.html">onion_clustering.onion_uni.BaseEstimator</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/onion_clustering.onion_uni.ClusterMixin.html">onion_clustering.onion_uni.ClusterMixin</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/onion_clustering.onion_uni.OnionUni.html">onion_clustering.onion_uni.OnionUni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/onion_clustering.onion_multi.html">onion_clustering.onion_multi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/onion_clustering.onion_uni.html">onion_clustering.onion_uni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/onion_clustering.OnionMulti.html">onion_clustering.OnionMulti</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/onion_clustering.OnionUni.html">onion_clustering.OnionUni</a></li>
 </ul>
 </li>
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../classes.html">Gaussian states</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Gaussian states</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../classes.html">Gaussian states</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Gaussian states</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/onion_clustering._internal.first_classes.StateUni.html">onion_clustering._internal.first_classes.StateUni</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/onion_clustering._internal.first_classes.StateMulti.html">onion_clustering._internal.first_classes.StateMulti</a></li>
 </ul>
@@ -275,6 +265,10 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents a unidimensional state as a Gaussian.</span>
 
+<span class="sd">    All the parameters and information on the Gaussian states corresponding</span>
+<span class="sd">    to the different clusters are stored within this class. The attributes can</span>
+<span class="sd">    be acessed using the get_attributes() method.</span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 
@@ -300,10 +294,22 @@
 <span class="sd">        Fraction of data points classified in the state.</span>
 
 <span class="sd">    th_inf : float</span>
-<span class="sd">        Lower thrashold of the state.</span>
+<span class="sd">        Lower threshold of the state. Considering the Gaussian states oreder</span>
+<span class="sd">        with increasing values of the mean, this is the intercsection point</span>
+<span class="sd">        (if exists) with the Gaussian before. If there is no intersection, it</span>
+<span class="sd">        is the weighted average between the two means. The two cases are</span>
+<span class="sd">        distinguished by the value of th_inf[1], which is &quot;0&quot; in the first</span>
+<span class="sd">        case, &quot;1&quot; in the second. The actual threshold value is stored in</span>
+<span class="sd">        th_inf[0].</span>
 
 <span class="sd">    th_sup : float</span>
-<span class="sd">        Upper thrashold of the state.</span>
+<span class="sd">        Upper thrashold of the state. Considering the Gaussian states oreder</span>
+<span class="sd">        with increasing values of the mean, this is the intercsection point</span>
+<span class="sd">        (if exists) with the Gaussian after. If there is no intersection, it</span>
+<span class="sd">        is the weighted average between the two means. The two cases are</span>
+<span class="sd">        distinguished by the value of th_sup[1], which is &quot;0&quot; in the first</span>
+<span class="sd">        case, &quot;1&quot; in the second. The actual threshold value is stored in</span>
+<span class="sd">        th_sup[0].</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">area</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">r_2</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
@@ -335,6 +341,9 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a dictionary containing the attributes of the state.</span>
 
+<span class="sd">        The attributes &quot;th_inf&quot; and &quot;th_sup&quot; are returned as a single ndarray</span>
+<span class="sd">        with the label &quot;th&quot;.</span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        attr_list : dict</span>
@@ -359,6 +368,10 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents a multifimensional state as a factorized Gaussian.</span>
 
+<span class="sd">    All the parameters and information on the factorized Gaussian states</span>
+<span class="sd">    corresponding to the different clusters are stored within this class.</span>
+<span class="sd">    The attributes can be acessed using the get_attributes() method.</span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 
@@ -381,7 +394,9 @@
 <span class="sd">        Fraction of data points classified in this state.</span>
 
 <span class="sd">    axis : ndarray of shape (dim,)</span>
-<span class="sd">        The thrasholds of the state.</span>
+<span class="sd">        The thresholds of the state. It contains the axis of the ellipsoid</span>
+<span class="sd">        given by the rescaled sigmas of the factorized Gaussian states,</span>
+<span class="sd">        multiplied by &quot;number of sigmas&quot;.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>

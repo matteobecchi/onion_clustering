@@ -11,6 +11,10 @@ class StateUni:
     """
     Represents a unidimensional state as a Gaussian.
 
+    All the parameters and information on the Gaussian states corresponding
+    to the different clusters are stored within this class. The attributes can
+    be acessed using the get_attributes() method.
+
     Parameters
     ----------
 
@@ -36,10 +40,22 @@ class StateUni:
         Fraction of data points classified in the state.
 
     th_inf : float
-        Lower thrashold of the state.
+        Lower threshold of the state. Considering the Gaussian states oreder
+        with increasing values of the mean, this is the intercsection point
+        (if exists) with the Gaussian before. If there is no intersection, it
+        is the weighted average between the two means. The two cases are
+        distinguished by the value of th_inf[1], which is "0" in the first
+        case, "1" in the second. The actual threshold value is stored in
+        th_inf[0].
 
     th_sup : float
-        Upper thrashold of the state.
+        Upper thrashold of the state. Considering the Gaussian states oreder
+        with increasing values of the mean, this is the intercsection point
+        (if exists) with the Gaussian after. If there is no intersection, it
+        is the weighted average between the two means. The two cases are
+        distinguished by the value of th_sup[1], which is "0" in the first
+        case, "1" in the second. The actual threshold value is stored in
+        th_sup[0].
     """
 
     def __init__(self, mean: float, sigma: float, area: float, r_2: float):
@@ -69,6 +85,9 @@ class StateUni:
         """
         Returns a dictionary containing the attributes of the state.
 
+        The attributes "th_inf" and "th_sup" are returned as a single ndarray
+        with the label "th".
+
         Returns
         -------
         attr_list : dict
@@ -88,6 +107,10 @@ class StateUni:
 class StateMulti:
     """
     Represents a multifimensional state as a factorized Gaussian.
+
+    All the parameters and information on the factorized Gaussian states
+    corresponding to the different clusters are stored within this class.
+    The attributes can be acessed using the get_attributes() method.
 
     Parameters
     ----------
@@ -111,7 +134,9 @@ class StateMulti:
         Fraction of data points classified in this state.
 
     axis : ndarray of shape (dim,)
-        The thrasholds of the state.
+        The thresholds of the state. It contains the axis of the ellipsoid
+        given by the rescaled sigmas of the factorized Gaussian states,
+        multiplied by "number of sigmas".
     """
 
     def __init__(

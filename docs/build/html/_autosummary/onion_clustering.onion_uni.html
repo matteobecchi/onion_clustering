@@ -261,24 +261,26 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="onion_clustering.onion_uni">
 <span class="sig-prename descclassname"><span class="pre">onion_clustering.</span></span><span class="sig-name descname"><span class="pre">onion_uni</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_sigmas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/onion_clustering/_internal/onion_uni.html#onion_uni"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#onion_clustering.onion_uni" title="Link to this definition">¶</a></dt>
-<dd><p>Performs onion clustering from data array ‘X’.</p>
+<dd><p>Performs onion clustering on the data array ‘X’.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>n_particles * n_windows</em><em>, </em><em>tau_window</em><em>)</em>) – The raw data.</p></li>
+<li><p><strong>X</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>n_particles * n_windows</em><em>, </em><em>tau_window</em><em>)</em>) – The raw data. Notice that each signal window is considered as a
+single data point.</p></li>
 <li><p><strong>bins</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>, </em><em>default=&quot;auto&quot;</em>) – The number of bins used for the construction of the histograms.
 Can be an integer value, or “auto”.
 If “auto”, the default of numpy.histogram_bin_edges is used
 (see <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges">https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges</a>).</p></li>
 <li><p><strong>number_of_sigmas</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a><em>, </em><em>default=2.0</em>) – Sets the thresholds for classifing a signal window inside a state:
 the window is contained in the state if it is entirely contained
-inside number_of_sigma * state.sigms times from state.mean.</p></li>
+inside number_of_sigmas * state.sigmas times from state.mean.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>states_list</strong> (<em>List[StateUni]</em>) – The list of the identified states.</p></li>
-<li><p><strong>labels</strong> (<em>ndarray of shape (n_particles * n_windows,)</em>) – Cluster labels for each point. Unclassified points are given
+<li><p><strong>states_list</strong> (<em>List[StateUni]</em>) – The list of the identified states. Refer to the documentation of
+StateUni for accessing the information on the states.</p></li>
+<li><p><strong>labels</strong> (<em>ndarray of shape (n_particles * n_windows,)</em>) – Cluster labels for each signal window. Unclassified points are given
 the label -1.</p></li>
 </ul>
 </p>

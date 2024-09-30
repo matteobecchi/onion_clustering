@@ -262,6 +262,9 @@
 <dt class="sig sig-object py" id="onion_clustering._internal.first_classes.StateUni">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">onion_clustering._internal.first_classes.</span></span><span class="sig-name descname"><span class="pre">StateUni</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/onion_clustering/_internal/first_classes.html#StateUni"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#onion_clustering._internal.first_classes.StateUni" title="Link to this definition">¶</a></dt>
 <dd><p>Represents a unidimensional state as a Gaussian.</p>
+<p>All the parameters and information on the Gaussian states corresponding
+to the different clusters are stored within this class. The attributes can
+be acessed using the get_attributes() method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -297,7 +300,13 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="onion_clustering._internal.first_classes.StateUni.th_inf">
 <span class="sig-name descname"><span class="pre">th_inf</span></span><a class="headerlink" href="#onion_clustering._internal.first_classes.StateUni.th_inf" title="Link to this definition">¶</a></dt>
-<dd><p>Lower thrashold of the state.</p>
+<dd><p>Lower threshold of the state. Considering the Gaussian states oreder
+with increasing values of the mean, this is the intercsection point
+(if exists) with the Gaussian before. If there is no intersection, it
+is the weighted average between the two means. The two cases are
+distinguished by the value of th_inf[1], which is “0” in the first
+case, “1” in the second. The actual threshold value is stored in
+th_inf[0].</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)">float</a></p>
@@ -308,7 +317,13 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="onion_clustering._internal.first_classes.StateUni.th_sup">
 <span class="sig-name descname"><span class="pre">th_sup</span></span><a class="headerlink" href="#onion_clustering._internal.first_classes.StateUni.th_sup" title="Link to this definition">¶</a></dt>
-<dd><p>Upper thrashold of the state.</p>
+<dd><p>Upper thrashold of the state. Considering the Gaussian states oreder
+with increasing values of the mean, this is the intercsection point
+(if exists) with the Gaussian after. If there is no intersection, it
+is the weighted average between the two means. The two cases are
+distinguished by the value of th_sup[1], which is “0” in the first
+case, “1” in the second. The actual threshold value is stored in
+th_sup[0].</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)">float</a></p>
@@ -330,6 +345,8 @@
 <dt class="sig sig-object py" id="onion_clustering._internal.first_classes.StateUni.get_attributes">
 <span class="sig-name descname"><span class="pre">get_attributes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/onion_clustering/_internal/first_classes.html#StateUni.get_attributes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#onion_clustering._internal.first_classes.StateUni.get_attributes" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a dictionary containing the attributes of the state.</p>
+<p>The attributes “th_inf” and “th_sup” are returned as a single ndarray
+with the label “th”.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>attr_list</strong></p>
