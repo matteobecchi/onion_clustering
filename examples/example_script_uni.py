@@ -17,7 +17,6 @@ from plot_results import (
 from tropea_clustering import onion_uni
 
 #############################################################################
-### Set all the analysis parameters ###
 # Use git clone git@github.com:matteobecchi/onion_example_files.git
 # to download example datasets
 PATH_TO_INPUT_DATA = "onion_example_files/data/univariate_time-series.npy"

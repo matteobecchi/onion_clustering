@@ -17,7 +17,6 @@ from plot_results import (
 from tropea_clustering import onion_multi
 
 ##############################################################################
-### Set all the analysis parameters ###
 # Use git clone git@github.com:matteobecchi/onion_example_files.git
 # to download example datasets
 PATH_TO_INPUT_DATA = "onion_example_files/data/multivariate_time-series.npy"
@@ -53,12 +52,6 @@ plot_sankey("Fig5.png", labels, n_windows, [100, 200, 300, 400])
 
 ### CLUSTERING THE WHOLE RANGE OF TIME RESOLUTIONS ###
 TAU_WINDOWS_LIST = np.geomspace(3, 10000, 20, dtype=int)
-# BINS = 25
-# input_data = np.load(PATH_TO_INPUT_DATA)
-
-# n_dims = input_data.shape[0]
-# n_particles = input_data.shape[1]
-# n_frames = input_data.shape[2]
 
 tra = np.zeros((len(TAU_WINDOWS_LIST), 3))  # List of number of states and
 # ENV0 population for each tau_window
