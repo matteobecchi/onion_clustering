@@ -1,8 +1,11 @@
 # tropea_clustering
 
-<img src="docs/source/_static/tropea-logo.jpg" alt="tropea-logo" width="100"/>
-
-tropea-clustering (the newest version of onion-clustering) is a Python package for single-point time-series clustering. 
+<div style="display: flex; align-items: center;">
+    <img src="docs/source/_static/tropea-logo.jpg" alt="tropea-logo" width="150"/>
+    <p>
+        tropea-clustering (the newest version of onion-clustering) is a Python package for single-point time-series clustering. 
+    </p>
+</div>
 
 Author: Matteo Becchi
 
