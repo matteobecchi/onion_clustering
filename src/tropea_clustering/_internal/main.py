@@ -344,7 +344,7 @@ def fit_local_maxima(
     """
     This functions takes care of particular cases where the
     data points on the tails of a Gaussian are not correctly assigned,
-    creating weird sharp peaks in the hsistogram.
+    creating weird sharp peaks in the histogram.
 
     Parameters
     ----------
@@ -565,6 +565,8 @@ def full_output_analysis(cl_ob: ClusteringObject1D):
         )
 
         cl_ob.data.labels = cl_ob.create_all_the_labels()
+    else:
+        cl_ob.data.labels = -np.ones(cl_ob.data.matrix.shape)
 
 
 def _main(
