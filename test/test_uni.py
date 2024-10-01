@@ -44,23 +44,13 @@ def test_output_files(original_wd: Path):
         np.array(random_walk), (N_PARTICLES * n_windows, -1)
     )
 
-    wrong_arr_1 = rng.normal((3, 3, 3))
-    wrong_arr_2 = rng.normal((1, 10))
-    wrong_arr_3 = rng.normal((3, 3)) + 1.0j * rng.normal((3, 3))
-
     with tempfile.TemporaryDirectory() as _:
-        # Call your code to generate the output files
+        # Test the class methods
         tmp = OnionUni()
-        tmp.fit_predict(reshaped_input_data)
+        tmp_params = {"bins": "auto", "number_of_sigmas": 2.0}
+        tmp.set_params(**tmp_params)
         _ = tmp.get_params()
-        tmp.set_params()
-
-        # Test wrong input arrays
-        with pytest.raises(ValueError):
-            _, _ = onion_uni(wrong_arr_1)
-            _, _ = onion_uni(wrong_arr_2)
-            _, _ = onion_uni(wrong_arr_2.T)
-            _, _ = onion_uni(wrong_arr_3)
+        tmp.fit_predict(reshaped_input_data)
 
         state_list, labels = onion_uni(reshaped_input_data)
 

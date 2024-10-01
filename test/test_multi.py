@@ -59,12 +59,19 @@ def test_output_files(original_wd: Path):
         ]
     )
 
+    wrong_arr = rng.random((5, 7))
+
     with tempfile.TemporaryDirectory() as _:
-        # Call your code to generate the output files
+        # Test the class methods
         tmp = OnionMulti()
-        tmp.fit_predict(reshaped_input_data)
+        tmp_params = {"bins": 25, "number_of_sigmas": 2.0}
+        tmp.set_params(**tmp_params)
         _ = tmp.get_params()
-        tmp.set_params()
+        tmp.fit_predict(reshaped_input_data)
+
+        # Test wrong input arrays
+        with pytest.raises(ValueError):
+            tmp.fit(wrong_arr)
 
         state_list, labels = onion_multi(reshaped_input_data)
 
