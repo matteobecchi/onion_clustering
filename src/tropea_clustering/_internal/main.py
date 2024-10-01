@@ -559,7 +559,7 @@ def full_output_analysis(cl_ob: ClusteringObject1D):
             list_of_states,
             cl_ob.data.matrix,
             tmp_labels,
-            cl_ob.data.range,
+            cl_ob.data.ranges,
             cl_ob.par.tau_w,
             cl_ob.par.number_of_sigmas,
         )

@@ -2,11 +2,13 @@
 Contains the classes used for storing parameters and system states.
 """
 
+from dataclasses import asdict, dataclass, field
 from typing import Union
 
 import numpy as np
 
 
+@dataclass
 class StateUni:
     """
     Represents a unidimensional state as a Gaussian.
@@ -18,55 +20,57 @@ class StateUni:
     Parameters
     ----------
 
-    mean : float
+    _mean : float
         Mean of the Gaussian.
 
-    sigma : float
+    _sigma : float
         Rescaled standard deviation of the Gaussian.
 
-    area : float
+    _area : float
         Area below the Gaussian.
 
-    r_2 : float
+    _r_2 : float
         Coefficient of determination of the Gaussian fit.
 
     Attributes
     ----------
 
-    peak : float
+    _peak : float
         Maximum value of the Gaussian.
 
-    perc : float
+    _perc : float
         Fraction of data points classified in the state.
 
-    th_inf : float
-        Lower threshold of the state. Considering the Gaussian states oreder
-        with increasing values of the mean, this is the intercsection point
-        (if exists) with the Gaussian before. If there is no intersection, it
-        is the weighted average between the two means. The two cases are
-        distinguished by the value of th_inf[1], which is "0" in the first
-        case, "1" in the second. The actual threshold value is stored in
-        th_inf[0].
+    _th_inf : ndarray of shape (2,)
+        _th_inf[0] stores the lower threshold of the state. Considering the
+        Gaussian states oreder with increasing values of the mean, this is the
+        intercsection point (if exists) with the Gaussian before. If there is
+        no intersection, it is the weighted average between the two means.
+        The two cases are distinguished by the value of _th_inf[1], which is
+        "0" in the first case, "1" in the second.
 
-    th_sup : float
-        Upper thrashold of the state. Considering the Gaussian states oreder
-        with increasing values of the mean, this is the intercsection point
-        (if exists) with the Gaussian after. If there is no intersection, it
-        is the weighted average between the two means. The two cases are
-        distinguished by the value of th_sup[1], which is "0" in the first
-        case, "1" in the second. The actual threshold value is stored in
-        th_sup[0].
+    _th_sup : ndarray of shape (2,)
+        _th_sup[0] stores the upper threshold of the state. Considering the
+        Gaussian states oreder with increasing values of the mean, this is the
+        intercsection point (if exists) with the Gaussian after. If there is
+        no intersection, it is the weighted average between the two means.
+        The two cases are distinguished by the value of _th_sup[1], which is
+        "0" in the first case, "1" in the second.
     """
 
-    def __init__(self, mean: float, sigma: float, area: float, r_2: float):
-        self._mean = mean
-        self._sigma = sigma
-        self._area = area
-        self._peak = area / sigma / np.sqrt(np.pi)
-        self._r_2 = r_2
-        self._perc = 0.0
-        self._th_inf = [mean - 2.0 * sigma, -1]
-        self._th_sup = [mean + 2.0 * sigma, -1]
+    _mean: float
+    _sigma: float
+    _area: float
+    _r_2: float
+    _perc: float = 0.0
+    _peak: float = field(init=False)
+    _th_inf: np.ndarray = field(init=False)
+    _th_sup: np.ndarray = field(init=False)
+
+    def __post_init__(self):
+        self._peak = self._area / self._sigma / np.sqrt(np.pi)
+        self._th_inf = [self._mean - 2.0 * self._sigma, -1]
+        self._th_sup = [self._mean + 2.0 * self._sigma, -1]
 
     def _build_boundaries(self, number_of_sigmas: float):
         """
@@ -78,8 +82,12 @@ class StateUni:
         number of sigmas : float
             How many sigmas the thresholds are far from the mean.
         """
-        self._th_inf = [self._mean - number_of_sigmas * self._sigma, -1]
-        self._th_sup = [self._mean + number_of_sigmas * self._sigma, -1]
+        self._th_inf = np.array(
+            [self._mean - number_of_sigmas * self._sigma, -1]
+        )
+        self._th_sup = np.array(
+            [self._mean + number_of_sigmas * self._sigma, -1]
+        )
 
     def get_attributes(self):
         """
@@ -92,18 +100,11 @@ class StateUni:
         -------
         attr_list : dict
         """
-        attr_list = {
-            "mean": self._mean,
-            "sigma": self._sigma,
-            "area": self._area,
-            "peak": self._peak,
-            "r_2": self._r_2,
-            "perc": self._perc,
-            "th": [self._th_inf, self._th_sup],
-        }
+        attr_list = asdict(self)
         return attr_list
 
 
+@dataclass
 class StateMulti:
     """
     Represents a multifimensional state as a factorized Gaussian.
@@ -115,39 +116,39 @@ class StateMulti:
     Parameters
     ----------
 
-    mean : np.ndarray of shape (dim,)
+    _mean : np.ndarray of shape (dim,)
         Mean of the Gaussians.
 
-    sigma : np.ndarray of shape (dim,)
+    _sigma : np.ndarray of shape (dim,)
         Rescaled standard deviation of the Gaussians.
 
-    area : np.ndarray of shape (dim,)
+    _area : np.ndarray of shape (dim,)
         Area below the Gaussians.
 
-    r_2 : float
+    _r_2 : float
         Coefficient of determination of the Gaussian fit.
 
     Attributes
     ----------
 
-    perc : float
+    _perc : float
         Fraction of data points classified in this state.
 
-    axis : ndarray of shape (dim,)
+    _axis : ndarray of shape (dim,)
         The thresholds of the state. It contains the axis of the ellipsoid
         given by the rescaled sigmas of the factorized Gaussian states,
         multiplied by "number of sigmas".
     """
 
-    def __init__(
-        self, mean: np.ndarray, sigma: np.ndarray, area: np.ndarray, r_2: float
-    ):
-        self._mean = mean
-        self._sigma = sigma
-        self._area = area
-        self._r_2 = r_2
-        self._perc = 0.0
-        self._axis = 2.0 * sigma
+    _mean: np.ndarray
+    _sigma: np.ndarray
+    _area: np.ndarray
+    _r_2: float
+    _perc: float = 0.0
+    _axis: np.ndarray = field(init=False)
+
+    def __post_init__(self):
+        self._axis = 2.0 * self._sigma
 
     def _build_boundaries(self, number_of_sigmas: float):
         """
@@ -169,17 +170,11 @@ class StateMulti:
         -------
         attr_list : dict
         """
-        attr_list = {
-            "mean": self._mean,
-            "sigma": self._sigma,
-            "area": self._area,
-            "r_2": self._r_2,
-            "perc": self._perc,
-            "axis": self._axis,
-        }
+        attr_list = asdict(self)
         return attr_list
 
 
+@dataclass
 class UniData:
     """
     The input univariate signals to cluster.
@@ -199,22 +194,26 @@ class UniData:
     num_of_steps : int
         The number of frames in the system.
 
-    range : ndarray of shape (2,)
+    ranges : ndarray of shape (2,)
         Min and max of the signals.
 
     labels : ndarray of shape (n_particles, n_frames)
         The cluster labels.
     """
 
-    def __init__(self, matrix: np.ndarray):
-        self.matrix = matrix
+    matrix: np.ndarray
+    num_of_particles: int = field(init=False)
+    num_of_steps: int = field(init=False)
+    labels: np.ndarray = field(init=False)
+    ranges: np.ndarray = field(init=False)
+
+    def __post_init__(self):
         self.num_of_particles = self.matrix.shape[0]
         self.num_of_steps = self.matrix.shape[1]
-        self.labels = np.array([])
-        if matrix.size > 0:
-            self.range = np.array([np.min(self.matrix), np.max(self.matrix)])
+        self.ranges = np.array([np.min(self.matrix), np.max(self.matrix)])
 
 
+@dataclass
 class MultiData:
     """
     The input mutivariate signals to cluster.
@@ -237,7 +236,7 @@ class MultiData:
     num_of_steps : int
         The number of frames in the system.
 
-    range : ndarray of shape (dim, 2)
+    ranges : ndarray of shape (dim, 2)
         Min and max of the signals along each axes.
 
     matrix : ndarray of shape (n_particles, n_frames, dims)
@@ -247,18 +246,25 @@ class MultiData:
         The cluster labels.
     """
 
-    def __init__(self, matrix: np.ndarray):
-        self.dims = matrix.shape[0]
-        self.num_of_particles = matrix.shape[1]
-        self.num_of_steps = matrix.shape[2]
-        self.range = np.array(
-            [[np.min(data), np.max(data)] for data in matrix]
-        )
+    matrix: np.ndarray
+    dims: int = field(init=False)
+    num_of_particles: int = field(init=False)
+    num_of_steps: int = field(init=False)
+    labels: np.ndarray = field(init=False)
+    ranges: np.ndarray = field(init=False)
 
-        self.matrix: np.ndarray = np.transpose(matrix, axes=(1, 2, 0))
+    def __post_init__(self):
+        self.dims = self.matrix.shape[0]
+        self.num_of_particles = self.matrix.shape[1]
+        self.num_of_steps = self.matrix.shape[2]
+        self.ranges = np.array(
+            [[np.min(data), np.max(data)] for data in self.matrix]
+        )
+        self.matrix = np.transpose(self.matrix, axes=(1, 2, 0))
         self.labels = np.array([])
 
 
+@dataclass
 class Parameters:
     """
     Contains the set of parameters for the specific analysis.
@@ -278,12 +284,6 @@ class Parameters:
         numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
     """
 
-    def __init__(
-        self,
-        tau_window: int,
-        bins: Union[int, str],
-        number_of_sigmas: float,
-    ):
-        self.tau_w = tau_window
-        self.bins = bins
-        self.number_of_sigmas = number_of_sigmas
+    tau_w: int
+    bins: Union[int, str]
+    number_of_sigmas: float
