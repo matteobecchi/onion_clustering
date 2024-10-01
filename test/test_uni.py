@@ -44,13 +44,16 @@ def test_output_files(original_wd: Path):
         np.array(random_walk), (N_PARTICLES * n_windows, -1)
     )
 
+    all_zeros_array = np.zeros((50, 50))
+
     with tempfile.TemporaryDirectory() as _:
         # Test the class methods
         tmp = OnionUni()
-        tmp_params = {"bins": "auto", "number_of_sigmas": 2.0}
+        tmp_params = {"bins": 100, "number_of_sigmas": 2.0}
         tmp.set_params(**tmp_params)
         _ = tmp.get_params()
         tmp.fit_predict(reshaped_input_data)
+        tmp.fit(all_zeros_array)
 
         state_list, labels = onion_uni(reshaped_input_data)
 

@@ -13,29 +13,6 @@ from scipy.optimize import OptimizeWarning
 from tropea_clustering._internal.first_classes import StateMulti, StateUni
 
 
-def moving_average(data: np.ndarray, window: int) -> np.ndarray:
-    """
-    Moving average on a 1D or 2D np.ndarray.
-
-    Parameters
-    ----------
-
-    data : np.ndarray
-        The input array to be smoothed.
-
-    window : int
-        The size of the moving average window.
-
-    Returns
-    -------
-
-    np.ndarray
-        The smoothed array.
-    """
-    weights = np.ones(window) / window
-    return np.convolve(data, weights, mode="valid")
-
-
 def moving_average_2d(data: np.ndarray, side: int) -> np.ndarray:
     """
     2D moving average on an np.ndarray.

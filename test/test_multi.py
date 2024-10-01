@@ -64,7 +64,7 @@ def test_output_files(original_wd: Path):
     with tempfile.TemporaryDirectory() as _:
         # Test the class methods
         tmp = OnionMulti()
-        tmp_params = {"bins": 25, "number_of_sigmas": 2.0}
+        tmp_params = {"bins": 50, "number_of_sigmas": 2.0}
         tmp.set_params(**tmp_params)
         _ = tmp.get_params()
         tmp.fit_predict(reshaped_input_data)
