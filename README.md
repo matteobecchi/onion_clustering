@@ -11,9 +11,7 @@ To get `tropea-clustering`, you can install it with pip
 
 ``pip install tropea-clustering``
 
-The `examples/` folder contains an example of usage. From this folder, download the example files as reported in the script `example_script_uni.py` and then run it with
-
-``python3 example_script_uni.py``
+The `examples/` folder contains examples of usage. 
 
 ## Overview
 Onion Clustering is an algorithm for single-point clustering of time-series data. It performs the clustering analyses at a specific time-resolution $\Delta t$, which is the minimum lifetime required for a cluster to be characterized as a stable environment. The clustering proceeds in an iterative way. At each iteration, the maximum of the cumulative distribution of data points is identified as a Gaussian state (meaning, a state characterized by the mean value and the variance of the signal inside it). The time-series signals are sliced in consecutive windows of duration $\Delta t$, and the windows close enough to the state's mean are classified as belonging to that state. These signals are then removed from the analysis, in order to enhance the resolution on the still unclassified signals at the next iteration. At the end of the process each signal windows is thus either classified in one of the identified states, or labelled as "unclassified" at that specific time resolution. 
