@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="prev" title="tropea_clustering._internal.first_classes.StateUni" href="tropea_clustering._internal.first_classes.StateUni.html" />
 
-    <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
+    <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
         <title>tropea_clustering._internal.first_classes.StateMulti - onion-clustering documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
@@ -260,7 +260,7 @@
 <h1>tropea_clustering._internal.first_classes.StateMulti<a class="headerlink" href="#tropea-clustering-internal-first-classes-statemulti" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="tropea_clustering._internal.first_classes.StateMulti">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tropea_clustering._internal.first_classes.</span></span><span class="sig-name descname"><span class="pre">StateMulti</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/first_classes.html#StateMulti"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering._internal.first_classes.StateMulti" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tropea_clustering._internal.first_classes.</span></span><span class="sig-name descname"><span class="pre">StateMulti</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_mean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_area</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_r_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_perc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/first_classes.html#StateMulti"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering._internal.first_classes.StateMulti" title="Link to this definition">¶</a></dt>
 <dd><p>Represents a multifimensional state as a factorized Gaussian.</p>
 <p>All the parameters and information on the factorized Gaussian states
 corresponding to the different clusters are stored within this class.
@@ -268,16 +268,17 @@ The attributes can be acessed using the get_attributes() method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mean</strong> (<em>np.ndarray</em><em> of </em><em>shape</em><em> (</em><em>dim</em><em>,</em><em>)</em>) – Mean of the Gaussians.</p></li>
-<li><p><strong>sigma</strong> (<em>np.ndarray</em><em> of </em><em>shape</em><em> (</em><em>dim</em><em>,</em><em>)</em>) – Rescaled standard deviation of the Gaussians.</p></li>
-<li><p><strong>area</strong> (<em>np.ndarray</em><em> of </em><em>shape</em><em> (</em><em>dim</em><em>,</em><em>)</em>) – Area below the Gaussians.</p></li>
-<li><p><strong>r_2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Coefficient of determination of the Gaussian fit.</p></li>
+<li><p><strong>_mean</strong> (<em>np.ndarray</em><em> of </em><em>shape</em><em> (</em><em>dim</em><em>,</em><em>)</em>) – Mean of the Gaussians.</p></li>
+<li><p><strong>_sigma</strong> (<em>np.ndarray</em><em> of </em><em>shape</em><em> (</em><em>dim</em><em>,</em><em>)</em>) – Rescaled standard deviation of the Gaussians.</p></li>
+<li><p><strong>_area</strong> (<em>np.ndarray</em><em> of </em><em>shape</em><em> (</em><em>dim</em><em>,</em><em>)</em>) – Area below the Gaussians.</p></li>
+<li><p><strong>_r_2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Coefficient of determination of the Gaussian fit.</p></li>
+<li><p><strong>_perc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="tropea_clustering._internal.first_classes.StateMulti.perc">
-<span class="sig-name descname"><span class="pre">perc</span></span><a class="headerlink" href="#tropea_clustering._internal.first_classes.StateMulti.perc" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tropea_clustering._internal.first_classes.StateMulti._perc">
+<span class="sig-name descname"><span class="pre">_perc</span></span><a class="headerlink" href="#tropea_clustering._internal.first_classes.StateMulti._perc" title="Link to this definition">¶</a></dt>
 <dd><p>Fraction of data points classified in this state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -287,8 +288,8 @@ The attributes can be acessed using the get_attributes() method.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="tropea_clustering._internal.first_classes.StateMulti.axis">
-<span class="sig-name descname"><span class="pre">axis</span></span><a class="headerlink" href="#tropea_clustering._internal.first_classes.StateMulti.axis" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tropea_clustering._internal.first_classes.StateMulti._axis">
+<span class="sig-name descname"><span class="pre">_axis</span></span><a class="headerlink" href="#tropea_clustering._internal.first_classes.StateMulti._axis" title="Link to this definition">¶</a></dt>
 <dd><p>The thresholds of the state. It contains the axis of the ellipsoid
 given by the rescaled sigmas of the factorized Gaussian states,
 multiplied by “number of sigmas”.</p>
@@ -376,8 +377,8 @@ multiplied by “number of sigmas”.</p>
             <ul>
 <li><a class="reference internal" href="#">tropea_clustering._internal.first_classes.StateMulti</a><ul>
 <li><a class="reference internal" href="#tropea_clustering._internal.first_classes.StateMulti"><code class="docutils literal notranslate"><span class="pre">StateMulti</span></code></a><ul>
-<li><a class="reference internal" href="#tropea_clustering._internal.first_classes.StateMulti.perc"><code class="docutils literal notranslate"><span class="pre">StateMulti.perc</span></code></a></li>
-<li><a class="reference internal" href="#tropea_clustering._internal.first_classes.StateMulti.axis"><code class="docutils literal notranslate"><span class="pre">StateMulti.axis</span></code></a></li>
+<li><a class="reference internal" href="#tropea_clustering._internal.first_classes.StateMulti._perc"><code class="docutils literal notranslate"><span class="pre">StateMulti._perc</span></code></a></li>
+<li><a class="reference internal" href="#tropea_clustering._internal.first_classes.StateMulti._axis"><code class="docutils literal notranslate"><span class="pre">StateMulti._axis</span></code></a></li>
 <li><a class="reference internal" href="#tropea_clustering._internal.first_classes.StateMulti.get_attributes"><code class="docutils literal notranslate"><span class="pre">StateMulti.get_attributes()</span></code></a></li>
 </ul>
 </li>
