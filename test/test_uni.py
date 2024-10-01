@@ -2,6 +2,8 @@
 
 import os
 import tempfile
+from pathlib import Path
+from typing import Generator
 
 import numpy as np
 import pytest
@@ -9,20 +11,18 @@ import pytest
 from tropea_clustering import OnionUni, onion_uni
 
 
-# Define a fixture to set up the test environment
 @pytest.fixture
-def setup_test_environment(tmpdir):
-    # tmpdir is a built-in pytest fixture providing a temporary directory
-    original_dir = os.getcwd()  # Save the current working directory
-    os.chdir(str(tmpdir))  # Change to the temporary directory
-    yield tmpdir
-    os.chdir(
-        original_dir
-    )  # Restore the original working directory after the test
+def original_wd() -> Generator[Path, None, None]:
+    original_dir = Path.cwd()
+
+    # Ensure the original working directory is restored after the test
+    yield original_dir
+
+    os.chdir(original_dir)
 
 
 # Define the actual test
-def test_output_files(setup_test_environment):
+def test_output_files(original_wd: Path):
     ### Set all the analysis parameters ###
     N_PARTICLES = 5
     N_STEPS = 1000
@@ -67,8 +67,8 @@ def test_output_files(setup_test_environment):
         _ = state_list[0].get_attributes()
 
         # Define the paths to the expected output files
-        original_dir = "/home/mattebecchi/onion_clustering/test/"
-        expected_output_path = original_dir + "output_uni/labels.npy"
+        original_dir = original_wd / "test/"
+        expected_output_path = original_dir / "output_uni/labels.npy"
 
         # np.save(expected_output_path, labels)
 
