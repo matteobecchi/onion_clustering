@@ -1,4 +1,4 @@
-"""Pytest for onion_multi and OnionMulti."""
+"""Pytest for plot."""
 
 import os
 import tempfile
@@ -8,7 +8,7 @@ from typing import Generator
 import numpy as np
 import pytest
 
-from tropea_clustering import OnionMulti, onion_multi
+from tropea_clustering import onion_multi, onion_uni, plot
 
 
 @pytest.fixture
@@ -35,11 +35,10 @@ def temp_dir(original_wd: Path) -> Generator[Path, None, None]:
 # Define the actual test
 def test_output_files(original_wd: Path, temp_dir: Path):
     ### Set all the analysis parameters ###
-    N_PARTICLES = 5
-    N_STEPS = 1000
+    N_PARTICLES = 2
+    N_STEPS = 500
     TAU_WINDOW = 10
 
-    ## Create the input data ###
     rng = np.random.default_rng(12345)
     random_walk_x = []
     random_walk_y = []
@@ -57,43 +56,45 @@ def test_output_files(original_wd: Path, temp_dir: Path):
 
     n_windows = int(N_STEPS / TAU_WINDOW)
 
+    reshaped_data_uni = np.reshape(
+        np.array(random_walk_x), (N_PARTICLES * n_windows, -1)
+    )
+
     reshaped_input_data_x = np.reshape(
         np.array(random_walk_x), (N_PARTICLES * n_windows, -1)
     )
     reshaped_input_data_y = np.reshape(
         np.array(random_walk_y), (N_PARTICLES * n_windows, -1)
     )
-    reshaped_input_data = np.array(
+    reshaped_data_multi = np.array(
         [
             np.concatenate((tmp, reshaped_input_data_y[i]))
             for i, tmp in enumerate(reshaped_input_data_x)
         ]
     )
 
-    wrong_arr = rng.random((5, 7))
-
     with tempfile.TemporaryDirectory() as _:
-        # Test the class methods
-        tmp = OnionMulti()
-        tmp_params = {"bins": 50, "number_of_sigmas": 2.0}
-        tmp.set_params(**tmp_params)
-        _ = tmp.get_params()
-        tmp.fit_predict(reshaped_input_data)
+        state_list, labels = onion_uni(reshaped_data_uni)
 
-        # Test wrong input arrays
-        with pytest.raises(ValueError):
-            tmp.fit(wrong_arr)
+        plot.plot_output_uni(
+            "tmp_fig.png", reshaped_data_uni, n_windows, state_list
+        )
+        plot.plot_one_trj_uni(
+            "tmp_fig.png", 0, reshaped_data_uni, labels, n_windows
+        )
+        plot.plot_medoids_uni("tmp_fig.png", reshaped_data_uni, labels)
+        plot.plot_state_populations("tmp_fig.png", n_windows, labels)
+        plot.plot_sankey("tmp_fig.png", labels, n_windows, [1, 3, 5, 7])
 
-        state_list, labels = onion_multi(reshaped_input_data)
+        state_list, labels = onion_multi(reshaped_data_multi)
 
-        _ = state_list[0].get_attributes()
-
-        # Define the paths to the expected output files
-        original_dir = original_wd / "test/"
-        expected_output_path = original_dir / "output_multi/labels.npy"
-
-        np.save(expected_output_path, labels)
-
-        # Compare the contents of the expected and actual output
-        expected_output = np.load(expected_output_path)
-        assert np.allclose(expected_output, labels)
+        old_input_data = np.array([random_walk_x, random_walk_y])
+        plot.plot_output_multi(
+            "tmp_fig.png", old_input_data, state_list, labels, TAU_WINDOW
+        )
+        plot.plot_one_trj_multi(
+            "tmp_fig.png", 0, TAU_WINDOW, old_input_data, labels
+        )
+        plot.plot_medoids_multi(
+            "tmp_fig.png", TAU_WINDOW, old_input_data, labels
+        )

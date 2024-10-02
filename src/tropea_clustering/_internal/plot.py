@@ -88,7 +88,8 @@ def plot_output_uni(
         100,
     )
     for state_id, state in enumerate(state_list):
-        th_inf, th_sup = state.get_attributes()["th"]
+        th_inf = state.get_attributes()["th_inf"]
+        th_sup = state.get_attributes()["th_sup"]
         linestyle, color = style_color_map.get(th_inf[1], ("-", "xkcd:black"))
         axes[1].hlines(
             th_inf[0],
@@ -105,7 +106,7 @@ def plot_output_uni(
             alpha=0.25,
         )
     axes[1].hlines(
-        state_list[-1].get_attributes()["th"][1][0],
+        state_list[-1].get_attributes()["th_sup"][0],
         xmin=0.0,
         xmax=np.amax(counts),
         linestyle=linestyle,

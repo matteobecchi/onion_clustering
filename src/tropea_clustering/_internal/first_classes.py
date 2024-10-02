@@ -20,28 +20,28 @@ class StateUni:
     Parameters
     ----------
 
-    _mean : float
+    mean : float
         Mean of the Gaussian.
 
-    _sigma : float
+    sigma : float
         Rescaled standard deviation of the Gaussian.
 
-    _area : float
+    area : float
         Area below the Gaussian.
 
-    _r_2 : float
+    r_2 : float
         Coefficient of determination of the Gaussian fit.
 
     Attributes
     ----------
 
-    _peak : float
+    peak : float
         Maximum value of the Gaussian.
 
-    _perc : float
+    perc : float
         Fraction of data points classified in the state.
 
-    _th_inf : ndarray of shape (2,)
+    th_inf : ndarray of shape (2,)
         _th_inf[0] stores the lower threshold of the state. Considering the
         Gaussian states oreder with increasing values of the mean, this is the
         intercsection point (if exists) with the Gaussian before. If there is
@@ -49,7 +49,7 @@ class StateUni:
         The two cases are distinguished by the value of _th_inf[1], which is
         "0" in the first case, "1" in the second.
 
-    _th_sup : ndarray of shape (2,)
+    th_sup : ndarray of shape (2,)
         _th_sup[0] stores the upper threshold of the state. Considering the
         Gaussian states oreder with increasing values of the mean, this is the
         intercsection point (if exists) with the Gaussian after. If there is
@@ -58,19 +58,19 @@ class StateUni:
         "0" in the first case, "1" in the second.
     """
 
-    _mean: float
-    _sigma: float
-    _area: float
-    _r_2: float
-    _perc: float = 0.0
-    _peak: float = field(init=False)
-    _th_inf: np.ndarray = field(init=False)
-    _th_sup: np.ndarray = field(init=False)
+    mean: float
+    sigma: float
+    area: float
+    r_2: float
+    perc: float = 0.0
+    peak: float = field(init=False)
+    th_inf: np.ndarray = field(init=False)
+    th_sup: np.ndarray = field(init=False)
 
     def __post_init__(self):
-        self._peak = self._area / self._sigma / np.sqrt(np.pi)
-        self._th_inf = [self._mean - 2.0 * self._sigma, -1]
-        self._th_sup = [self._mean + 2.0 * self._sigma, -1]
+        self.peak = self.area / self.sigma / np.sqrt(np.pi)
+        self.th_inf = [self.mean - 2.0 * self.sigma, -1]
+        self.th_sup = [self.mean + 2.0 * self.sigma, -1]
 
     def _build_boundaries(self, number_of_sigmas: float):
         """
@@ -83,10 +83,10 @@ class StateUni:
             How many sigmas the thresholds are far from the mean.
         """
         self._th_inf = np.array(
-            [self._mean - number_of_sigmas * self._sigma, -1]
+            [self.mean - number_of_sigmas * self.sigma, -1]
         )
         self._th_sup = np.array(
-            [self._mean + number_of_sigmas * self._sigma, -1]
+            [self.mean + number_of_sigmas * self.sigma, -1]
         )
 
     def get_attributes(self):
@@ -116,39 +116,39 @@ class StateMulti:
     Parameters
     ----------
 
-    _mean : np.ndarray of shape (dim,)
+    mean : np.ndarray of shape (dim,)
         Mean of the Gaussians.
 
-    _sigma : np.ndarray of shape (dim,)
+    sigma : np.ndarray of shape (dim,)
         Rescaled standard deviation of the Gaussians.
 
-    _area : np.ndarray of shape (dim,)
+    area : np.ndarray of shape (dim,)
         Area below the Gaussians.
 
-    _r_2 : float
+    r_2 : float
         Coefficient of determination of the Gaussian fit.
 
     Attributes
     ----------
 
-    _perc : float
+    perc : float
         Fraction of data points classified in this state.
 
-    _axis : ndarray of shape (dim,)
+    axis : ndarray of shape (dim,)
         The thresholds of the state. It contains the axis of the ellipsoid
         given by the rescaled sigmas of the factorized Gaussian states,
         multiplied by "number of sigmas".
     """
 
-    _mean: np.ndarray
-    _sigma: np.ndarray
-    _area: np.ndarray
-    _r_2: float
-    _perc: float = 0.0
-    _axis: np.ndarray = field(init=False)
+    mean: np.ndarray
+    sigma: np.ndarray
+    area: np.ndarray
+    r_2: float
+    perc: float = 0.0
+    axis: np.ndarray = field(init=False)
 
     def __post_init__(self):
-        self._axis = 2.0 * self._sigma
+        self.axis = 2.0 * self.sigma
 
     def _build_boundaries(self, number_of_sigmas: float):
         """
@@ -160,7 +160,7 @@ class StateMulti:
         number of sigmas : float
             How many sigmas the thresholds are far from the mean.
         """
-        self._axis = number_of_sigmas * self._sigma  # Axes of the state
+        self.axis = number_of_sigmas * self.sigma  # Axes of the state
 
     def get_attributes(self):
         """

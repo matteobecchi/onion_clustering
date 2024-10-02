@@ -522,7 +522,7 @@ def iterative_search(
             if counter == 0 or state is None:
                 break
 
-        state._perc = counter
+        state.perc = counter
         states_list.append(state)
         states_counter += 1
         iteration_id += 1

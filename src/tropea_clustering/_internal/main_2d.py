@@ -251,8 +251,8 @@ def find_stable_trj(
     m_clean = cl_ob.data.matrix
 
     mask_unclassified = tmp_labels < 0.5
-    shifted = m_clean - state._mean
-    rescaled = shifted / state._axis
+    shifted = m_clean - state.mean
+    rescaled = shifted / state.axis
     squared_distances = np.sum(rescaled**2, axis=2)
     mask_dist = np.max(squared_distances, axis=1) <= 1.0
     mask = mask_unclassified & mask_dist
@@ -331,7 +331,7 @@ def iterative_search(
             cl_ob, state, tmp_labels, states_counter
         )
 
-        state._perc = counter
+        state.perc = counter
         if counter > 0.0:
             states_list.append(state)
         states_counter += 1
