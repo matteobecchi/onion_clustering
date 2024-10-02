@@ -19,4 +19,15 @@
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~StateMulti.perc
+      ~StateMulti.mean
+      ~StateMulti.sigma
+      ~StateMulti.area
+      ~StateMulti.r_2
+      ~StateMulti.axis
+   
    

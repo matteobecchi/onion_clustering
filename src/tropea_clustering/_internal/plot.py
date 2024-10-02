@@ -20,8 +20,23 @@ def plot_output_uni(
     n_windows: int,
     state_list: List,
 ):
-    """Plots clustering output with Gaussians and threshols."""
+    """Plots clustering output with Gaussians and threshols.
 
+    Parameters
+    ----------
+
+    title : str
+        The path of the .png file the figure will be saved as.
+
+    input_data : ndarray of shape (n_particles * n_windows, tau_window)
+        The input data array.
+
+    n_windows : int
+        The number of windows used.
+
+    state_list : List[StateUni]
+        The list of the cluster states.
+    """
     n_particles = int(input_data.shape[0] / n_windows)
     n_frames = n_windows * input_data.shape[1]
     input_data = np.reshape(input_data, (n_particles, n_frames))
@@ -128,8 +143,26 @@ def plot_one_trj_uni(
     labels: np.ndarray,
     n_windows: int,
 ):
-    """Plots the colored trajectory of one example particle."""
+    """Plots the colored trajectory of one example particle.
 
+    Parameters
+    ----------
+
+    title : str
+        The path of the .png file the figure will be saved as.
+
+    example_id : int
+        The ID of the selected particle.
+
+    input_data : ndarray of shape (n_particles * n_windows, tau_window)
+        The input data array.
+
+    labels : ndarray of shape (n_particles * n_windows,)
+        The output of the clustering algorithm.
+
+    n_windows : int
+        The number of windows used.
+    """
     tau_window = input_data.shape[1]
     n_particles = int(input_data.shape[0] / n_windows)
     n_frames = n_windows * tau_window
@@ -181,12 +214,22 @@ def plot_state_populations(
     """
     Plot the populations of states over time.
 
-    - Initializes some useful variables
-    - If all the points are classified, we still need the "0" state
-        for consistency
-    - Computes the population of each state at each time
-    - Plots the results to Fig5.png
+    Parameters
+    ----------
 
+    title : str
+        The path of the .png file the figure will be saved as.
+
+    n_windows : int
+        The number of windows used.
+
+    labels : ndarray of shape (n_particles * n_windows,)
+        The output of the clustering algorithm.
+
+    Notes
+    -----
+
+    If all the points are classified, we still need the "-1" state for consistency.
     """
     n_particles = int(labels.shape[0] / n_windows)
     labels = np.reshape(labels, (n_particles, n_windows))
@@ -227,13 +270,23 @@ def plot_medoids_uni(
     """
     Compute and plot the average signal sequence inside each state.
 
-    - Initializes some usieful variables
-    - Check if we need to add the "0" state for consistency
-    - For each state, stores all the signal windows in that state, and
-    - Computes mean and standard deviation of the signals in that state
-    - Prints the output to file
-    - Plots the results to Fig4.png
+    Parameters
+    ----------
 
+    title : str
+        The path of the .png file the figure will be saved as.
+
+    input_data : ndarray of shape (n_particles * n_windows, tau_window)
+        The input data array.
+
+    labels : ndarray of shape (n_particles * n_windows,)
+        The output of the clustering algorithm.
+
+    Notes
+    -----
+
+    - If all the points are classified, we still need the "-1" state for consistency.
+    - Prints the output to files.
     """
     center_list = []
     std_list = []
@@ -323,18 +376,26 @@ def plot_sankey(
     """
     Plots the Sankey diagram at the desired frames.
 
-    Args:
-    - tmp_frame_list (list[int]): list of frame indices
+    Parameters
+    ----------
 
-    - Initializes some useful variables
-    - If there are no assigned window, we still need the "0" state
-        for consistency
-    - Create arrays to store the source, target, and value data
-        for the Sankey diagram
+    title : str
+        The path of the .png file the figure will be saved as.
+
+    labels : ndarray of shape (n_particles * n_windows,)
+        The output of the clustering algorithm.
+
+    n_windows : int
+        The number of windows used.
+
+    tmp_frame_list : List[int]
+        The list of windows at which we want to plot the Sankey.
 
     Notes
     -----
-    Requires kaleido.
+
+    - If there are no assigned window, we still need the "-1" state for consistency
+    - Requires kaleido.
     """
     n_particles = int(labels.shape[0] / n_windows)
     all_the_labels = np.reshape(labels, (n_particles, n_windows))
@@ -424,6 +485,15 @@ def plot_time_res_analysis(
     Plots the number of states (including the unclassified points) and
     the fraction of unclassificed data points as a function of the time
     resolution used.
+
+    Parameters
+    ----------
+
+    title : str
+        The path of the .png file the figure will be saved as.
+
+    tra : ndarray of shape (n_windows, 3)
+        Contains the number of states and the population of ENV0 at every tau_window.
     """
     fig, axes = plt.subplots()
     axes.plot(tra[:, 0], tra[:, 1], marker="o")
@@ -443,6 +513,18 @@ def plot_pop_fractions(
 ):
     """
     Plot, for every time resolution, the populations of the ENVs.
+
+    Parameters
+    ----------
+
+    title : str
+        The path of the .png file the figure will be saved as.
+
+    list_of_pop : List[List[float]]
+        For every tau_window, this is the list of the populations of all the states (the first one is ENV0).
+
+    Notes
+    -----
 
     The bottom state is the ENV0.
     """
@@ -480,13 +562,26 @@ def plot_medoids_multi(
     """
     Compute and plot the average signal sequence inside each state.
 
-    - Checks if the data have 2 or 3 components (works only with D == 2)
-    - Initializes some usieful variables
-    - Check if we need to add the "0" state for consistency
-    - For each state, stores all the signal windows in that state, and
-    - Computes mean of the signals in that state
+    Parameters
+    ----------
+
+    title : str
+        The path of the .png file the figure will be saved as.
+
+    tau_window : int
+        The length of the signal window used.
+
+    input_data : ndarray of shape (n_dims, n_particles, n_frames)
+        The input data array.
+
+    labels : ndarray of shape (n_particles * n_windows,)
+        The output of the clustering algorithm.
+
+    Notes
+    -----
+
+    - If there are no assigned window, we still need the "-1" state for consistency
     - Prints the output to file
-    - Plots the results
     """
     ndims = input_data.shape[0]
     if ndims != 2:
@@ -570,6 +665,24 @@ def plot_output_multi(
 ):
     """
     Plot a cumulative figure showing trajectories and identified states.
+
+    Parameters
+    ----------
+
+    title : str
+        The path of the .png file the figure will be saved as.
+
+    input_data : ndarray of shape (n_dims, n_particles, n_frames)
+        The input data array.
+
+    state_list : List[StateUni]
+        The list of the cluster states.
+
+    labels : ndarray of shape (n_particles * n_windows,)
+        The output of the clustering algorithm.
+
+    tau_window : int
+        The length of the signal window used.
     """
     n_states = len(state_list) + 1
     tmp = plt.get_cmap(COLORMAP, n_states)
@@ -789,7 +902,26 @@ def plot_one_trj_multi(
     input_data: np.ndarray,
     labels: np.ndarray,
 ):
-    """Plots the colored trajectory of an example particle."""
+    """Plots the colored trajectory of an example particle.
+
+    Parameters
+    ----------
+
+    title : str
+        The path of the .png file the figure will be saved as.
+
+    example_id : int
+        The ID of the selected particle.
+
+    tau_window : int
+        The length of the signal window used.
+
+    input_data : ndarray of shape (n_dims, n_particles, n_frames)
+        The input data array.
+
+    labels : ndarray of shape (n_particles * n_windows,)
+        The output of the clustering algorithm.
+    """
     m_clean = input_data.transpose(1, 2, 0)
     n_windows = int(m_clean.shape[1] / tau_window)
     tmp_labels = labels.reshape((m_clean.shape[0], n_windows))
