@@ -4,7 +4,9 @@ Example script for running onion_multi
 
 import matplotlib.pyplot as plt
 import numpy as np
-from plot_results import (
+
+from tropea_clustering import onion_multi
+from tropea_clustering.plot import (
     plot_medoids_multi,
     plot_one_trj_multi,
     plot_output_multi,
@@ -13,8 +15,6 @@ from plot_results import (
     plot_state_populations,
     plot_time_res_analysis,
 )
-
-from tropea_clustering import onion_multi
 
 ##############################################################################
 # Use git clone git@github.com:matteobecchi/onion_example_files.git

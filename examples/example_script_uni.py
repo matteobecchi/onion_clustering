@@ -4,7 +4,9 @@ Example script for running onion_uni.
 
 import matplotlib.pyplot as plt
 import numpy as np
-from plot_results import (
+
+from tropea_clustering import onion_uni
+from tropea_clustering.plot import (
     plot_medoids_uni,
     plot_one_trj_uni,
     plot_output_uni,
@@ -13,8 +15,6 @@ from plot_results import (
     plot_state_populations,
     plot_time_res_analysis,
 )
-
-from tropea_clustering import onion_uni
 
 #############################################################################
 # Use git clone git@github.com:matteobecchi/onion_example_files.git
