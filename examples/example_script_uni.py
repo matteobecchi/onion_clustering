@@ -5,7 +5,7 @@ Example script for running onion_uni.
 import matplotlib.pyplot as plt
 import numpy as np
 
-from tropea_clustering import onion_uni
+from tropea_clustering import helpers, onion_uni
 from tropea_clustering.plot import (
     plot_medoids_uni,
     plot_one_trj_uni,
@@ -31,13 +31,10 @@ n_frames = input_data.shape[1]
 ### time-series will be divided
 TAU_WINDOW = 5
 n_windows = int(n_frames / TAU_WINDOW)  # Number of windows
-frames_in_excess = n_frames - n_windows * TAU_WINDOW
 
-### The input array needs to be (n_parrticles * n_windows, TAU_WINDOW) because
-### each window is trerated as a single data-point
-reshaped_data = np.reshape(
-    input_data[:, :-frames_in_excess], (n_particles * n_windows, TAU_WINDOW)
-)
+### The input array needs to be (n_particles * n_windows, TAU_WINDOW) because
+### each window is treated as a single data-point
+reshaped_data = helpers.reshape_from_nt(input_data, TAU_WINDOW)
 
 ### onion_uni() returns the list of states and the label for each
 ### signal window
@@ -59,16 +56,7 @@ tra = np.zeros((len(TAU_WINDOWS), 3))  # List of number of states and
 list_of_pop = []  # List of the states' population for each tau_window
 
 for i, tau_window in enumerate(TAU_WINDOWS):
-    n_windows = int(n_frames / tau_window)
-    frames_in_excess = n_frames - n_windows * tau_window
-    if frames_in_excess > 0:
-        tmp_input_data = input_data[:, :-frames_in_excess]
-    else:
-        tmp_input_data = input_data
-    reshaped_data = np.reshape(
-        tmp_input_data,
-        (n_particles * n_windows, tau_window),
-    )
+    reshaped_data = helpers.reshape_from_nt(input_data, tau_window)
 
     state_list, labels = onion_uni(reshaped_data)
 
