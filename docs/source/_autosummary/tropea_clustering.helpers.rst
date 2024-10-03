@@ -1,4 +1,4 @@
-tropea\_clustering.helpers
+﻿tropea\_clustering.helpers
 ==========================
 
 .. automodule:: tropea_clustering.helpers
@@ -15,6 +15,7 @@ tropea\_clustering.helpers
       :toctree:
       :nosignatures:
    
+      reshape_from_dnt
       reshape_from_nt
    
    

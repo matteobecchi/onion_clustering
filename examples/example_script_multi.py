@@ -5,7 +5,7 @@ Example script for running onion_multi
 import matplotlib.pyplot as plt
 import numpy as np
 
-from tropea_clustering import onion_multi
+from tropea_clustering import helpers, onion_multi
 from tropea_clustering.plot import (
     plot_medoids_multi,
     plot_one_trj_multi,
@@ -37,7 +37,7 @@ n_windows = int(n_frames / TAU_WINDOW)  # Number of windows
 
 ### The input array has to be (n_parrticles * n_windows, TAU_WINDOW * n_dims)
 ### because each window is trerated as a single data-point
-reshaped_data = np.reshape(input_data, (n_particles * n_windows, -1))
+reshaped_data = helpers.reshape_from_dnt(input_data, TAU_WINDOW)
 
 ### onion_multi() returns the list of states and the label for each
 ### signal window
@@ -60,15 +60,7 @@ tra = np.zeros((len(TAU_WINDOWS_LIST), 3))  # List of number of states and
 pop_list = []  # List of the states' population for each tau_window
 
 for i, tau_window in enumerate(TAU_WINDOWS_LIST):
-    n_windows = int(n_frames / tau_window)
-    excess_frames = n_frames - n_windows * tau_window
-
-    if excess_frames > 0:
-        reshaped_data = np.reshape(
-            input_data[:, :, :-excess_frames], (n_particles * n_windows, -1)
-        )
-    else:
-        reshaped_data = np.reshape(input_data, (n_particles * n_windows, -1))
+    reshaped_data = helpers.reshape_from_dnt(input_data, tau_window)
 
     state_list, labels = onion_multi(reshaped_data, bins=BINS)
 
