@@ -1,3 +1,5 @@
+"""Auxiliary/discarded functions, not needed for the clustering."""
+
 import numpy as np
 import scipy
 
