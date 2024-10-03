@@ -1,5 +1,5 @@
 """
-Example script for running onion_multi
+Example script for running onion_multi.
 """
 
 import matplotlib.pyplot as plt

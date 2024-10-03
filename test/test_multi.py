@@ -56,21 +56,6 @@ def test_output_files(original_wd: Path, temp_dir: Path):
         random_walk_y.append(tmp_y)
     input_data = np.array([random_walk_x, random_walk_y])
 
-    # n_windows = int(N_STEPS / TAU_WINDOW)
-
-    # reshaped_input_data_x = np.reshape(
-    #     np.array(random_walk_x), (N_PARTICLES * n_windows, -1)
-    # )
-    # reshaped_input_data_y = np.reshape(
-    #     np.array(random_walk_y), (N_PARTICLES * n_windows, -1)
-    # )
-    # reshaped_input_data = np.array(
-    #     [
-    #         np.concatenate((tmp, reshaped_input_data_y[i]))
-    #         for i, tmp in enumerate(reshaped_input_data_x)
-    #     ]
-    # )
-
     reshaped_input_data = helpers.reshape_from_dnt(input_data, TAU_WINDOW)
 
     wrong_arr = rng.random((5, 7))
