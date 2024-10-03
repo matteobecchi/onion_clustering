@@ -491,20 +491,20 @@ def final_state_settings(
     if len(list_of_states) == 0:
         return list_of_states
 
-    list_of_states[0]._th_inf[0] = m_range[0]
-    list_of_states[0]._th_inf[1] = 0
+    list_of_states[0].th_inf[0] = m_range[0]
+    list_of_states[0].th_inf[1] = 0
 
     for i in range(len(list_of_states) - 1):
         th_val, th_type = find_intersection(
             list_of_states[i], list_of_states[i + 1]
         )
-        list_of_states[i]._th_sup[0] = th_val
-        list_of_states[i]._th_sup[1] = th_type
-        list_of_states[i + 1]._th_inf[0] = th_val
-        list_of_states[i + 1]._th_inf[1] = th_type
+        list_of_states[i].th_sup[0] = th_val
+        list_of_states[i].th_sup[1] = th_type
+        list_of_states[i + 1].th_inf[0] = th_val
+        list_of_states[i + 1].th_inf[1] = th_type
 
-    list_of_states[-1]._th_sup[0] = m_range[1]
-    list_of_states[-1]._th_sup[1] = 0
+    list_of_states[-1].th_sup[0] = m_range[1]
+    list_of_states[-1].th_sup[1] = 0
 
     return list_of_states
 

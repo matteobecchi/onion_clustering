@@ -82,10 +82,10 @@ class StateUni:
         number of sigmas : float
             How many sigmas the thresholds are far from the mean.
         """
-        self._th_inf = np.array(
+        self.th_inf = np.array(
             [self.mean - number_of_sigmas * self.sigma, -1]
         )
-        self._th_sup = np.array(
+        self.th_sup = np.array(
             [self.mean + number_of_sigmas * self.sigma, -1]
         )
 

@@ -311,8 +311,8 @@ def find_stable_trj(
     m_clean = cl_ob.data.matrix
 
     mask_unclassified = tmp_labels < 0.5
-    mask_inf = np.min(m_clean, axis=1) >= state._th_inf[0]
-    mask_sup = np.max(m_clean, axis=1) <= state._th_sup[0]
+    mask_inf = np.min(m_clean, axis=1) >= state.th_inf[0]
+    mask_sup = np.max(m_clean, axis=1) <= state.th_sup[0]
     mask = mask_unclassified & mask_inf & mask_sup
 
     tmp_labels[mask] = lim + 1
@@ -430,8 +430,8 @@ def fit_local_maxima(
         m_clean = cl_ob.data.matrix
 
         mask_unclassified = tmp_labels < 0.5
-        mask_inf = np.min(m_clean, axis=1) >= state._th_inf[0]
-        mask_sup = np.max(m_clean, axis=1) <= state._th_sup[0]
+        mask_inf = np.min(m_clean, axis=1) >= state.th_inf[0]
+        mask_sup = np.max(m_clean, axis=1) <= state.th_sup[0]
         mask = mask_unclassified & mask_inf & mask_sup
 
         tmp_labels[mask] = lim + 1
