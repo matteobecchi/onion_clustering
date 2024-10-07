@@ -972,7 +972,7 @@ def color_trj_from_xyz(
     tau_window: int,
 ):
     """
-    Saves a colored .xyz file ('colored_trj.xyz').
+    Saves a colored .xyz file ('colored_trj.xyz') in the working directory.
 
     Parameters
     ----------
