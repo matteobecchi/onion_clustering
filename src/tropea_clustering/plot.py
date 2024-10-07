@@ -1,6 +1,7 @@
 """Functions for plotting the results."""
 
 from tropea_clustering._internal.plot import (
+    color_trj_from_xyz,
     plot_medoids_multi,
     plot_medoids_uni,
     plot_one_trj_multi,
@@ -24,4 +25,5 @@ __all__ = [
     "plot_medoids_multi",
     "plot_output_multi",
     "plot_one_trj_multi",
+    "color_trj_from_xyz",
 ]

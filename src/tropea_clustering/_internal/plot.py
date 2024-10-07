@@ -1017,4 +1017,4 @@ def color_trj_from_xyz(
                     )
                 i += n_particles + 2
     else:
-        print(f"ERROR: {trj_path} not found.")
+        raise ValueError(f"ValueError: {trj_path} not found.")

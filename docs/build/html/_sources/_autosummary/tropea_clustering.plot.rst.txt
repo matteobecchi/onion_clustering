@@ -15,6 +15,7 @@ tropea\_clustering.plot
       :toctree:
       :nosignatures:
    
+      color_trj_from_xyz
       plot_medoids_multi
       plot_medoids_uni
       plot_one_trj_multi
