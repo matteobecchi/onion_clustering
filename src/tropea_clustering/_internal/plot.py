@@ -1,5 +1,6 @@
 """Auxiliary functions for plotting the results of onion-clustering."""
 
+import os
 from typing import List
 
 import matplotlib.pyplot as plt
@@ -962,3 +963,58 @@ def plot_one_trj_multi(
     ax.set_ylabel(r"$y$")
 
     fig.savefig(title, dpi=600)
+
+
+def color_trj_from_xyz(
+    trj_path: str,
+    labels: np.ndarray,
+    n_particles: int,
+    tau_window: int,
+):
+    """
+    Saves a colored .xyz file ('colored_trj.xyz').
+
+    Parameters
+    ----------
+
+    trj_path : str
+        The path to the input .xyz trajectory.
+
+    labels : np.ndarray (n_particles * n_windows,)
+        The output of the clustering algorithm.
+
+    n_particles : int
+        The number of particles in the system.
+
+    tau_window : int
+        The length of the signal windows.
+    """
+    if os.path.exists(trj_path):
+        with open(trj_path, "r", encoding="utf-8") as in_file:
+            tmp = [line.strip().split() for line in in_file]
+
+        tmp_labels = labels.reshape((n_particles, -1))
+        all_the_labels = np.repeat(tmp_labels, tau_window, axis=1)
+        total_time = int(labels.shape[0] / n_particles) * tau_window
+        nlines = (n_particles + 2) * total_time
+
+        # frames_to_remove = int((len(tmp) - nlines) / (n_particles + 2))
+        # print("\t Removing the last", frames_to_remove, "frames...")
+        tmp = tmp[:nlines]
+
+        with open("colored_trj.xyz", "w+", encoding="utf-8") as out_file:
+            i = 0
+            for j in range(total_time):
+                print(tmp[i][0], file=out_file)
+                print("Properties=species:S:1:pos:R:3", file=out_file)
+                for k in range(n_particles):
+                    print(
+                        all_the_labels[k][j],
+                        tmp[i + 2 + k][1],
+                        tmp[i + 2 + k][2],
+                        tmp[i + 2 + k][3],
+                        file=out_file,
+                    )
+                i += n_particles + 2
+    else:
+        print(f"ERROR: {trj_path} not found.")
