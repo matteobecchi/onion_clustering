@@ -993,18 +993,20 @@ def color_trj_from_xyz(
 
     tau_window : int
         The length of the signal windows.
+
+    Notes
+    -----
+
+    If all the points are classified, we still need the "-1" state for consistency.
     """
     if os.path.exists(trj_path):
         with open(trj_path, "r", encoding="utf-8") as in_file:
             tmp = [line.strip().split() for line in in_file]
 
         tmp_labels = labels.reshape((n_particles, -1))
-        all_the_labels = np.repeat(tmp_labels, tau_window, axis=1)
+        all_the_labels = np.repeat(tmp_labels, tau_window, axis=1) + 1
         total_time = int(labels.shape[0] / n_particles) * tau_window
         nlines = (n_particles + 2) * total_time
-
-        # frames_to_remove = int((len(tmp) - nlines) / (n_particles + 2))
-        # print("\t Removing the last", frames_to_remove, "frames...")
         tmp = tmp[:nlines]
 
         with open("colored_trj.xyz", "w+", encoding="utf-8") as out_file:
