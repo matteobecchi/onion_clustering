@@ -808,10 +808,12 @@
     <span class="n">axes</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Time resolution $\Delta t$ [frame]&quot;</span><span class="p">)</span>
     <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;# environments&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;#1f77b4&quot;</span><span class="p">)</span>
     <span class="n">axes</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">tra</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="mf">0.2</span><span class="p">)</span>
     <span class="n">axes</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">MaxNLocator</span><span class="p">(</span><span class="n">integer</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
     <span class="n">axesr</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
     <span class="n">axesr</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tra</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">tra</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;#ff7f0e&quot;</span><span class="p">)</span>
     <span class="n">axesr</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Population of env 0&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;#ff7f0e&quot;</span><span class="p">)</span>
+    <span class="n">axesr</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">)</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span></div>
 
 
@@ -1294,7 +1296,10 @@
     <span class="n">tau_window</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Saves a colored .xyz file (&#39;colored_trj.xyz&#39;).</span>
+<span class="sd">    Saves a colored .xyz file (&#39;colored_trj.xyz&#39;) in the working directory.</span>
+
+<span class="sd">    In the input file, the (x, y, z) coordinates of the particles need to be</span>
+<span class="sd">    stored in the second, third and fourth column respectively.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>

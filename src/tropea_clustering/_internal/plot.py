@@ -976,6 +976,9 @@ def color_trj_from_xyz(
     """
     Saves a colored .xyz file ('colored_trj.xyz') in the working directory.
 
+    In the input file, the (x, y, z) coordinates of the particles need to be
+    stored in the second, third and fourth column respectively.
+
     Parameters
     ----------
 
