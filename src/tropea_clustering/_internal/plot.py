@@ -501,10 +501,12 @@ def plot_time_res_analysis(
     axes.set_xlabel(r"Time resolution $\Delta t$ [frame]")
     axes.set_ylabel(r"# environments", weight="bold", c="#1f77b4")
     axes.set_xscale("log")
+    axes.set_ylim(-0.2, np.max(tra[:, 1]) + 0.2)
     axes.yaxis.set_major_locator(MaxNLocator(integer=True))
     axesr = axes.twinx()
     axesr.plot(tra[:, 0], tra[:, 2], marker="o", c="#ff7f0e")
     axesr.set_ylabel("Population of env 0", weight="bold", c="#ff7f0e")
+    axesr.set_ylim(-0.02, 1.02)
     fig.savefig(title, dpi=600)
 
 
