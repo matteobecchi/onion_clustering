@@ -993,11 +993,6 @@ def color_trj_from_xyz(
 
     tau_window : int
         The length of the signal windows.
-
-    Notes
-    -----
-
-    If all the points are classified, we still need the "-1" state for consistency.
     """
     if os.path.exists(trj_path):
         with open(trj_path, "r", encoding="utf-8") as in_file:
