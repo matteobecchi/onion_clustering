@@ -5,8 +5,9 @@ https://scikit-learn.org/stable/modules/generated/
     sklearn.utils.estimator_checks.check_estimator.html
 """
 
-from tropea_clustering import OnionUni, OnionMulti
 from sklearn.utils.estimator_checks import check_estimator
+
+from tropea_clustering import OnionMulti, OnionUni
 
 
 def run_the_checks_1():
