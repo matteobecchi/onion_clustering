@@ -47,5 +47,6 @@
    :template: module.rst
    :recursive:
 
+   helpers
    plot
 

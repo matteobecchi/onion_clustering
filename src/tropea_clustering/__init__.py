@@ -1,6 +1,6 @@
 """tropea-clustering package."""
 
-from tropea_clustering import plot
+from tropea_clustering import helpers, plot
 from tropea_clustering._internal.onion_multi import (
     OnionMulti,
     onion_multi,
@@ -16,4 +16,5 @@ __all__ = [
     "onion_multi",
     "OnionMulti",
     "plot",
+    "helpers",
 ]

@@ -23,6 +23,11 @@ Performing this analysis at different values of the time resolution $\Delta t$ a
 - [scipy](https://docs.scipy.org/doc/scipy/index.html)
 - [scikit-learn](https://scikit-learn.org/stable/)
 
+For plotting the results, you will need also 
+- [matplotlib](https://matplotlib.org)
+- [plotly](https://plotly.com/graphing-libraries/) (optional)
+- [kaleido](https://pypi.org/project/kaleido/) (optional)
+
 ## How to cite us
 If you use tropea-clustering (or onion-clustering) in your work, please cite https://doi.org/10.1073/pnas.2403771121. 
 

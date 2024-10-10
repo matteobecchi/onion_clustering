@@ -7,4 +7,5 @@ Modules
   :recursive:
 
   tropea_clustering
+  tropea_clustering.helpers
   tropea_clustering.plot

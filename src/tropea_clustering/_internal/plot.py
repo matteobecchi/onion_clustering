@@ -1,5 +1,6 @@
 """Auxiliary functions for plotting the results of onion-clustering."""
 
+import os
 from typing import List
 
 import matplotlib.pyplot as plt
@@ -500,10 +501,12 @@ def plot_time_res_analysis(
     axes.set_xlabel(r"Time resolution $\Delta t$ [frame]")
     axes.set_ylabel(r"# environments", weight="bold", c="#1f77b4")
     axes.set_xscale("log")
+    axes.set_ylim(-0.2, np.max(tra[:, 1]) + 0.2)
     axes.yaxis.set_major_locator(MaxNLocator(integer=True))
     axesr = axes.twinx()
     axesr.plot(tra[:, 0], tra[:, 2], marker="o", c="#ff7f0e")
     axesr.set_ylabel("Population of env 0", weight="bold", c="#ff7f0e")
+    axesr.set_ylim(-0.02, 1.02)
     fig.savefig(title, dpi=600)
 
 
@@ -962,3 +965,58 @@ def plot_one_trj_multi(
     ax.set_ylabel(r"$y$")
 
     fig.savefig(title, dpi=600)
+
+
+def color_trj_from_xyz(
+    trj_path: str,
+    labels: np.ndarray,
+    n_particles: int,
+    tau_window: int,
+):
+    """
+    Saves a colored .xyz file ('colored_trj.xyz') in the working directory.
+
+    In the input file, the (x, y, z) coordinates of the particles need to be
+    stored in the second, third and fourth column respectively.
+
+    Parameters
+    ----------
+
+    trj_path : str
+        The path to the input .xyz trajectory.
+
+    labels : np.ndarray (n_particles * n_windows,)
+        The output of the clustering algorithm.
+
+    n_particles : int
+        The number of particles in the system.
+
+    tau_window : int
+        The length of the signal windows.
+    """
+    if os.path.exists(trj_path):
+        with open(trj_path, "r", encoding="utf-8") as in_file:
+            tmp = [line.strip().split() for line in in_file]
+
+        tmp_labels = labels.reshape((n_particles, -1))
+        all_the_labels = np.repeat(tmp_labels, tau_window, axis=1) + 1
+        total_time = int(labels.shape[0] / n_particles) * tau_window
+        nlines = (n_particles + 2) * total_time
+        tmp = tmp[:nlines]
+
+        with open("colored_trj.xyz", "w+", encoding="utf-8") as out_file:
+            i = 0
+            for j in range(total_time):
+                print(tmp[i][0], file=out_file)
+                print("Properties=species:S:1:pos:R:3", file=out_file)
+                for k in range(n_particles):
+                    print(
+                        all_the_labels[k][j],
+                        tmp[i + 2 + k][1],
+                        tmp[i + 2 + k][2],
+                        tmp[i + 2 + k][3],
+                        file=out_file,
+                    )
+                i += n_particles + 2
+    else:
+        raise ValueError(f"ValueError: {trj_path} not found.")

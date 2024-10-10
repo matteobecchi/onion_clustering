@@ -8,7 +8,7 @@ from typing import Generator
 import numpy as np
 import pytest
 
-from tropea_clustering import OnionUni, onion_uni
+from tropea_clustering import OnionUni, helpers, onion_uni
 
 
 @pytest.fixture
@@ -50,9 +50,8 @@ def test_output_files(original_wd: Path, temp_dir: Path):
             tmp.append(x_new)
         random_walk.append(tmp)
 
-    n_windows = int(N_STEPS / TAU_WINDOW)
-    reshaped_input_data = np.reshape(
-        np.array(random_walk), (N_PARTICLES * n_windows, -1)
+    reshaped_input_data = helpers.reshape_from_nt(
+        np.array(random_walk), TAU_WINDOW
     )
 
     with tempfile.TemporaryDirectory() as _:
