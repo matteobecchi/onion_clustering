@@ -66,8 +66,12 @@ def all_the_input_stuff(
     - Reads input raw data
     - Creates and returns the ClusteringObject2D for the analysis
     """
+    # Check compatibility of array shapes
     tau_window = int(matrix.shape[1] / ndims)
-    reshaped_matrix = np.reshape(matrix, (ndims, -1, tau_window))
+    try:
+        reshaped_matrix = np.reshape(matrix, (ndims, -1, tau_window))
+    except ValueError:
+        raise ValueError
 
     par = Parameters(tau_window, bins, number_of_sigmas)
     data = MultiData(reshaped_matrix)

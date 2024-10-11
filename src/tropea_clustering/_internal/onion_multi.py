@@ -128,11 +128,6 @@ class OnionMulti(BaseEstimator, ClusterMixin):
 
         X = X.copy()  # copy to avoid in-place modification
 
-        # Check compatibility of array shapes
-        tau_window = int(X.shape[1] / self.ndims)
-        if X.shape[1] != tau_window * self.ndims:
-            raise ValueError("X.shape[1] not compatible with self.ndims")
-
         cl_ob = _onion_inner(
             X,
             self.ndims,
