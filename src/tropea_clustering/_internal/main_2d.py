@@ -67,10 +67,7 @@ def all_the_input_stuff(
     - Creates and returns the ClusteringObject2D for the analysis
     """
     tau_window = int(matrix.shape[1] / ndims)
-    try:
-        reshaped_matrix = np.reshape(matrix, (ndims, -1, tau_window))
-    except ValueError:
-        raise ValueError
+    reshaped_matrix = np.reshape(matrix, (ndims, -1, tau_window))
 
     par = Parameters(tau_window, bins, number_of_sigmas)
     data = MultiData(reshaped_matrix)
