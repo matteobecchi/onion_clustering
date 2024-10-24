@@ -2,6 +2,8 @@
 Contains the classes used for storing parameters and system states.
 """
 
+# Author: Becchi Matteo <bechmath@gmail.com>
+
 from dataclasses import asdict, dataclass, field
 from typing import Union
 

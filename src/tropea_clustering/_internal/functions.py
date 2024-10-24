@@ -2,6 +2,8 @@
 Should contains all the functions in common between the 2 codes.
 """
 
+# Author: Becchi Matteo <bechmath@gmail.com>
+
 from typing import List, Tuple
 
 import numpy as np

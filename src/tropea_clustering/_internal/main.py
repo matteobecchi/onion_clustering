@@ -3,6 +3,8 @@ Code for clustering of univariate time-series data.
 See the documentation for all the details.
 """
 
+# Author: Becchi Matteo <bechmath@gmail.com>
+
 import warnings
 from typing import List, Tuple, Union
 

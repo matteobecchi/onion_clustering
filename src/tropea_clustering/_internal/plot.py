@@ -1,5 +1,7 @@
 """Auxiliary functions for plotting the results of onion-clustering."""
 
+# Author: Becchi Matteo <bechmath@gmail.com>
+
 import os
 from typing import List
 

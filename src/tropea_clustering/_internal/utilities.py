@@ -1,5 +1,7 @@
 """Auxiliary/discarded functions, not needed for the clustering."""
 
+# Author: Becchi Matteo <bechmath@gmail.com>
+
 import numpy as np
 import scipy
 

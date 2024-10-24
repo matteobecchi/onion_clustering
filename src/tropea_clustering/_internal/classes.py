@@ -2,6 +2,8 @@
 Contains the classes used for storing the clustering data.
 """
 
+# Author: Becchi Matteo <bechmath@gmail.com>
+
 from dataclasses import dataclass
 from typing import List, Union
 

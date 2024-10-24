@@ -3,6 +3,8 @@ Code for clustering of multivariate (2- or 3-dimensional) time-series data.
 See the documentation for all the details.
 """
 
+# Author: Becchi Matteo <bechmath@gmail.com>
+
 from typing import List, Tuple, Union
 
 import numpy as np
