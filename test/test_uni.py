@@ -1,5 +1,7 @@
 """Pytest for onion_uni and OnionUni."""
 
+# Author: Matteo Becchi <bechmath@gmail.com>
+
 import os
 import tempfile
 from pathlib import Path

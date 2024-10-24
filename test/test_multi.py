@@ -1,5 +1,7 @@
 """Pytest for onion_multi and OnionMulti."""
 
+# Author: Matteo Becchi <bechmath@gmail.com>
+
 import os
 import tempfile
 from pathlib import Path
