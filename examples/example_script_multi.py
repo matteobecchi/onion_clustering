@@ -1,6 +1,6 @@
-"""
-Example script for running onion_multi.
-"""
+"""Example script for running onion_multi."""
+
+# Author: Becchi Matteo <bechmath@gmail.com>
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -53,7 +53,7 @@ plot_state_populations("output_multi/Fig4.png", n_windows, labels)
 plot_sankey("output_multi/Fig5.png", labels, n_windows, [100, 200, 300, 400])
 
 ### CLUSTERING THE WHOLE RANGE OF TIME RESOLUTIONS ###
-TAU_WINDOWS_LIST = np.geomspace(3, 10000, 20, dtype=int)
+TAU_WINDOWS_LIST = np.geomspace(3, n_frames, 20, dtype=int)
 
 tra = np.zeros((len(TAU_WINDOWS_LIST), 3))  # List of number of states and
 # ENV0 population for each tau_window
