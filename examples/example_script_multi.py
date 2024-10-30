@@ -74,6 +74,6 @@ for i, tau_window in enumerate(TAU_WINDOWS_LIST):
 
 ### These functions are examples of how to visualize the results
 plot_time_res_analysis("output_multi/Fig6.png", tra)
-plot_pop_fractions("output_multi/Fig7.png", pop_list)
+plot_pop_fractions("output_multi/Fig7.png", pop_list, tra)
 
 plt.show()

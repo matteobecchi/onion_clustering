@@ -515,26 +515,29 @@ def plot_time_res_analysis(
 def plot_pop_fractions(
     title: str,
     list_of_pop: List[List[float]],
+    tra: np.ndarray,
 ):
     """
     Plot, for every time resolution, the populations of the ENVs.
 
     Parameters
     ----------
-
     title : str
         The path of the .png file the figure will be saved as.
 
     list_of_pop : List[List[float]]
         For every tau_window, this is the list of the populations of all the states (the first one is ENV0).
 
+    tra : ndarray of shape (n_windows, 3)
+        Contains the number of states and the population of ENV0 at every tau_window.
+
     Notes
     -----
-
     The bottom state is the ENV0.
     """
+    # Pad the lists in list_of_pop to ensure they all have the same length
     max_num_of_states = np.max([len(pop_list) for pop_list in list_of_pop])
-    for _, pop_list in enumerate(list_of_pop):
+    for pop_list in list_of_pop:
         while len(pop_list) < max_num_of_states:
             pop_list.append(0.0)
 
@@ -542,10 +545,9 @@ def plot_pop_fractions(
 
     fig, axes = plt.subplots()
 
-    width = 1
-    min_tau_w = 2
-    time = range(min_tau_w, pop_array.shape[0] + min_tau_w)
+    time = tra[:, 0]
     bottom = np.zeros(len(pop_array))
+    width = time / 2 * 0.5
 
     for _, state in enumerate(pop_array.T):
         _ = axes.bar(time, state, width, bottom=bottom, edgecolor="black")
