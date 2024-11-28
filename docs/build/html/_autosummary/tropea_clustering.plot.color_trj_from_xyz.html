@@ -300,18 +300,19 @@
 <dt class="sig sig-object py" id="tropea_clustering.plot.color_trj_from_xyz">
 <span class="sig-prename descclassname"><span class="pre">tropea_clustering.plot.</span></span><span class="sig-name descname"><span class="pre">color_trj_from_xyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trj_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_particles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_window</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/plot.html#color_trj_from_xyz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering.plot.color_trj_from_xyz" title="Link to this definition">¶</a></dt>
 <dd><p>Saves a colored .xyz file (‘colored_trj.xyz’) in the working directory.</p>
-<p>In the input file, the (x, y, z) coordinates of the particles need to be
-stored in the second, third and fourth column respectively.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>trj_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The path to the input .xyz trajectory.</p></li>
+<li><p><strong>trj_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The path to the input .xyz trajectory.</p></li>
 <li><p><strong>labels</strong> (<em>np.ndarray</em><em> (</em><em>n_particles * n_windows</em><em>,</em><em>)</em>) – The output of the clustering algorithm.</p></li>
-<li><p><strong>n_particles</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – The number of particles in the system.</p></li>
-<li><p><strong>tau_window</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – The length of the signal windows.</p></li>
+<li><p><strong>n_particles</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The number of particles in the system.</p></li>
+<li><p><strong>tau_window</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The length of the signal windows.</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>In the input file, the (x, y, z) coordinates of the particles need to be
+stored in the second, third and fourth column respectively.</p>
 </dd></dl>
 
 </section>

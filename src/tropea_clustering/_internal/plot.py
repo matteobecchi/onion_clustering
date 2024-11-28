@@ -1,6 +1,7 @@
 """Auxiliary functions for plotting the results of onion-clustering."""
 
 # Author: Becchi Matteo <bechmath@gmail.com>
+# Date: November 28, 2024
 
 import os
 from typing import List
@@ -24,6 +25,17 @@ def plot_output_uni(
     state_list: List,
 ):
     """Plots clustering output with Gaussians and threshols.
+
+    Here's an example of the output:
+
+    .. image:: ../_static/images/uni_Fig1.png
+        :alt: Example Image
+        :width: 600px
+
+    The left planel shows the input time-series data, with the backgound
+    colored according to the thresholds between the clusters. The left panel
+    shows the cumulative data distribution, and the Gaussians fitted to the
+    data, corresponding to the identified clusters.
 
     Parameters
     ----------
@@ -148,6 +160,15 @@ def plot_one_trj_uni(
 ):
     """Plots the colored trajectory of one example particle.
 
+    Here's an example of the output:
+
+    .. image:: ../_static/images/uni_Fig2.png
+        :alt: Example Image
+        :width: 600px
+
+    The datapoints are colored according to the cluster they have been
+    assigned.
+
     Parameters
     ----------
 
@@ -217,6 +238,15 @@ def plot_state_populations(
     """
     Plot the populations of states over time.
 
+    Here's an example of the output:
+
+    .. image:: ../_static/images/uni_Fig4.png
+        :alt: Example Image
+        :width: 600px
+
+    For each trajectory frame, plots the fraction of the population of each
+    cluster. "ENV0" refers to the unclassified data.
+
     Parameters
     ----------
 
@@ -228,11 +258,6 @@ def plot_state_populations(
 
     labels : ndarray of shape (n_particles * n_windows,)
         The output of the clustering algorithm.
-
-    Notes
-    -----
-
-    If all the points are classified, we still need the "-1" state for consistency.
     """
     n_particles = int(labels.shape[0] / n_windows)
     labels = np.reshape(labels, (n_particles, n_windows))
@@ -272,6 +297,16 @@ def plot_medoids_uni(
 ):
     """
     Compute and plot the average signal sequence inside each state.
+
+    Here's an example of the output:
+
+    .. image:: ../_static/images/uni_Fig3.png
+        :alt: Example Image
+        :width: 600px
+
+    For each cluster, the average (solid line) and standard deviation (shaded
+    area) of the signal sequences contained in it is shown. The unclassififed
+    seqeunces are shown individually in purple.
 
     Parameters
     ----------
@@ -379,6 +414,17 @@ def plot_sankey(
     """
     Plots the Sankey diagram at the desired frames.
 
+    Here's an example of the output:
+
+    .. image:: ../_static/images/uni_Fig5.png
+        :alt: Example Image
+        :width: 600px
+
+    For each of the selected frames, the colored bars width is proportional
+    to each cluster population. The gray bands' witdh are proportional to
+    the number of data points moving from one cluster to the other between the
+    selected frames. "State -1" refers to the unclassified data.
+
     Parameters
     ----------
 
@@ -485,9 +531,15 @@ def plot_time_res_analysis(
     """
     Plots the results of clustering at different time resolutions.
 
-    Plots the number of states (including the unclassified points) and
-    the fraction of unclassificed data points as a function of the time
-    resolution used.
+    Here's an example of the output:
+
+    .. image:: ../_static/images/uni_Fig6.png
+        :alt: Example Image
+        :width: 600px
+
+    For each of the analyzed time resolutions, the blue curve shows the number
+    of identified clusters (not including the unclassified data); the orange
+    line shows the fraction of unclassififed data.
 
     Parameters
     ----------
@@ -496,7 +548,8 @@ def plot_time_res_analysis(
         The path of the .png file the figure will be saved as.
 
     tra : ndarray of shape (n_windows, 3)
-        Contains the number of states and the population of ENV0 at every tau_window.
+        Contains the number of states and the population of ENV0 at every
+        tau_window.
     """
     fig, axes = plt.subplots()
     axes.plot(tra[:, 0], tra[:, 1], marker="o")
@@ -520,16 +573,29 @@ def plot_pop_fractions(
     """
     Plot, for every time resolution, the populations of the ENVs.
 
+    Here's an example of the output:
+
+    .. image:: ../_static/images/uni_Fig7.png
+        :alt: Example Image
+        :width: 600px
+
+    For each time resolution analysed, the bars show the fraction of data
+    points classified in each cluster. Clusters are ordered according to the
+    value of their Gaussian's mean; the bottom cluster is always the
+    unclassified data points.
+
     Parameters
     ----------
     title : str
         The path of the .png file the figure will be saved as.
 
     list_of_pop : List[List[float]]
-        For every tau_window, this is the list of the populations of all the states (the first one is ENV0).
+        For every tau_window, this is the list of the populations of all the
+        states (the first one is ENV0).
 
     tra : ndarray of shape (n_windows, 3)
-        Contains the number of states and the population of ENV0 at every tau_window.
+        Contains the number of states and the population of ENV0 at every
+        tau_window.
 
     Notes
     -----
@@ -569,6 +635,16 @@ def plot_medoids_multi(
     """
     Compute and plot the average signal sequence inside each state.
 
+    Here's an example of the output:
+
+    .. image:: ../_static/images/multi_Fig3.png
+        :alt: Example Image
+        :width: 600px
+
+    For each cluster, the average of the signal sequences contained in it is
+    shown (large solid points). The unclassififed seqeunces are shown
+    individually in purple (thin lines).
+
     Parameters
     ----------
 
@@ -587,8 +663,8 @@ def plot_medoids_multi(
     Notes
     -----
 
-    - If there are no assigned window, we still need the "-1" state for consistency
-    - Prints the output to file
+    If there are no assigned window, we still need the "-1" state for
+    consistency
     """
     ndims = input_data.shape[0]
     if ndims != 2:
@@ -672,6 +748,16 @@ def plot_output_multi(
 ):
     """
     Plot a cumulative figure showing trajectories and identified states.
+
+    .. image:: ../_static/images/multi_Fig1.png
+        :alt: Example Image
+        :width: 600px
+
+    All the data are plotted, colored according to the cluster thay have been
+    assigned to. The clusters are shown as black ellipses, whose orizontal and
+    vertical axis length is given by the standard deviation of the Gaussians
+    corresponding to the cluster. Unclassififed data points are colored in
+    purple.
 
     Parameters
     ----------
@@ -911,6 +997,15 @@ def plot_one_trj_multi(
 ):
     """Plots the colored trajectory of an example particle.
 
+    Here's an example of the output:
+
+    .. image:: ../_static/images/multi_Fig2.png
+        :alt: Example Image
+        :width: 600px
+
+    The datapoints are colored according to the cluster they have been
+    assigned to.
+
     Parameters
     ----------
 
@@ -980,9 +1075,6 @@ def color_trj_from_xyz(
     """
     Saves a colored .xyz file ('colored_trj.xyz') in the working directory.
 
-    In the input file, the (x, y, z) coordinates of the particles need to be
-    stored in the second, third and fourth column respectively.
-
     Parameters
     ----------
 
@@ -997,6 +1089,11 @@ def color_trj_from_xyz(
 
     tau_window : int
         The length of the signal windows.
+
+    Notes
+    -----
+    In the input file, the (x, y, z) coordinates of the particles need to be
+    stored in the second, third and fourth column respectively.
     """
     if os.path.exists(trj_path):
         with open(trj_path, "r", encoding="utf-8") as in_file:
