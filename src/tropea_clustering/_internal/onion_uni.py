@@ -157,7 +157,7 @@ class OnionUni(BaseEstimator, ClusterMixin):
         clusterer = OnionUni()
         clust_params = {"bins": 100, "number_of_sigmas": 2.0}
         clusterer.set_params(**clust_params)
-        clusterer.fit_predict(reshaped_input_data)
+        clusterer.fit(reshaped_input_data)
 
     .. testcode:: OnionUni-test
             :hide:
