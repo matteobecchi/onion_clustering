@@ -112,6 +112,39 @@ class OnionMulti(BaseEstimator, ClusterMixin):
     labels_: ndarray of shape (n_particles * n_windows,)
         Cluster labels for each point. Unclassified points are given
         the label -1.
+
+    Example
+    -------
+
+    .. testcode:: OnionMulti-test
+
+        import numpy as np
+        from tropea_clustering import OnionMulti, helpers
+
+        # Select time resolution
+        tau_window = 5
+
+        # Create random input data
+        rng = np.random.default_rng(1234)
+        n_features = 2
+        n_particles = 5
+        n_steps = 1000
+
+        input_data = np.random.rand(n_features, n_particles, n_steps)
+
+        # Create input array with the correct shape
+        reshaped_input_data = helpers.reshape_from_dnt(input_data, tau_window)
+
+        # Run Onion Clustering
+        clusterer = OnionMulti()
+        clust_params = {"bins": 100, "number_of_sigmas": 2.0}
+        clusterer.set_params(**clust_params)
+        clusterer.fit(reshaped_input_data)
+
+    .. testcode:: OnionMulti-test
+            :hide:
+
+            assert len(clusterer.state_list_) == 1
     """
 
     def __init__(

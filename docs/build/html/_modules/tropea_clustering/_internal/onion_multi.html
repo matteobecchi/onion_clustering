@@ -407,6 +407,39 @@
 <span class="sd">    labels_: ndarray of shape (n_particles * n_windows,)</span>
 <span class="sd">        Cluster labels for each point. Unclassified points are given</span>
 <span class="sd">        the label -1.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    .. testcode:: OnionMulti-test</span>
+
+<span class="sd">        import numpy as np</span>
+<span class="sd">        from tropea_clustering import OnionMulti, helpers</span>
+
+<span class="sd">        # Select time resolution</span>
+<span class="sd">        tau_window = 5</span>
+
+<span class="sd">        # Create random input data</span>
+<span class="sd">        rng = np.random.default_rng(1234)</span>
+<span class="sd">        n_features = 2</span>
+<span class="sd">        n_particles = 5</span>
+<span class="sd">        n_steps = 1000</span>
+
+<span class="sd">        input_data = np.random.rand(n_features, n_particles, n_steps)</span>
+
+<span class="sd">        # Create input array with the correct shape</span>
+<span class="sd">        reshaped_input_data = helpers.reshape_from_dnt(input_data, tau_window)</span>
+
+<span class="sd">        # Run Onion Clustering</span>
+<span class="sd">        clusterer = OnionMulti()</span>
+<span class="sd">        clust_params = {&quot;bins&quot;: 100, &quot;number_of_sigmas&quot;: 2.0}</span>
+<span class="sd">        clusterer.set_params(**clust_params)</span>
+<span class="sd">        clusterer.fit(reshaped_input_data)</span>
+
+<span class="sd">    .. testcode:: OnionMulti-test</span>
+<span class="sd">            :hide:</span>
+
+<span class="sd">            assert len(clusterer.state_list_) == 1</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
