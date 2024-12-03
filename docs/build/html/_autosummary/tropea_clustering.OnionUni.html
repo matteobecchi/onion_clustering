@@ -367,8 +367,8 @@ the label -1.</p>
 <span class="c1"># Run Onion Clustering</span>
 <span class="n">clusterer</span> <span class="o">=</span> <span class="n">OnionUni</span><span class="p">()</span>
 <span class="n">clust_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;bins&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;number_of_sigmas&quot;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">}</span>
-<span class="n">clusterer</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="o">**</span><span class="n">tmp_params</span><span class="p">)</span>
-<span class="n">clusterer</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">reshaped_input_data</span><span class="p">)</span>
+<span class="n">clusterer</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="o">**</span><span class="n">clust_params</span><span class="p">)</span>
+<span class="n">clusterer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">reshaped_input_data</span><span class="p">)</span>
 </pre></div>
 </div>
 <p class="rubric">Methods</p>

@@ -451,8 +451,8 @@
 <span class="sd">        # Run Onion Clustering</span>
 <span class="sd">        clusterer = OnionUni()</span>
 <span class="sd">        clust_params = {&quot;bins&quot;: 100, &quot;number_of_sigmas&quot;: 2.0}</span>
-<span class="sd">        clusterer.set_params(**tmp_params)</span>
-<span class="sd">        clusterer.fit_predict(reshaped_input_data)</span>
+<span class="sd">        clusterer.set_params(**clust_params)</span>
+<span class="sd">        clusterer.fit(reshaped_input_data)</span>
 
 <span class="sd">    .. testcode:: OnionUni-test</span>
 <span class="sd">            :hide:</span>
