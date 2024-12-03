@@ -58,7 +58,7 @@ def onion_uni(
         tau_window = 5
 
         # Create random input data
-        rng = np.random.default_rng(1234)
+        np.random.seed(1234)
         n_particles = 5
         n_steps = 1000
 
@@ -126,7 +126,7 @@ class OnionUni(BaseEstimator, ClusterMixin):
         tau_window = 5
 
         # Create random input data
-        rng = np.random.default_rng(1234)
+        np.random.seed(1234)
         n_particles = 5
         n_steps = 1000
 
