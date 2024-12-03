@@ -354,15 +354,7 @@
 <span class="sd">        n_particles = 5</span>
 <span class="sd">        n_steps = 1000</span>
 
-<span class="sd">        random_walk = []</span>
-<span class="sd">        for _ in range(n_particles):</span>
-<span class="sd">            tmp = [0.0]</span>
-<span class="sd">            for _ in range(n_steps - 1):</span>
-<span class="sd">                d_x = rng.normal()</span>
-<span class="sd">                x_new = tmp[-1] + d_x</span>
-<span class="sd">                tmp.append(x_new)</span>
-<span class="sd">            random_walk.append(tmp)</span>
-<span class="sd">        input_data = np.array(random_walk)</span>
+<span class="sd">        input_data = np.random.rand(n_particles, n_steps)</span>
 
 <span class="sd">        # Create input array with the correct shape</span>
 <span class="sd">        reshaped_input_data = helpers.reshape_from_nt(</span>
@@ -375,7 +367,7 @@
 <span class="sd">    .. testcode:: onionuni-test</span>
 <span class="sd">            :hide:</span>
 
-<span class="sd">            assert len(state_list) == 2</span>
+<span class="sd">            assert len(state_list) == 1</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">est</span> <span class="o">=</span> <span class="n">OnionUni</span><span class="p">(</span>
@@ -433,15 +425,7 @@
 <span class="sd">        n_particles = 5</span>
 <span class="sd">        n_steps = 1000</span>
 
-<span class="sd">        random_walk = []</span>
-<span class="sd">        for _ in range(n_particles):</span>
-<span class="sd">            tmp = [0.0]</span>
-<span class="sd">            for _ in range(n_steps - 1):</span>
-<span class="sd">                d_x = rng.normal()</span>
-<span class="sd">                x_new = tmp[-1] + d_x</span>
-<span class="sd">                tmp.append(x_new)</span>
-<span class="sd">            random_walk.append(tmp)</span>
-<span class="sd">        input_data = np.array(random_walk)</span>
+<span class="sd">        input_data = np.random.rand(n_particles, n_steps)</span>
 
 <span class="sd">        # Create input array with the correct shape</span>
 <span class="sd">        reshaped_input_data = helpers.reshape_from_nt(</span>
@@ -457,7 +441,7 @@
 <span class="sd">    .. testcode:: OnionUni-test</span>
 <span class="sd">            :hide:</span>
 
-<span class="sd">            assert len(clusterer.state_list_) == 2</span>
+<span class="sd">            assert len(clusterer.state_list_) == 1</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>

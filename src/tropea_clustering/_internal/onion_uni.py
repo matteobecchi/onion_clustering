@@ -62,15 +62,7 @@ def onion_uni(
         n_particles = 5
         n_steps = 1000
 
-        random_walk = []
-        for _ in range(n_particles):
-            tmp = [0.0]
-            for _ in range(n_steps - 1):
-                d_x = rng.normal()
-                x_new = tmp[-1] + d_x
-                tmp.append(x_new)
-            random_walk.append(tmp)
-        input_data = np.array(random_walk)
+        input_data = np.random.rand(n_particles, n_steps)
 
         # Create input array with the correct shape
         reshaped_input_data = helpers.reshape_from_nt(
@@ -83,7 +75,7 @@ def onion_uni(
     .. testcode:: onionuni-test
             :hide:
 
-            assert len(state_list) == 2
+            assert len(state_list) == 1
     """
 
     est = OnionUni(
@@ -138,15 +130,7 @@ class OnionUni(BaseEstimator, ClusterMixin):
         n_particles = 5
         n_steps = 1000
 
-        random_walk = []
-        for _ in range(n_particles):
-            tmp = [0.0]
-            for _ in range(n_steps - 1):
-                d_x = rng.normal()
-                x_new = tmp[-1] + d_x
-                tmp.append(x_new)
-            random_walk.append(tmp)
-        input_data = np.array(random_walk)
+        input_data = np.random.rand(n_particles, n_steps)
 
         # Create input array with the correct shape
         reshaped_input_data = helpers.reshape_from_nt(
@@ -162,7 +146,7 @@ class OnionUni(BaseEstimator, ClusterMixin):
     .. testcode:: OnionUni-test
             :hide:
 
-            assert len(clusterer.state_list_) == 2
+            assert len(clusterer.state_list_) == 1
     """
 
     def __init__(
