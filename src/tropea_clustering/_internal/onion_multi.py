@@ -46,6 +46,36 @@ def onion_multi(
     labels : ndarray of shape (n_particles * n_windows,)
         Cluster labels for each signal window. Unclassified points are given
         the label -1.
+
+    Example
+    -------
+
+    .. testcode:: onionmulti-test
+
+        import numpy as np
+        from tropea_clustering import onion_multi, helpers
+
+        # Select time resolution
+        tau_window = 5
+
+        # Create random input data
+        rng = np.random.default_rng(1234)
+        n_features = 2
+        n_particles = 5
+        n_steps = 1000
+
+        input_data = np.random.rand(n_features, n_particles, n_steps)
+
+        # Create input array with the correct shape
+        reshaped_input_data = helpers.reshape_from_dnt(input_data, tau_window)
+
+        # Run Onion Clustering
+        state_list, labels = onion_multi(reshaped_input_data)
+
+    .. testcode:: onionmulti-test
+            :hide:
+
+            assert len(state_list) == 0
     """
 
     est = OnionMulti(
