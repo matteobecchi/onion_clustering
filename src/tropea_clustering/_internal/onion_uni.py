@@ -121,6 +121,48 @@ class OnionUni(BaseEstimator, ClusterMixin):
     labels_: ndarray of shape (n_particles * n_windows,)
         Cluster labels for signal window. Unclassified points are given
         the label -1.
+
+    Example
+    -------
+
+    .. testcode:: OnionUni-test
+
+        import numpy as np
+        from tropea_clustering import OnionUni, helpers
+
+        # Select time resolution
+        tau_window = 5
+
+        # Create random input data
+        rng = np.random.default_rng(1234)
+        n_particles = 5
+        n_steps = 1000
+
+        random_walk = []
+        for _ in range(n_particles):
+            tmp = [0.0]
+            for _ in range(n_steps - 1):
+                d_x = rng.normal()
+                x_new = tmp[-1] + d_x
+                tmp.append(x_new)
+            random_walk.append(tmp)
+        input_data = np.array(random_walk)
+
+        # Create input array with the correct shape
+        reshaped_input_data = helpers.reshape_from_nt(
+            input_data, tau_window,
+        )
+
+        # Run Onion Clustering
+        clusterer = OnionUni()
+        clust_params = {"bins": 100, "number_of_sigmas": 2.0}
+        clusterer.set_params(**clust_params)
+        clusterer.fit_predict(reshaped_input_data)
+
+    .. testcode:: OnionUni-test
+            :hide:
+
+            assert len(clusterer.state_list_) == 2
     """
 
     def __init__(

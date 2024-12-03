@@ -329,12 +329,12 @@ the label -1.</p></li>
 <span class="kn">from</span> <span class="nn">tropea_clustering</span> <span class="kn">import</span> <span class="n">onion_uni</span><span class="p">,</span> <span class="n">helpers</span>
 
 <span class="c1"># Select time resolution</span>
-<span class="n">tau_window</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">tau_window</span> <span class="o">=</span> <span class="mi">5</span>
 
 <span class="c1"># Create random input data</span>
 <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
 <span class="n">n_particles</span> <span class="o">=</span> <span class="mi">5</span>
-<span class="n">n_steps</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">n_steps</span> <span class="o">=</span> <span class="mi">1000</span>
 
 <span class="n">random_walk</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_particles</span><span class="p">):</span>

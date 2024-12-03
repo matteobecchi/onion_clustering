@@ -347,12 +347,12 @@
 <span class="sd">        from tropea_clustering import onion_uni, helpers</span>
 
 <span class="sd">        # Select time resolution</span>
-<span class="sd">        tau_window = 10</span>
+<span class="sd">        tau_window = 5</span>
 
 <span class="sd">        # Create random input data</span>
 <span class="sd">        rng = np.random.default_rng(1234)</span>
 <span class="sd">        n_particles = 5</span>
-<span class="sd">        n_steps = 100</span>
+<span class="sd">        n_steps = 1000</span>
 
 <span class="sd">        random_walk = []</span>
 <span class="sd">        for _ in range(n_particles):</span>
@@ -375,7 +375,7 @@
 <span class="sd">    .. testcode:: onionuni-test</span>
 <span class="sd">            :hide:</span>
 
-<span class="sd">            assert len(state_list) == 5</span>
+<span class="sd">            assert len(state_list) == 2</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">est</span> <span class="o">=</span> <span class="n">OnionUni</span><span class="p">(</span>
@@ -416,6 +416,48 @@
 <span class="sd">    labels_: ndarray of shape (n_particles * n_windows,)</span>
 <span class="sd">        Cluster labels for signal window. Unclassified points are given</span>
 <span class="sd">        the label -1.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    .. testcode:: OnionUni-test</span>
+
+<span class="sd">        import numpy as np</span>
+<span class="sd">        from tropea_clustering import OnionUni, helpers</span>
+
+<span class="sd">        # Select time resolution</span>
+<span class="sd">        tau_window = 5</span>
+
+<span class="sd">        # Create random input data</span>
+<span class="sd">        rng = np.random.default_rng(1234)</span>
+<span class="sd">        n_particles = 5</span>
+<span class="sd">        n_steps = 1000</span>
+
+<span class="sd">        random_walk = []</span>
+<span class="sd">        for _ in range(n_particles):</span>
+<span class="sd">            tmp = [0.0]</span>
+<span class="sd">            for _ in range(n_steps - 1):</span>
+<span class="sd">                d_x = rng.normal()</span>
+<span class="sd">                x_new = tmp[-1] + d_x</span>
+<span class="sd">                tmp.append(x_new)</span>
+<span class="sd">            random_walk.append(tmp)</span>
+<span class="sd">        input_data = np.array(random_walk)</span>
+
+<span class="sd">        # Create input array with the correct shape</span>
+<span class="sd">        reshaped_input_data = helpers.reshape_from_nt(</span>
+<span class="sd">            input_data, tau_window,</span>
+<span class="sd">        )</span>
+
+<span class="sd">        # Run Onion Clustering</span>
+<span class="sd">        clusterer = OnionUni()</span>
+<span class="sd">        clust_params = {&quot;bins&quot;: 100, &quot;number_of_sigmas&quot;: 2.0}</span>
+<span class="sd">        clusterer.set_params(**tmp_params)</span>
+<span class="sd">        clusterer.fit_predict(reshaped_input_data)</span>
+
+<span class="sd">    .. testcode:: OnionUni-test</span>
+<span class="sd">            :hide:</span>
+
+<span class="sd">            assert len(clusterer.state_list_) == 2</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>

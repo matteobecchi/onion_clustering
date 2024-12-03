@@ -1,4 +1,4 @@
-Results of doctest builder run on 2024-12-03 15:58:28
+Results of doctest builder run on 2024-12-03 16:04:00
 =====================================================
 
 Document: _autosummary/tropea_clustering.onion_uni
@@ -9,9 +9,17 @@ Document: _autosummary/tropea_clustering.onion_uni
 2 passed and 0 failed.
 Test passed.
 
+Document: _autosummary/tropea_clustering.OnionUni
+-------------------------------------------------
+1 items passed all tests:
+   2 tests in OnionUni-test
+2 tests in 1 items.
+2 passed and 0 failed.
+Test passed.
+
 Doctest summary
 ===============
-    2 tests
+    4 tests
     0 failures in tests
     0 failures in setup code
     0 failures in cleanup code
