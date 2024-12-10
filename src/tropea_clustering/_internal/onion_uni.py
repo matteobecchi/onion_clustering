@@ -75,7 +75,7 @@ def onion_uni(
     .. testcode:: onionuni-test
             :hide:
 
-            assert len(state_list) == 1
+            assert state_list[0].mean == 0.5789299753284055
     """
 
     est = OnionUni(
@@ -146,7 +146,7 @@ class OnionUni(BaseEstimator, ClusterMixin):
     .. testcode:: OnionUni-test
             :hide:
 
-            assert len(clusterer.state_list_) == 1
+            assert state_list_[0].mean == 0.5789299753284055
     """
 
     def __init__(
