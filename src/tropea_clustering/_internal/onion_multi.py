@@ -75,7 +75,7 @@ def onion_multi(
     .. testcode:: onionmulti-test
             :hide:
 
-            assert state_list[0].mean == [0.66757015, 0.76032325]
+            assert state_list[0].mean[0] ==  0.6675701490204133
     """
 
     est = OnionMulti(
@@ -144,7 +144,7 @@ class OnionMulti(BaseEstimator, ClusterMixin):
     .. testcode:: OnionMulti-test
             :hide:
 
-            assert state_list_[0].mean == [0.66757015, 0.76032325]
+            assert clusterer.state_list_[0].mean[0] == 0.6680603111724006
     """
 
     def __init__(

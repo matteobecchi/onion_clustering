@@ -146,7 +146,7 @@ class OnionUni(BaseEstimator, ClusterMixin):
     .. testcode:: OnionUni-test
             :hide:
 
-            assert state_list_[0].mean == 0.5789299753284055
+            assert clusterer.state_list_[0].mean == 0.5789299753284055
     """
 
     def __init__(
