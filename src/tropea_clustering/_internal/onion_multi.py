@@ -56,7 +56,7 @@ def onion_multi(
         from tropea_clustering import onion_multi, helpers
 
         # Select time resolution
-        tau_window = 5
+        tau_window = 2
 
         # Create random input data
         np.random.seed(1234)
@@ -122,7 +122,7 @@ class OnionMulti(BaseEstimator, ClusterMixin):
         from tropea_clustering import OnionMulti, helpers
 
         # Select time resolution
-        tau_window = 5
+        tau_window = 2
 
         # Create random input data
         np.random.seed(1234)
