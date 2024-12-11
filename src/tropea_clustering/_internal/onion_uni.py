@@ -7,6 +7,7 @@ from typing import Union
 
 import numpy as np
 from sklearn.base import BaseEstimator, ClusterMixin
+from sklearn.utils.validation import validate_data
 
 from tropea_clustering._internal.main import _main as _onion_inner
 
@@ -171,7 +172,7 @@ class OnionUni(BaseEstimator, ClusterMixin):
         self : object
             A fitted instance of self.
         """
-        X = self._validate_data(X, accept_sparse=False)
+        X = validate_data(self, X=X, y=y, accept_sparse=False)
 
         if X.ndim != 2:
             raise ValueError("Expected 2-dimensional input data.")
