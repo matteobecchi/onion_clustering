@@ -76,7 +76,7 @@ def onion_uni(
     .. testcode:: onionuni-test
             :hide:
 
-            assert state_list[0].mean == 0.5789299753284055
+            assert np.isclose(state_list[0].mean, 0.5789299753284055)
     """
 
     est = OnionUni(
@@ -147,7 +147,8 @@ class OnionUni(BaseEstimator, ClusterMixin):
     .. testcode:: OnionUni-test
             :hide:
 
-            assert clusterer.state_list_[0].mean == 0.5789299753284055
+            assert np.isclose(
+                clusterer.state_list_[0].mean, 0.5789299753284055)
     """
 
     def __init__(
