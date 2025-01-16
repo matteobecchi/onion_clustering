@@ -4,9 +4,9 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
-    <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
+    <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
         <title>tropea_clustering._internal.plot - onion-clustering documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
@@ -293,24 +293,24 @@
 <span class="c1"># Author: Becchi Matteo &lt;bechmath@gmail.com&gt;</span>
 <span class="c1"># Date: November 28, 2024</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
 
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">plotly.graph_objects</span> <span class="k">as</span> <span class="nn">go</span>
-<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">rgb2hex</span>
-<span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="kn">import</span> <span class="n">Ellipse</span>
-<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">MaxNLocator</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objects</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.colors</span><span class="w"> </span><span class="kn">import</span> <span class="n">rgb2hex</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ellipse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.ticker</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaxNLocator</span>
 
-<span class="kn">from</span> <span class="nn">tropea_clustering._internal.functions</span> <span class="kn">import</span> <span class="n">gaussian</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tropea_clustering._internal.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">gaussian</span>
 
 <span class="n">COLORMAP</span> <span class="o">=</span> <span class="s2">&quot;viridis&quot;</span>
 
 
 <div class="viewcode-block" id="plot_output_uni">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_output_uni.html#tropea_clustering.plot.plot_output_uni">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_output_uni</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_output_uni</span><span class="p">(</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">input_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">n_windows</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -446,7 +446,7 @@
 
 <div class="viewcode-block" id="plot_one_trj_uni">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_one_trj_uni.html#tropea_clustering.plot.plot_one_trj_uni">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_one_trj_uni</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_one_trj_uni</span><span class="p">(</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">example_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">input_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -528,7 +528,7 @@
 
 <div class="viewcode-block" id="plot_state_populations">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_state_populations.html#tropea_clustering.plot.plot_state_populations">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_state_populations</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_state_populations</span><span class="p">(</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">n_windows</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -591,7 +591,7 @@
 
 <div class="viewcode-block" id="plot_medoids_uni">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_medoids_uni.html#tropea_clustering.plot.plot_medoids_uni">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_medoids_uni</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_medoids_uni</span><span class="p">(</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">input_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -709,7 +709,7 @@
 
 <div class="viewcode-block" id="plot_sankey">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_sankey.html#tropea_clustering.plot.plot_sankey">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_sankey</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_sankey</span><span class="p">(</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">n_windows</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -831,7 +831,7 @@
 
 <div class="viewcode-block" id="plot_time_res_analysis">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_time_res_analysis.html#tropea_clustering.plot.plot_time_res_analysis">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_time_res_analysis</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_time_res_analysis</span><span class="p">(</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">tra</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
 <span class="p">):</span>
@@ -875,7 +875,7 @@
 
 <div class="viewcode-block" id="plot_pop_fractions">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_pop_fractions.html#tropea_clustering.plot.plot_pop_fractions">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_pop_fractions</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_pop_fractions</span><span class="p">(</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">list_of_pop</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
     <span class="n">tra</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -939,7 +939,7 @@
 
 <div class="viewcode-block" id="plot_medoids_multi">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_medoids_multi.html#tropea_clustering.plot.plot_medoids_multi">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_medoids_multi</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_medoids_multi</span><span class="p">(</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">tau_window</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">input_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -1055,7 +1055,7 @@
 
 <div class="viewcode-block" id="plot_output_multi">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_output_multi.html#tropea_clustering.plot.plot_output_multi">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_output_multi</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_output_multi</span><span class="p">(</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">input_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">state_list</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span>
@@ -1307,7 +1307,7 @@
 
 <div class="viewcode-block" id="plot_one_trj_multi">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_one_trj_multi.html#tropea_clustering.plot.plot_one_trj_multi">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_one_trj_multi</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_one_trj_multi</span><span class="p">(</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">example_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">tau_window</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -1388,7 +1388,7 @@
 
 <div class="viewcode-block" id="color_trj_from_xyz">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.color_trj_from_xyz.html#tropea_clustering.plot.color_trj_from_xyz">[docs]</a>
-<span class="k">def</span> <span class="nf">color_trj_from_xyz</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">color_trj_from_xyz</span><span class="p">(</span>
     <span class="n">trj_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">n_particles</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -1477,7 +1477,7 @@
     </aside>
   </div>
 </div><script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
