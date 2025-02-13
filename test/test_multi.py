@@ -82,8 +82,6 @@ def test_output_files(original_wd: Path, temp_dir: Path):
         original_dir = original_wd / "test/"
         expected_output_path = original_dir / "output_multi/labels.npy"
 
-        np.save(expected_output_path, labels)
-
         # Compare the contents of the expected and actual output
         expected_output = np.load(expected_output_path)
         assert np.allclose(expected_output, labels)
