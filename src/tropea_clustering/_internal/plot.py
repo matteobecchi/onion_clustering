@@ -19,6 +19,15 @@ from tropea_clustering._internal.utilities import reshape_to_nt
 COLORMAP = "viridis"
 
 
+def color_palette(num_labels: int) -> List[str]:
+    palette = []
+    cmap = plt.get_cmap(COLORMAP, num_labels)
+    for i in range(0, cmap.N):
+        rgba = cmap(i)
+        palette.append(rgb2hex(rgba))
+    return palette
+
+
 def plot_output_uni(
     title: str,
     input_data: np.ndarray,
@@ -51,11 +60,7 @@ def plot_output_uni(
     state_list : List[StateUni]
         The list of the cluster states.
     """
-    palette = []
-    cmap = plt.get_cmap(COLORMAP, len(state_list) + 1)
-    for i in range(0, cmap.N):
-        rgba = cmap(i)
-        palette.append(rgb2hex(rgba))
+    palette = color_palette(len(state_list) + 1)
 
     fig, axes = plt.subplots(
         1,
@@ -139,11 +144,7 @@ def plot_one_trj_uni(
 
     example_id: int
     """
-    palette = []
-    cmap = plt.get_cmap(COLORMAP, len(np.unique(labels)))
-    for i in range(0, cmap.N):
-        rgba = cmap(i)
-        palette.append(rgb2hex(rgba))
+    palette = color_palette(len(np.unique(labels)))
 
     fig, ax = plt.subplots()
 
@@ -207,12 +208,7 @@ def plot_state_populations(
         population = np.sum(labels == label, axis=0)
         list_of_populations.append(population / n_particles)
 
-    palette = []
-    n_states = unique_labels.size
-    cmap = plt.get_cmap(COLORMAP, n_states)
-    for i in range(cmap.N):
-        rgba = cmap(i)
-        palette.append(rgb2hex(rgba))
+    palette = color_palette(unique_labels.size)
 
     fig, axes = plt.subplots()
     t_steps = labels.shape[1]
@@ -296,12 +292,7 @@ def plot_medoids_uni(
         header="Signal standard deviation for each ENV",
     )
 
-    palette = []
-    cmap = plt.get_cmap(COLORMAP, list_of_labels.size)
-    palette.append(rgb2hex(cmap(0)))
-    for i in range(1, cmap.N):
-        rgba = cmap(i)
-        palette.append(rgb2hex(rgba))
+    palette = color_palette(list_of_labels.size)
 
     fig, axes = plt.subplots()
     time_seq = range(input_data.shape[1])
@@ -436,12 +427,7 @@ def plot_sankey(
     # Concatenate the temporary labels to create the final node labels.
     label = np.concatenate((arr_label1, arr_label2))
 
-    # Generate a color palette for the Sankey diagram.
-    palette = []
-    cmap = plt.get_cmap(COLORMAP, n_states)
-    for i in range(cmap.N):
-        rgba = cmap(i)
-        palette.append(rgb2hex(rgba))
+    palette = color_palette(n_states)
 
     # Tile the color palette to match the number of frames.
     color = np.tile(palette, frame_list.size)
