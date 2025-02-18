@@ -6,6 +6,46 @@ import numpy as np
 import scipy
 
 
+def split_time_series(
+    time_series: np.ndarray,
+    delta_t: int,
+) -> np.ndarray:
+    """Split time-series into non-overlapping windows.
+
+    Parameters
+    ----------
+    time_series : np.ndarray
+        The dataset.
+
+    delta_t : int
+        Length of the windows in which the signals will be split.
+
+    Returns
+    -------
+    windows : np.ndarray
+        List of signal windows.
+    """
+    if time_series.ndim == 1:
+        n_windows = len(time_series) // delta_t
+        windows = np.array(
+            [
+                time_series[i * delta_t : (i + 1) * delta_t]
+                for i in range(n_windows)
+            ]
+        )
+        return windows
+
+    n_windows = time_series.shape[1] // delta_t
+    windows = np.array(
+        [
+            particle[i * delta_t : (i + 1) * delta_t]
+            for i in range(n_windows)
+            for particle in time_series
+        ]
+    )
+    return windows
+
+
 def reshape_from_nt(input_data: np.ndarray, tau_window: int) -> np.ndarray:
     """
     Reshapes the input data from traditional from scikit format.

@@ -1,4 +1,4 @@
-tropea\_clustering.helpers
+﻿tropea\_clustering.helpers
 ==========================
 
 .. automodule:: tropea_clustering.helpers
@@ -17,6 +17,7 @@ tropea\_clustering.helpers
    
       reshape_from_dnt
       reshape_from_nt
+      split_time_series
    
    
 

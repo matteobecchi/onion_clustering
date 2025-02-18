@@ -1,612 +1,231 @@
-"""
-Code for clustering of univariate time-series data.
-See the documentation for all the details.
+"""Code for clustering of univariate time-series data.
+
+Author: Becchi Matteo <bechmath@gmail.com>
+Date: February 18, 2025
 """
 
-# Author: Becchi Matteo <bechmath@gmail.com>
-
-import warnings
-from typing import List, Tuple, Union
+from typing import Any, List
 
 import numpy as np
-import scipy.signal
-from scipy.optimize import OptimizeWarning
-from scipy.stats import gaussian_kde
+from sklearn.mixture import GaussianMixture
 
-from tropea_clustering._internal.classes import ClusteringObject1D
-from tropea_clustering._internal.first_classes import (
-    Parameters,
-    StateUni,
-    UniData,
-)
-from tropea_clustering._internal.functions import (
-    gaussian,
-    max_prob_assignment,
-    relabel_states,
-    set_final_states,
-)
-
-AREA_MAX_OVERLAP = 0.8
+from tropea_clustering._internal.first_classes import StateUni
 
 
-def all_the_input_stuff(
-    matrix: np.ndarray,
-    bins: Union[int, str],
-    number_of_sigmas: float,
-) -> ClusteringObject1D:
+def find_optimal_gmm_dynamic(
+    windows: np.ndarray,
+    threshold=0.01,
+) -> tuple[int, list[float]]:
+    """Dynamic optimization of the number of components based on BIC.
+
+    Parameter
+    ---------
+    windows : np.ndarray
+        List of signal windows.
+
+    threshold : float = 0.01
+        Minimum relative increase in BIC for considering one more cluster valid.
+
+    Return
+    ------
+    tuple[int, list[float]]:
+        - The optimal number of clusters
+        - The list of BIC for each clusters number
     """
-    Data preprocessing for the analysis.
-
-    Parameters
-    ----------
-    matrix : ndarray of shape (n_particles * n_windows, tau_window)
-        The values of the signal for each particle at each frame.
-
-    bins: Union[str, int] = "auto"
-        The number of bins used for the construction of the histograms.
-        Can be an integer value, or "auto".
-        If "auto", the default of numpy.histogram_bin_edges is used
-        (see https://numpy.org/doc/stable/reference/generated/
-        numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
-
-    number_of_sigma : float = 2.0
-        Sets the thresholds for classifing a signal window inside a state:
-        the window is contained in the state if it is entirely contained
-        inside number_of_sigma * state.sigms times from state.mean.
-
-    Returns
-    -------
-
-    clustering_object : ClusteringObject1D
-
-    Notes
-    -----
-
-    - Reads analysis parameters
-    - Reads input data
-    - Creates and returns the ClusteringObject1D for the analysis
-    """
-    tau_window = matrix.shape[1]
-
-    par = Parameters(tau_window, bins, number_of_sigmas)
-    data = UniData(matrix)
-    clustering_object = ClusteringObject1D(par, data)
-
-    return clustering_object
-
-
-def perform_gauss_fit(
-    param: List[int], data: List[np.ndarray], int_type: str
-) -> Tuple[bool, int, np.ndarray, np.ndarray]:
-    """
-    Gaussian fit on the data histogram.
-
-    Parameters
-    ----------
-
-    param : List[int]
-        A list of the parameters for the fit:
-            initial index,
-            final index,
-            index of the max,
-            amount of data points,
-            gap value for histogram smoothing
-
-    data : List[np.ndarray]
-        A list of the data for the fit:
-            histogram binning,
-            histogram counts
-
-    int_type : str
-        The type of the fitting interval ('max' or 'half').
-
-    Returns
-    -------
-
-    A boolean value for the fit convergence.
-
-    goodness : int
-        The fit quality (max is 5).
-
-    popt : ndarray of shape (3,)
-        The optimal gaussians fit parameters.
-
-    Notes
-    -----
-
-    - Trys to perform the fit with the specified parameters
-    - Computes the fit quality by checking if some requirements are satisfied
-    - If the fit fails, returns (False, 5, np.empty(3))
-    """
-    ### Initialize return values ###
-    flag = False
-    coeff_det_r2 = 0
-    popt = np.empty(3)
-    perr = np.empty(3)
-
-    id0, id1, max_ind, n_data = param
-    bins, counts = data
-
-    selected_bins = bins[id0:id1]
-    selected_counts = counts[id0:id1]
-    mu0 = bins[max_ind]
-    sigma0 = (bins[id0] - bins[id1]) / 6
-    area0 = counts[max_ind] * np.sqrt(np.pi) * sigma0
-    try:
-        with warnings.catch_warnings():
-            warnings.filterwarnings("error")
-            popt, pcov, infodict, _, _ = scipy.optimize.curve_fit(
-                gaussian,
-                selected_bins,
-                selected_counts,
-                p0=[mu0, sigma0, area0],
-                full_output=True,
-            )
-            if popt[1] < 0:
-                popt[1] = -popt[1]
-                popt[2] = -popt[2]
-            popt[2] *= n_data
-            perr = np.array([np.sqrt(pcov[i][i]) for i in range(popt.size)])
-            perr[2] *= n_data
-            ss_res = np.sum(infodict["fvec"] ** 2)
-            ss_tot = np.sum((selected_counts - np.mean(selected_counts)) ** 2)
-            coeff_det_r2 = 1 - ss_res / ss_tot
-            flag = True
-    except OptimizeWarning:
-        return flag, coeff_det_r2, popt, perr
-    except RuntimeError:
-        return flag, coeff_det_r2, popt, perr
-    except TypeError:
-        return flag, coeff_det_r2, popt, perr
-    except ValueError:
-        return flag, coeff_det_r2, popt, perr
-
-    return flag, coeff_det_r2, popt, perr
-
-
-def gauss_fit_max(
-    m_clean: np.ndarray, par: Parameters
-) -> Union[StateUni, None]:
-    """
-    Selection of the optimal interval and parameters in order to fit a state.
-
-    Parameters
-    ----------
-
-    m_clean : ndarray
-        The data points.
-
-    par : Parameters
-        Object containing parameters for the analysis.
-
-    Returns
-    -------
-
-    state : StateUni
-        Object containing Gaussian fit parameters (mu, sigma, area),
-        or None if the fit fails.
-
-    Notes
-    -----
-
-    - Computes the data histogram
-    - If the bins are more than 50, smooths the histogram with gap = 3
-    - Finds the maximum
-    - Finds the interval between the two surriunding minima
-    - Tries to perform the Gaussian fit in it
-    - Finds the interval between the two half heigth points
-    - Tries to perform the Gaussian fit in it
-    - Compares the two fits and choose the one with higher goodness
-    - Create the State object
-    - Prints State's information to file
-    """
-    flat_m = m_clean.flatten()
-
-    try:
-        kde = gaussian_kde(flat_m)
-    except ValueError:
-        return None
-
-    if par.bins == "auto":
-        bins = np.linspace(np.min(flat_m), np.max(flat_m), 100)
-    else:
-        bins = np.linspace(np.min(flat_m), np.max(flat_m), int(par.bins))
-    counts = kde.evaluate(bins)
-
-    gap = 3
-    max_val = counts.max()
-    max_ind = counts.argmax()
-
-    min_id0 = np.max([max_ind - gap, 0])
-    min_id1 = np.min([max_ind + gap, counts.size - 1])
-    while min_id0 > 0 and counts[min_id0] > counts[min_id0 - 1]:
-        min_id0 -= 1
-    while min_id1 < counts.size - 1 and counts[min_id1] > counts[min_id1 + 1]:
-        min_id1 += 1
-
-    fit_param = [min_id0, min_id1, max_ind, flat_m.size]
-    fit_data = [bins, counts]
-    flag_min, r_2_min, popt_min, _ = perform_gauss_fit(
-        fit_param, fit_data, "Min"
-    )
-
-    half_id0 = np.max([max_ind - gap, 0])
-    half_id1 = np.min([max_ind + gap, counts.size - 1])
-    while half_id0 > 0 and counts[half_id0] > max_val / 2:
-        half_id0 -= 1
-    while half_id1 < counts.size - 1 and counts[half_id1] > max_val / 2:
-        half_id1 += 1
-
-    fit_param = [half_id0, half_id1, max_ind, flat_m.size]
-    fit_data = [bins, counts]
-    flag_half, r_2_half, popt_half, _ = perform_gauss_fit(
-        fit_param, fit_data, "Half"
-    )
-
-    r_2 = r_2_min
-    if flag_min == 1 and flag_half == 0:
-        popt = popt_min
-    elif flag_min == 0 and flag_half == 1:
-        popt = popt_half
-        r_2 = r_2_half
-    elif flag_min * flag_half == 1:
-        if r_2_min >= r_2_half:
-            popt = popt_min
-        else:
-            popt = popt_half
-            r_2 = r_2_half
-    else:
-        return None
-
-    state = StateUni(popt[0], popt[1], popt[2], r_2)
-    state._build_boundaries(par.number_of_sigmas)
-
-    return state
-
-
-def find_stable_trj(
-    cl_ob: ClusteringObject1D,
-    state: StateUni,
-    tmp_labels: np.ndarray,
-    lim: int,
-) -> Tuple[np.ndarray, float, bool]:
-    """
-    Identification of windows contained in a certain state.
-
-    Parameters
-    ----------
-
-    cl_ob : ClusteringObject1D
-        The clustering object.
-
-    state : StateUni
-        The state we want to put windows in.
-
-    tmp_labels : ndarray of shape (n_particles, n_windows)
-        Contains the cluster labels of all the signal windows.
-
-    lim : int
-        The algorithm iteration.
-
-    Returns
-    -------
-
-    m2_array : ndarray
-        Array of still unclassified data points.
-
-    window_fraction : float
-        Fraction of windows classified in this state.
-
-    env_0 : bool
-        Indicates if there are still unclassified data points.
-
-    Notes
-    -----
-
-    - Initializes some useful variables
-    - Selects the data windows contained inside the state
-    - Updates tmp_labels with the newly classified data windows
-    - Calculates the fraction of stable windows found and prints it
-    - Creates a np.ndarray to store still unclassified windows
-    - Sets the value of env_0 to signal still unclassified data points
-    """
-    m_clean = cl_ob.data.matrix
-
-    mask_unclassified = tmp_labels < 0.5
-    mask_inf = np.min(m_clean, axis=1) >= state.th_inf[0]
-    mask_sup = np.max(m_clean, axis=1) <= state.th_sup[0]
-    mask = mask_unclassified & mask_inf & mask_sup
-
-    tmp_labels[mask] = lim + 1
-    counter = np.sum(mask)
-
-    mask_remaining = mask_unclassified & ~mask
-    remaning_data = m_clean[mask_remaining]
-    m2_array = np.array(remaning_data)
-
-    if tmp_labels.size == 0:
-        return m2_array, 0.0, False
-    else:
-        window_fraction = counter / tmp_labels.size
-
-    env_0 = True
-    if len(m2_array) == 0:
-        env_0 = False
-
-    return m2_array, window_fraction, env_0
-
-
-def fit_local_maxima(
-    cl_ob: ClusteringObject1D,
-    m_clean: np.ndarray,
-    par: Parameters,
-    tmp_labels: np.ndarray,
-    lim: int,
-):
-    """
-    This functions takes care of particular cases where the
-    data points on the tails of a Gaussian are not correctly assigned,
-    creating weird sharp peaks in the histogram.
-
-    Parameters
-    ----------
-
-    cl_ob : ClusteringObject1D
-
-    m_clean : np.ndarray
-        Input data for Gaussian fitting.
-
-    par : Parameters
-        Object containing parameters for fitting.
-
-    tmp_labels : np.ndarray
-        Labels indicating window classifications.
-
-    tau_windw : int
-        The time resolution of the analysis.
-
-    lim : int
-        Offset value for classifying stable windows.
-    """
-    flat_m = m_clean.flatten()
-
-    kde = gaussian_kde(flat_m)
-    if par.bins == "auto":
-        bins = np.linspace(np.min(flat_m), np.max(flat_m), 100)
-    else:
-        bins = np.linspace(np.min(flat_m), np.max(flat_m), int(par.bins))
-    counts = kde.evaluate(bins)
-
-    gap = 3
-
-    max_ind, _ = scipy.signal.find_peaks(counts)
-    max_val = np.array([counts[i] for i in max_ind])
-
-    for i, m_ind in enumerate(max_ind[:1]):
-        min_id0 = np.max([m_ind - gap, 0])
-        min_id1 = np.min([m_ind + gap, counts.size - 1])
-        while min_id0 > 0 and counts[min_id0] > counts[min_id0 - 1]:
-            min_id0 -= 1
-        while (
-            min_id1 < counts.size - 1 and counts[min_id1] > counts[min_id1 + 1]
-        ):
-            min_id1 += 1
-
-        fit_param = [min_id0, min_id1, m_ind, flat_m.size]
-        fit_data = [bins, counts]
-        flag_min, r_2_min, popt_min, _ = perform_gauss_fit(
-            fit_param, fit_data, "Min"
-        )
-
-        half_id0 = np.max([m_ind - gap, 0])
-        half_id1 = np.min([m_ind + gap, counts.size - 1])
-        while half_id0 > 0 and counts[half_id0] > max_val[i] / 2:
-            half_id0 -= 1
-        while half_id1 < counts.size - 1 and counts[half_id1] > max_val[i] / 2:
-            half_id1 += 1
-
-        fit_param = [half_id0, half_id1, m_ind, flat_m.size]
-        fit_data = [bins, counts]
-        flag_half, r_2_half, popt_half, _ = perform_gauss_fit(
-            fit_param, fit_data, "Half"
-        )
-
-        r_2 = r_2_min
-        if flag_min == 1 and flag_half == 0:
-            popt = popt_min
-        elif flag_min == 0 and flag_half == 1:
-            popt = popt_half
-            r_2 = r_2_half
-        elif flag_min * flag_half == 1:
-            if r_2_min >= r_2_half:
-                popt = popt_min
-            else:
-                popt = popt_half
-                r_2 = r_2_half
-        else:
-            continue
-
-        state = StateUni(popt[0], popt[1], popt[2], r_2)
-        state._build_boundaries(par.number_of_sigmas)
-
-        m_clean = cl_ob.data.matrix
-
-        mask_unclassified = tmp_labels < 0.5
-        mask_inf = np.min(m_clean, axis=1) >= state.th_inf[0]
-        mask_sup = np.max(m_clean, axis=1) <= state.th_sup[0]
-        mask = mask_unclassified & mask_inf & mask_sup
-
-        tmp_labels[mask] = lim + 1
-        counter = np.sum(mask)
-
-        mask_remaining = mask_unclassified & ~mask
-        remaning_data = m_clean[mask_remaining]
-        m2_array = np.array(remaning_data)
-
-        if tmp_labels.size == 0:
-            return None, None, None, None
-        else:
-            window_fraction = counter / tmp_labels.size
-
-        one_last_state = True
-        if len(m2_array) == 0:
-            one_last_state = False
-
-        return state, m2_array, window_fraction, one_last_state
-
-    return None, None, None, None
-
-
-def iterative_search(
-    cl_ob: ClusteringObject1D,
-) -> Tuple[ClusteringObject1D, np.ndarray, bool]:
-    """
-    Iterative search for stable windows in the trajectory.
-
-    Parameters
-    ----------
-
-    cl_ob : ClusteringObject1D)
-        The clustering object.
-
-    Returns
-    -------
-
-    cl_ob : ClusteringObject1D
-        Updated with the clustering results.
-
-    atl : ndarray
-        Temporary array of labels.
-
-    env_0 : bool
-        Indicates if there are unclassified data points.
-
-    Notes
-    -----
-
-    - Initializes some useful variables
-    - At each ieration:
-        - performs the Gaussian fit and identifies the new proposed state
-        - if no state is identified, break
-        - finds the windows contained inside the proposed state
-        - if no data points are remaining, break
-        - otherwise, repeats
-    - Updates the clusering object with the number of iterations
-    - Calls "relable_states" to sort and clean the state list, and updates
-    the clustering object
-    """
-    tmp_labels = np.zeros((cl_ob.data.matrix.shape[0],)).astype(int)
-
-    states_list = []
-    m_copy = cl_ob.data.matrix
-    iteration_id = 1
-    states_counter = 0
-    env_0 = False
-
+    bic_scores = []
+    k = 1
+    prev_bic = float("inf")
     while True:
-        state = gauss_fit_max(m_copy, cl_ob.par)
-        if state is None:
-            break
-
-        m_next, counter, env_0 = find_stable_trj(
-            cl_ob, state, tmp_labels, states_counter
+        gmm = GaussianMixture(
+            n_components=k,
+            covariance_type="full",
+            random_state=42,
         )
+        gmm.fit(windows)
+        current_bic = gmm.bic(windows)
+        bic_scores.append(current_bic)
 
-        if counter <= 0.0:
-            state, m_next, counter, env_0 = fit_local_maxima(
-                cl_ob,
-                m_copy,
-                cl_ob.par,
-                tmp_labels,
-                states_counter,
-            )
-
-            if counter == 0 or state is None:
+        if k > 1:
+            if (current_bic - prev_bic) / prev_bic < threshold:
                 break
 
-        state.perc = counter
-        states_list.append(state)
-        states_counter += 1
-        iteration_id += 1
-        m_copy = m_next
+        prev_bic = current_bic
+        k += 1
 
-    cl_ob.iterations = len(states_list)
-
-    atl, lis = relabel_states(tmp_labels, states_list)
-    cl_ob.state_list = lis
-
-    return cl_ob, atl, env_0
+    optimal_k = k - 1
+    return optimal_k, bic_scores
 
 
-def full_output_analysis(cl_ob: ClusteringObject1D):
-    """
-    The complete clustering analysis with the input parameters.
+def assign_windows(
+    means: np.ndarray,
+    sigmas: np.ndarray,
+    windows: np.ndarray,
+    number_of_sigma: float,
+) -> np.ndarray:
+    """Assign each signal window to its environment.
 
     Parameters
     ----------
+    means : np.ndarray of shape (n_clusters,)
+        Mean value of each cluster.
 
-    cl_ob : ClusteringObject1D
-        The clustering object.
-    """
-    cl_ob, tmp_labels, _ = iterative_search(cl_ob)
+    sigmas : np.ndarray of shape (n_clusters,)
+        Standard deviation of each cluster.
 
-    if len(cl_ob.state_list) > 0:
-        list_of_states, tmp_labels = set_final_states(
-            cl_ob.state_list,
-            tmp_labels,
-            AREA_MAX_OVERLAP,
-        )
+     windows : np.ndarray
+        List of signal windows.
 
-        cl_ob.data.labels, cl_ob.state_list = max_prob_assignment(
-            list_of_states,
-            cl_ob.data.matrix,
-            tmp_labels,
-            cl_ob.data.ranges,
-            cl_ob.par.tau_w,
-            cl_ob.par.number_of_sigmas,
-        )
-
-        cl_ob.data.labels = cl_ob.create_all_the_labels()
-    else:
-        cl_ob.data.labels = -np.ones(cl_ob.data.matrix.shape)
-
-
-def _main(
-    matrix: np.ndarray,
-    bins: Union[int, str],
-    number_of_sigmas: float,
-) -> ClusteringObject1D:
-    """
-    Returns the clustering object with the analysis.
-
-    Parameters
-    ----------
-    matrix : ndarray of shape (n_particles * n_windows, tau_window)
-        The values of the signal for each particle at each frame.
-
-    bins: Union[str, int] = "auto"
-        The number of bins used for the construction of the histograms.
-        Can be an integer value, or "auto".
-        If "auto", the default of numpy.histogram_bin_edges is used
-        (see https://numpy.org/doc/stable/reference/generated/
-        numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
-
-    number_of_sigma : float = 2.0
-        Sets the thresholds for classifing a signal window inside a state:
-        the window is contained in the state if it is entirely contained
-        inside number_of_sigma * state.sigms times from state.mean.
+    number_of_sigma : float
+        Number of standard deviations for the range check.
 
     Returns
     -------
-    clustering_object : ClusteringObject1D
-        The final clustering object.
+    cluster_labels : np.ndarray of shape (n_windows,)
+        Label for each window. Unclassified windows are labelled -1.
     """
-    clustering_object = all_the_input_stuff(
-        matrix,
-        bins,
-        number_of_sigmas,
+    means = means[:, None, None]  # Shape: (n_clusters, 1, 1)
+    sigmas = sigmas[:, None, None]  # Shape: (n_clusters, 1, 1)
+
+    lower_bounds = means - number_of_sigma * sigmas
+    upper_bounds = means + number_of_sigma * sigmas
+
+    windows = windows[None, :, :]  # Shape: (1, n_windows, window_length)
+    within_bounds = (windows >= lower_bounds) & (windows <= upper_bounds)
+    fully_contained = np.all(within_bounds, axis=2)
+    cluster_labels = np.argmax(fully_contained, axis=0)
+    cluster_labels[~np.any(fully_contained, axis=0)] = -1
+
+    return np.array(cluster_labels)
+
+
+def sort_states(
+    state_list: List[StateUni],
+    labels: np.ndarray,
+) -> tuple[List[StateUni], np.ndarray[int, Any]]:
+    """Sort states according to their mean."""
+    sorted_list = sorted(state_list, key=lambda state: state.mean)
+    sorted_indices = sorted(
+        range(len(state_list)), key=lambda i: state_list[i].mean
+    )
+    index_mapping = {old: new for new, old in enumerate(sorted_indices)}
+
+    sorted_labels = np.array(
+        [index_mapping[label] if label != -1 else -1 for label in labels]
     )
 
-    full_output_analysis(clustering_object)
+    return sorted_list, sorted_labels
 
-    return clustering_object
+
+def plot_clusters(
+    time_series: np.ndarray,
+    cluster_labels: np.ndarray,
+    delta_t: int,
+    g_param: np.ndarray,
+)->None:
+    """Plot clustering results.
+
+    Parameters
+    ----------
+    time_series : np.ndarray of shape (n_particles, n_frames)
+        The signals to be clustered.
+
+    cluster_labels : np.ndarray of shape (n_particles, n_frames)
+        The labels for each data point in time_series.
+
+    delta_t : int
+        The length of the signal windows.
+
+    g_param:  np.ndarray of shape (n_clusters, 3)
+        g_param[i] contains the mean, the standard deviation, and the fraction
+        pf assigned points to the i-th cluster.
+    """
+    cluster_colors = [f'C{i}' for i in range(10)]
+    cluster_colors.append('k')
+
+    fig, ax = plt.subplots(1, 2, figsize=(12, 6), sharey=True)
+
+    for particle in time_series[:50]:
+        ax[0].plot(particle, color='black', alpha=0.7, lw=1.0)
+
+    reshaped_labels = cluster_labels.reshape(
+        -1,
+        time_series.shape[1] // delta_t,
+        order='F',
+    )
+    reshaped_labels = np.repeat(reshaped_labels, repeats=delta_t, axis=1)
+
+    for i, particle in enumerate(reshaped_labels[:50]):
+        for j, label in enumerate(particle):
+            ax[0].plot(j, time_series[i][j], 'o',
+                color=cluster_colors[label], ms=2)
+
+    ax[1].hist(time_series.flatten(), bins=50,
+        orientation='horizontal', density=True, color='gray')
+
+    def gaussian(x_points, mu_i, sigma_i, pi_i):
+        return pi_i * (1 / (np.sqrt(2 * np.pi * sigma_i**2))
+            ) * np.exp(-((x_points - mu_i)**2) / (2 * sigma_i**2))
+
+    for i, params in enumerate(g_param):
+        x_points = np.linspace(np.min(time_series), np.max(time_series), 500)
+        ax[1].plot(gaussian(x_points, *params), x_points, c=cluster_colors[i],
+            label=f'ENV{i + 1}')
+
+    fig.suptitle("Time-Series Segmentation and Clustering")
+    ax[0].set_xlabel("Time")
+    ax[0].set_ylabel("Value")
+    ax[1].set_xlabel("Probability density")
+    ax[1].legend()
+    fig.savefig(f'output/Fig2_{delta_t}.png')
+    plt.close(fig)
+    # plt.show()
+
+
+def _onion_inner(
+    windows: np.ndarray,
+    number_of_sigma: float,
+) -> tuple[List[StateUni], np.ndarray[int, Any]]:
+    """Performs Onion CLustering with GMM implementation.
+
+    Parameters
+    ----------
+    time_series : np.ndarray of shape (n_particles, n_frames)
+        The signals to be clustered.
+
+    number_of_sigma : float
+        Sets the threshold for assigning the windows to a state.
+
+    Returns
+    -------
+    tuple[List[StateUni], np.ndarray[int, Any]]
+        - List of gaussian states.
+        - Array with cluster labels
+    """
+
+    optimal_k, _ = find_optimal_gmm_dynamic(windows)
+    gmm = GaussianMixture(
+        n_components=optimal_k, covariance_type="full", random_state=42
+    )
+    gmm.fit(windows)
+
+    means = np.mean(gmm.means_, axis=1)
+    sigmas = np.array(
+        [np.sqrt(np.trace(cov) / cov.shape[0]) for cov in gmm.covariances_]
+    )
+    (means, sigmas) = zip(*sorted(zip(means, sigmas)))
+    means = np.asarray(means, dtype=np.float64)
+    sigmas = np.asarray(sigmas, dtype=np.float64)
+    g_param = np.array([means, sigmas, gmm.weights_]).T
+
+    labels = assign_windows(means, sigmas, windows, number_of_sigma)
+    print(labels[:99])
+
+    state_list = [StateUni(*elem) for elem in g_param]
+
+    # state_list, labels = sort_states(state_list, labels)
+
+    for label in np.unique(labels):
+        if label > -1:
+            state_list[label].perc = np.sum(labels == label) / labels.size
+
+    return state_list, labels

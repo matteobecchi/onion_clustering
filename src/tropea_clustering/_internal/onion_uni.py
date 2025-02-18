@@ -9,7 +9,7 @@ import numpy as np
 from sklearn.base import BaseEstimator, ClusterMixin
 from sklearn.utils.validation import validate_data
 
-from tropea_clustering._internal.main import _main as _onion_inner
+from tropea_clustering._internal.main import _onion_inner
 
 
 def onion_uni(
@@ -193,14 +193,10 @@ class OnionUni(BaseEstimator, ClusterMixin):
 
         X = X.copy()  # copy to avoid in-place modification
 
-        cl_ob = _onion_inner(
+        self.state_list_, self.labels_ = _onion_inner(
             X,
-            self.bins,
             self.number_of_sigmas,
         )
-
-        self.state_list_ = cl_ob.state_list
-        self.labels_ = cl_ob.data.labels
 
         return self
 

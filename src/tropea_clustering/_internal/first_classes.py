@@ -63,7 +63,6 @@ class StateUni:
     mean: float
     sigma: float
     area: float
-    r_2: float
     perc: float = 0.0
     peak: float = field(init=False)
     th_inf: np.ndarray = field(init=False)
@@ -73,19 +72,6 @@ class StateUni:
         self.peak = self.area / self.sigma / np.sqrt(np.pi)
         self.th_inf = [self.mean - 2.0 * self.sigma, -1]
         self.th_sup = [self.mean + 2.0 * self.sigma, -1]
-
-    def _build_boundaries(self, number_of_sigmas: float):
-        """
-        Sets the thresholds to classify the data windows inside the state.
-
-        Parameters
-        ----------
-
-        number of sigmas : float
-            How many sigmas the thresholds are far from the mean.
-        """
-        self.th_inf = np.array([self.mean - number_of_sigmas * self.sigma, -1])
-        self.th_sup = np.array([self.mean + number_of_sigmas * self.sigma, -1])
 
     def get_attributes(self):
         """
