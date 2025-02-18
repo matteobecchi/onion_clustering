@@ -97,9 +97,6 @@ def plot_output_uni(
     # Histogram on the right panel
     flat_m = input_data.flatten()
     counts, bins = np.histogram(flat_m, bins=50, density=True)
-    bins -= (bins[1] - bins[0]) / 2
-    counts *= flat_m.size
-
     axes[1].stairs(
         counts, bins, fill=True, orientation="horizontal", alpha=0.5
     )
@@ -115,8 +112,8 @@ def plot_output_uni(
 
     # Set plot titles and axis labels
     axes[0].set_ylabel("Signal")
-    axes[0].set_xlabel(r"Time [frame]")
-    axes[1].set_xticklabels([])
+    axes[0].set_xlabel(r"Time [frames]")
+    axes[1].set_xlabel(r"Probability density")
     fig.savefig(title, dpi=600)
 
 
@@ -166,8 +163,8 @@ def plot_one_trj_uni(
         ax.plot(j, time_series[example_id][j], 'o',
             color=palette[label], ms=2)
 
-    ax.set_xlabel("Time")
-    ax.set_ylabel("Value")
+    ax.set_xlabel("Time [frames]")
+    ax.set_ylabel("Signal")
     fig.savefig(title, dpi=600)
 
 
