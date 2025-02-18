@@ -14,6 +14,7 @@ from matplotlib.patches import Ellipse
 from matplotlib.ticker import MaxNLocator
 
 from tropea_clustering._internal.functions import gaussian
+from tropea_clustering._internal.utilities import reshape_to_nt
 
 COLORMAP = "viridis"
 
@@ -22,6 +23,8 @@ def plot_output_uni(
     title: str,
     input_data: np.ndarray,
     state_list: List,
+    labels: np.ndarray,
+    delta_t: int,
 ):
     """Plots clustering output with Gaussians and threshols.
 
@@ -48,6 +51,12 @@ def plot_output_uni(
     state_list : List[StateUni]
         The list of the cluster states.
     """
+    palette = []
+    cmap = plt.get_cmap(COLORMAP, len(state_list) + 1)
+    for i in range(1, cmap.N):
+        rgba = cmap(i)
+        palette.append(rgb2hex(rgba))
+
     fig, axes = plt.subplots(
         1,
         2,
@@ -65,31 +74,35 @@ def plot_output_uni(
         step = int(input_data.size // 1e5)
     for mol in input_data[::step]:
         axes[0].plot(
-            time,
+            # time,
             mol,
-            c="xkcd:black",
+            c="k",
             ms=0.1,
             lw=0.1,
             alpha=0.5,
             rasterized=True,
         )
 
+    reshaped_labels = reshape_to_nt(
+        labels,
+        delta_t,
+        input_data.shape[1] // delta_t,
+    )
+
+    for i, particle in enumerate(reshaped_labels[:1]):
+        for j, label in enumerate(particle):
+            axes[0].plot(j, input_data[i][j], 'o',
+                color=palette[label], ms=2)
+
     # Histogram on the right panel
     flat_m = input_data.flatten()
-    counts, bins = np.histogram(flat_m, bins=100, density=True)
+    counts, bins = np.histogram(flat_m, bins=50, density=True)
     bins -= (bins[1] - bins[0]) / 2
     counts *= flat_m.size
 
-    # axes[1].stairs(
-    #     counts, bins, fill=True, orientation="horizontal", alpha=0.5
-    # )
-
-    palette = []
-    n_states = len(state_list)
-    cmap = plt.get_cmap(COLORMAP, n_states + 1)
-    for i in range(1, cmap.N):
-        rgba = cmap(i)
-        palette.append(rgb2hex(rgba))
+    axes[1].stairs(
+        counts, bins, fill=True, orientation="horizontal", alpha=0.5
+    )
 
     for state_id, state in enumerate(state_list):
         attr = state.get_attributes()
@@ -104,14 +117,13 @@ def plot_output_uni(
     axes[0].set_ylabel("Signal")
     axes[0].set_xlabel(r"Time [frame]")
     axes[1].set_xticklabels([])
-
     fig.savefig(title, dpi=600)
 
 
 def plot_one_trj_uni(
     title: str,
     time_series: np.ndarray,
-    cluster_labels: np.ndarray,
+    labels: np.ndarray,
     delta_t: int,
     example_id: int,
 )->None:
@@ -119,123 +131,44 @@ def plot_one_trj_uni(
 
     Parameters
     ----------
+    title: str
+
     time_series : np.ndarray of shape (n_particles, n_frames)
         The signals to be clustered.
 
-    cluster_labels : np.ndarray of shape (n_particles, n_frames)
+    labels : np.ndarray of shape (n_particles, n_frames)
         The labels for each data point in time_series.
 
     delta_t : int
         The length of the signal windows.
 
-    g_param:  np.ndarray of shape (n_clusters, 3)
-        g_param[i] contains the mean, the standard deviation, and the fraction
-        pf assigned points to the i-th cluster.
+    example_id: int
     """
-    cluster_colors = [f'C{i}' for i in range(10)]
-    cluster_colors.append('k')
+    palette = []
+    cmap = plt.get_cmap(COLORMAP, len(np.unique(labels)))
+    for i in range(1, cmap.N):
+        rgba = cmap(i)
+        palette.append(rgb2hex(rgba))
 
-    fig, ax = plt.subplots(1, 2, figsize=(12, 6), sharey=True)
+    fig, ax = plt.subplots()
 
     particle = time_series[example_id]
-    ax[0].plot(particle, color='black', alpha=0.7, lw=1.0)
+    ax.plot(particle, color='black', alpha=0.7, lw=1.0)
 
-    reshaped_labels = cluster_labels.reshape(
-        -1,
+    reshaped_labels = reshape_to_nt(
+        labels,
+        delta_t,
         time_series.shape[1] // delta_t,
-        order='F',
     )
-    reshaped_labels = np.repeat(reshaped_labels, repeats=delta_t, axis=1)
 
     particle = reshaped_labels[example_id]
     for j, label in enumerate(particle):
-        ax[0].plot(j, time_series[example_id][j], 'o',
-            color=cluster_colors[label], ms=2)
+        ax.plot(j, time_series[example_id][j], 'o',
+            color=palette[label], ms=2)
 
-    fig.suptitle("Time-Series Segmentation and Clustering")
-    ax[0].set_xlabel("Time")
-    ax[0].set_ylabel("Value")
-    ax[1].set_xlabel("Probability density")
-    ax[1].legend()
-
+    ax.set_xlabel("Time")
+    ax.set_ylabel("Value")
     fig.savefig(title, dpi=600)
-    plt.show()
-
-
-# def plot_one_trj_uni(
-#     title: str,
-#     example_id: int,
-#     input_data: np.ndarray,
-#     labels: np.ndarray,
-#     tau_window: int,
-# ):
-#     """Plots the colored trajectory of one example particle.
-
-#     Here's an example of the output:
-
-#     .. image:: ../_static/images/uni_Fig2.png
-#         :alt: Example Image
-#         :width: 600px
-
-#     The datapoints are colored according to the cluster they have been
-#     assigned.
-
-#     Parameters
-#     ----------
-
-#     title : str
-#         The path of the .png file the figure will be saved as.
-
-#     example_id : int
-#         The ID of the selected particle.
-
-#     input_data : ndarray of shape (n_particles, tau_window)
-#         The input data array.
-
-#     labels : ndarray of shape (n_particles * n_windows,)
-#         The output of the clustering algorithm.
-
-#     tau_window : int
-#         The number of windows used.
-#     """
-#     n_windows = int(input_data.shape[1] / tau_window)
-#     t_max = n_windows * tau_window
-#     time = np.linspace(0, t_max - 1, t_max)
-
-#     example_signal = input_data[example_id][:t_max]
-
-#     tmp_labels = labels[example_id*n_windows:(example_id + 1)*n_windows]
-#     example_labels = np.repeat(tmp_labels, tau_window)
-
-#     fig, axes = plt.subplots()
-#     unique_labels = np.unique(labels)
-#     # If there are no unassigned window, we still need the "-1" state
-#     # for consistency:
-#     if -1 not in unique_labels:
-#         unique_labels = np.insert(unique_labels, 0, -1)
-
-#     cmap = plt.get_cmap(
-#         COLORMAP, np.max(unique_labels) - np.min(unique_labels) + 1
-#     )
-#     color = example_labels + 1
-
-#     axes.plot(time, example_signal, c="black", lw=0.1)
-#     axes.scatter(
-#         time,
-#         example_signal,
-#         c=color,
-#         cmap=cmap,
-#         vmin=np.min(unique_labels) + 1,
-#         vmax=np.max(unique_labels) + 1,
-#         s=1.0,
-#     )
-
-#     # Add title and labels to the axes
-#     fig.suptitle(f"Example particle: ID = {example_id}")
-#     axes.set_xlabel("Time [frame]")
-#     axes.set_ylabel("Signal")
-
-#     fig.savefig(title, dpi=600)
 
 
 def plot_state_populations(

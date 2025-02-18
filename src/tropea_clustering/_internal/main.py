@@ -116,71 +116,6 @@ def sort_states(
     return sorted_list, sorted_labels
 
 
-def plot_clusters(
-    time_series: np.ndarray,
-    cluster_labels: np.ndarray,
-    delta_t: int,
-    g_param: np.ndarray,
-)->None:
-    """Plot clustering results.
-
-    Parameters
-    ----------
-    time_series : np.ndarray of shape (n_particles, n_frames)
-        The signals to be clustered.
-
-    cluster_labels : np.ndarray of shape (n_particles, n_frames)
-        The labels for each data point in time_series.
-
-    delta_t : int
-        The length of the signal windows.
-
-    g_param:  np.ndarray of shape (n_clusters, 3)
-        g_param[i] contains the mean, the standard deviation, and the fraction
-        pf assigned points to the i-th cluster.
-    """
-    cluster_colors = [f'C{i}' for i in range(10)]
-    cluster_colors.append('k')
-
-    fig, ax = plt.subplots(1, 2, figsize=(12, 6), sharey=True)
-
-    for particle in time_series[:50]:
-        ax[0].plot(particle, color='black', alpha=0.7, lw=1.0)
-
-    reshaped_labels = cluster_labels.reshape(
-        -1,
-        time_series.shape[1] // delta_t,
-        order='F',
-    )
-    reshaped_labels = np.repeat(reshaped_labels, repeats=delta_t, axis=1)
-
-    for i, particle in enumerate(reshaped_labels[:50]):
-        for j, label in enumerate(particle):
-            ax[0].plot(j, time_series[i][j], 'o',
-                color=cluster_colors[label], ms=2)
-
-    ax[1].hist(time_series.flatten(), bins=50,
-        orientation='horizontal', density=True, color='gray')
-
-    def gaussian(x_points, mu_i, sigma_i, pi_i):
-        return pi_i * (1 / (np.sqrt(2 * np.pi * sigma_i**2))
-            ) * np.exp(-((x_points - mu_i)**2) / (2 * sigma_i**2))
-
-    for i, params in enumerate(g_param):
-        x_points = np.linspace(np.min(time_series), np.max(time_series), 500)
-        ax[1].plot(gaussian(x_points, *params), x_points, c=cluster_colors[i],
-            label=f'ENV{i + 1}')
-
-    fig.suptitle("Time-Series Segmentation and Clustering")
-    ax[0].set_xlabel("Time")
-    ax[0].set_ylabel("Value")
-    ax[1].set_xlabel("Probability density")
-    ax[1].legend()
-    fig.savefig(f'output/Fig2_{delta_t}.png')
-    plt.close(fig)
-    # plt.show()
-
-
 def _onion_inner(
     windows: np.ndarray,
     number_of_sigma: float,
@@ -218,7 +153,6 @@ def _onion_inner(
     g_param = np.array([means, sigmas, gmm.weights_]).T
 
     labels = assign_windows(means, sigmas, windows, number_of_sigma)
-    print(labels[:99])
 
     state_list = [StateUni(*elem) for elem in g_param]
 

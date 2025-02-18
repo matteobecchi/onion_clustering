@@ -6,7 +6,7 @@ import numpy as np
 import scipy
 
 
-def split_time_series(
+def reshape_from_nt(
     time_series: np.ndarray,
     delta_t: int,
 ) -> np.ndarray:
@@ -46,45 +46,17 @@ def split_time_series(
     return windows
 
 
-def reshape_from_nt(input_data: np.ndarray, tau_window: int) -> np.ndarray:
-    """
-    Reshapes the input data from traditional from scikit format.
-
-    Takes the data array in the (n_particles, n_frames) format and
-    reshapes it in the format required by scikit-learn.
-
-    Parameters
-    ----------
-
-    input_data : np.ndarray of shape (n_particles, n_frames)
-        The raw data in the traditional shape.
-
-    tau_window : int
-        Length of the signal window - the analysis time resolution.
-
-    Returns
-    -------
-
-    reshaped_data : np.ndarray of shape (n_particles * n_windows, tau_window)
-        The raw data in the scikit-required shape.
-    """
-    n_particles = input_data.shape[0]
-    n_frames = input_data.shape[1]
-    n_windows = int(n_frames / tau_window)
-    frames_in_excess = n_frames - n_windows * tau_window
-
-    if frames_in_excess > 0:
-        reshaped_data = np.reshape(
-            input_data[:, :-frames_in_excess],
-            (n_particles * n_windows, tau_window),
-        )
-    else:
-        reshaped_data = np.reshape(
-            input_data,
-            (n_particles * n_windows, tau_window),
-        )
-
-    return reshaped_data
+def reshape_to_nt(
+    data: np.ndarray,
+    delta_t: int,
+    n_windows: int,
+) -> np.ndarray:
+    reshaped_data = data.reshape(
+        -1,
+        n_windows,
+        order='F',
+    )
+    return np.repeat(reshaped_data, repeats=delta_t, axis=1)
 
 
 def reshape_from_dnt(input_data: np.ndarray, tau_window: int) -> np.ndarray:
