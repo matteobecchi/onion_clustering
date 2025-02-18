@@ -53,7 +53,7 @@ def plot_output_uni(
     """
     palette = []
     cmap = plt.get_cmap(COLORMAP, len(state_list) + 1)
-    for i in range(1, cmap.N):
+    for i in range(0, cmap.N):
         rgba = cmap(i)
         palette.append(rgb2hex(rgba))
 
@@ -72,10 +72,9 @@ def plot_output_uni(
     step = 1
     if input_data.size > 1e6:
         step = int(input_data.size // 1e5)
-    for mol in input_data[::step]:
+    for particle in input_data[::step]:
         axes[0].plot(
-            # time,
-            mol,
+            particle,
             c="k",
             ms=0.1,
             lw=0.1,
@@ -92,7 +91,7 @@ def plot_output_uni(
     for i, particle in enumerate(reshaped_labels[:1]):
         for j, label in enumerate(particle):
             axes[0].plot(j, input_data[i][j], 'o',
-                color=palette[label], ms=2)
+                color=palette[label + 1], ms=2)
 
     # Histogram on the right panel
     flat_m = input_data.flatten()
@@ -107,10 +106,9 @@ def plot_output_uni(
         axes[1].plot(
             gaussian(np.linspace(bins[0], bins[-1], 1000), *popt),
             np.linspace(bins[0], bins[-1], 1000),
-            color=palette[state_id],
+            color=palette[state_id + 1],
         )
 
-    # Set plot titles and axis labels
     axes[0].set_ylabel("Signal")
     axes[0].set_xlabel(r"Time [frames]")
     axes[1].set_xlabel(r"Probability density")
@@ -143,7 +141,7 @@ def plot_one_trj_uni(
     """
     palette = []
     cmap = plt.get_cmap(COLORMAP, len(np.unique(labels)))
-    for i in range(1, cmap.N):
+    for i in range(0, cmap.N):
         rgba = cmap(i)
         palette.append(rgb2hex(rgba))
 
@@ -161,7 +159,7 @@ def plot_one_trj_uni(
     particle = reshaped_labels[example_id]
     for j, label in enumerate(particle):
         ax.plot(j, time_series[example_id][j], 'o',
-            color=palette[label], ms=2)
+            color=palette[label + 1], ms=2)
 
     ax.set_xlabel("Time [frames]")
     ax.set_ylabel("Signal")
