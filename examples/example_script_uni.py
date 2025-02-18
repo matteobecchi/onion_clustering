@@ -29,7 +29,7 @@ n_frames = input_data.shape[1]
 ### CLUSTERING WITH A SINGLE TIME RESOLUTION ###
 ### Chose the time resolution --> the length of the windows in which the
 ### time-series will be divided
-TAU_WINDOW = 5
+TAU_WINDOW = 4
 n_windows = int(n_frames / TAU_WINDOW)  # Number of windows
 
 ### The input array needs to be (n_particles * n_windows, TAU_WINDOW) because
@@ -44,10 +44,10 @@ state_list, labels = onion_uni(reshaped_data)
 plot_output_uni("output_uni/Fig1.png", input_data, state_list, labels, TAU_WINDOW)
 plot_one_trj_uni("output_uni/Fig2.png", input_data, labels, TAU_WINDOW, 0)
 plot_medoids_uni("output_uni/Fig3.png", reshaped_data, labels)
-plot_state_populations("output_uni/Fig4.png", n_windows, labels)
-plot_sankey("output_uni/Fig5.png", labels, n_windows, [10, 20, 30, 40])
+plot_state_populations("output_uni/Fig4.png", n_windows, TAU_WINDOW, labels)
+# plot_sankey("output_uni/Fig5.png", labels, n_windows, [10, 20, 30, 40])
 
-### CLUSTERING THE WHOLE RANGE OF TIME RESOLUTIONS ###
+# ### CLUSTERING THE WHOLE RANGE OF TIME RESOLUTIONS ###
 # TAU_WINDOWS = np.unique(np.geomspace(2, n_frames, num=20, dtype=int))
 
 # tra = np.zeros((len(TAU_WINDOWS), 3))  # List of number of states and
@@ -56,7 +56,7 @@ plot_sankey("output_uni/Fig5.png", labels, n_windows, [10, 20, 30, 40])
 
 # for i, tau_window in enumerate(TAU_WINDOWS):
 #     print(tau_window)
-#     reshaped_data = helpers.split_time_series(input_data, tau_window)
+#     reshaped_data = helpers.reshape_from_nt(input_data, tau_window)
 
 #     state_list, labels = onion_uni(reshaped_data)
 

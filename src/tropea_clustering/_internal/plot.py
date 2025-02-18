@@ -170,6 +170,7 @@ def plot_one_trj_uni(
 def plot_state_populations(
     title: str,
     n_windows: int,
+    delta_t: int,
     labels: np.ndarray,
 ):
     """
@@ -197,7 +198,7 @@ def plot_state_populations(
         The output of the clustering algorithm.
     """
     n_particles = int(labels.shape[0] / n_windows)
-    labels = np.reshape(labels, (n_particles, n_windows))
+    labels = reshape_to_nt(labels, delta_t, n_windows)
 
     unique_labels = np.unique(labels)
     if -1 not in unique_labels:
@@ -314,15 +315,15 @@ def plot_medoids_uni(
             c=palette[center_id + 1],
         )
 
-        for window in env0:
-            axes.plot(
-                time_seq,
-                window,
-                lw=0.1,
-                c=palette[0],
-                zorder=0,
-                alpha=0.2,
-            )
+    for window in env0:
+        axes.plot(
+            time_seq,
+            window,
+            lw=0.1,
+            c=palette[0],
+            zorder=0,
+            alpha=0.2,
+        )
 
     fig.suptitle("Average time sequence inside each environments")
     axes.set_xlabel(r"Time [frames]")
