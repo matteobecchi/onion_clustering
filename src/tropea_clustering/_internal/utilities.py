@@ -54,7 +54,7 @@ def reshape_to_nt(
     reshaped_data = data.reshape(
         -1,
         n_windows,
-        order='F',
+        order="F",
     )
     return np.repeat(reshaped_data, repeats=delta_t, axis=1)
 

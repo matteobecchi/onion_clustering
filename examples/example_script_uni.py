@@ -41,11 +41,17 @@ reshaped_data = helpers.reshape_from_nt(input_data, TAU_WINDOW)
 state_list, labels = onion_uni(reshaped_data)
 
 ### These functions are examples of how to visualize the results
-plot_output_uni("output_uni/Fig1.png", input_data, state_list, labels, TAU_WINDOW)
-plot_one_trj_uni("output_uni/Fig2.png", input_data, labels, TAU_WINDOW, 0)
-plot_medoids_uni("output_uni/Fig3.png", reshaped_data, labels)
-plot_state_populations("output_uni/Fig4.png", n_windows, TAU_WINDOW, labels)
-# plot_sankey("output_uni/Fig5.png", labels, n_windows, [10, 20, 30, 40])
+plot_output_uni(
+    TAU_WINDOW,
+    input_data,
+    labels,
+    state_list,
+    "output_uni/Fig1.png",
+)
+plot_one_trj_uni(TAU_WINDOW, 0, input_data, labels, "output_uni/Fig2.png")
+plot_medoids_uni(reshaped_data, labels, "output_uni/Fig3.png")
+plot_state_populations(TAU_WINDOW, labels, n_windows, "output_uni/Fig4.png")
+plot_sankey(labels, n_windows, "output_uni/Fig5.png", [10, 20, 30, 40])
 
 ### CLUSTERING THE WHOLE RANGE OF TIME RESOLUTIONS ###
 TAU_WINDOWS = np.unique(np.geomspace(2, n_frames, num=20, dtype=int))

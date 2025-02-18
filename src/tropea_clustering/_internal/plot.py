@@ -29,11 +29,11 @@ def color_palette(num_labels: int) -> List[str]:
 
 
 def plot_output_uni(
-    title: str,
-    input_data: np.ndarray,
-    state_list: List,
-    labels: np.ndarray,
     delta_t: int,
+    input_data: np.ndarray,
+    labels: np.ndarray,
+    state_list: List,
+    title: str,
 ):
     """Plots clustering output with Gaussians and threshols.
 
@@ -71,9 +71,6 @@ def plot_output_uni(
     )
 
     # Time-series on the left panel
-    n_frames = input_data.shape[1]
-    time = np.linspace(0, n_frames - 1, n_frames)
-
     step = 1
     if input_data.size > 1e6:
         step = int(input_data.size // 1e5)
@@ -95,8 +92,9 @@ def plot_output_uni(
 
     for i, particle in enumerate(reshaped_labels[:1]):
         for j, label in enumerate(particle):
-            axes[0].plot(j, input_data[i][j], 'o',
-                color=palette[label + 1], ms=2)
+            axes[0].plot(
+                j, input_data[i][j], "o", color=palette[label + 1], ms=2
+            )
 
     # Histogram on the right panel
     flat_m = input_data.flatten()
@@ -121,12 +119,12 @@ def plot_output_uni(
 
 
 def plot_one_trj_uni(
-    title: str,
-    time_series: np.ndarray,
-    labels: np.ndarray,
     delta_t: int,
     example_id: int,
-)->None:
+    input_data: np.ndarray,
+    labels: np.ndarray,
+    title: str,
+) -> None:
     """Plot clustering results.
 
     Parameters
@@ -148,19 +146,20 @@ def plot_one_trj_uni(
 
     fig, ax = plt.subplots()
 
-    particle = time_series[example_id]
-    ax.plot(particle, color='black', alpha=0.7, lw=1.0)
+    particle = input_data[example_id]
+    ax.plot(particle, color="black", alpha=0.7, lw=1.0)
 
     reshaped_labels = reshape_to_nt(
         labels,
         delta_t,
-        time_series.shape[1] // delta_t,
+        input_data.shape[1] // delta_t,
     )
 
     particle = reshaped_labels[example_id]
     for j, label in enumerate(particle):
-        ax.plot(j, time_series[example_id][j], 'o',
-            color=palette[label + 1], ms=2)
+        ax.plot(
+            j, input_data[example_id][j], "o", color=palette[label + 1], ms=2
+        )
 
     ax.set_xlabel("Time [frames]")
     ax.set_ylabel("Signal")
@@ -168,10 +167,10 @@ def plot_one_trj_uni(
 
 
 def plot_state_populations(
-    title: str,
-    n_windows: int,
     delta_t: int,
     labels: np.ndarray,
+    n_windows: int,
+    title: str,
 ):
     """
     Plot the populations of states over time.
@@ -224,9 +223,9 @@ def plot_state_populations(
 
 
 def plot_medoids_uni(
-    title: str,
     input_data: np.ndarray,
     labels: np.ndarray,
+    title: str,
 ):
     """
     Compute and plot the average signal sequence inside each state.
@@ -334,9 +333,9 @@ def plot_medoids_uni(
 
 
 def plot_sankey(
-    title: str,
     labels: np.ndarray,
     n_windows: int,
+    title: str,
     tmp_frame_list: list[int],
 ):
     """

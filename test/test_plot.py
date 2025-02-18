@@ -78,15 +78,23 @@ def test_output_files(original_wd: Path, temp_dir: Path):
     with tempfile.TemporaryDirectory() as _:
         state_list, labels = onion_uni(reshaped_data_uni)
 
+        time_series_x = np.array(random_walk_x)
+
         plot.plot_output_uni(
-            "tmp_fig.png", reshaped_data_uni, n_windows, state_list
+            TAU_WINDOW,
+            time_series_x,
+            labels,
+            state_list,
+            "tmp_fig.png",
         )
         plot.plot_one_trj_uni(
-            "tmp_fig.png", 0, reshaped_data_uni, labels, n_windows
+            TAU_WINDOW, 0, time_series_x, labels, "tmp_fig.png"
         )
-        plot.plot_medoids_uni("tmp_fig.png", reshaped_data_uni, labels)
-        plot.plot_state_populations("tmp_fig.png", n_windows, labels)
-        plot.plot_sankey("tmp_fig.png", labels, n_windows, [1, 3, 5, 7])
+        plot.plot_medoids_uni(reshaped_data_uni, labels, "tmp_fig.png")
+        plot.plot_state_populations(
+            TAU_WINDOW, labels, n_windows, "tmp_fig.png"
+        )
+        plot.plot_sankey(labels, n_windows, "tmp_fig.png", [1, 3, 5, 7])
 
         state_list, labels = onion_multi(reshaped_data_multi)
 

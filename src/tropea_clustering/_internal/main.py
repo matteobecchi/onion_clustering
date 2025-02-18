@@ -4,7 +4,12 @@ Author: Becchi Matteo <bechmath@gmail.com>
 Date: February 18, 2025
 """
 
-from typing import Any, List
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from numpy.typing import NDArray
+
+from typing import List
 
 import numpy as np
 from sklearn.mixture import GaussianMixture
@@ -13,7 +18,7 @@ from tropea_clustering._internal.first_classes import StateUni
 
 
 def find_optimal_gmm_dynamic(
-    windows: np.ndarray,
+    windows: NDArray[np.float64],
     threshold=0.01,
 ) -> tuple[int, list[float]]:
     """Dynamic optimization of the number of components based on BIC.
@@ -57,11 +62,11 @@ def find_optimal_gmm_dynamic(
 
 
 def assign_windows(
-    means: np.ndarray,
-    sigmas: np.ndarray,
-    windows: np.ndarray,
+    means: NDArray[np.float64],
+    sigmas: NDArray[np.float64],
+    windows: NDArray[np.float64],
     number_of_sigma: float,
-) -> np.ndarray:
+) -> NDArray[np.int64]:
     """Assign each signal window to its environment.
 
     Parameters
@@ -100,8 +105,8 @@ def assign_windows(
 
 def sort_states(
     state_list: List[StateUni],
-    labels: np.ndarray,
-) -> tuple[List[StateUni], np.ndarray[int, Any]]:
+    labels: NDArray[np.int64],
+) -> tuple[List[StateUni], NDArray[np.int64]]:
     """Sort states according to their mean."""
     sorted_list = sorted(state_list, key=lambda state: state.mean)
     sorted_indices = sorted(
@@ -117,9 +122,9 @@ def sort_states(
 
 
 def _onion_inner(
-    windows: np.ndarray,
+    windows: NDArray[np.float64],
     number_of_sigma: float,
-) -> tuple[List[StateUni], np.ndarray[int, Any]]:
+) -> tuple[List[StateUni], NDArray[np.int64]]:
     """Performs Onion CLustering with GMM implementation.
 
     Parameters
