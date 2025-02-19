@@ -4,6 +4,8 @@ Author: Becchi Matteo <bechmath@gmail.com>
 Date: February 18, 2025
 """
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -152,9 +154,9 @@ def _onion_inner(
     sigmas = np.array(
         [np.sqrt(np.trace(cov) / cov.shape[0]) for cov in gmm.covariances_]
     )
-    (means, sigmas) = zip(*sorted(zip(means, sigmas)))
-    means = np.asarray(means, dtype=np.float64)
-    sigmas = np.asarray(sigmas, dtype=np.float64)
+    (tmp_means, tmp_sigmas) = zip(*sorted(zip(means, sigmas)))
+    means = np.asarray(tmp_means, dtype=np.float64)
+    sigmas = np.asarray(tmp_sigmas, dtype=np.float64)
     g_param = np.array([means, sigmas, gmm.weights_]).T
 
     labels = assign_windows(means, sigmas, windows, number_of_sigma)
