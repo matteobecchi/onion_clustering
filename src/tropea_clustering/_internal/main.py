@@ -105,6 +105,17 @@ def assign_windows(
     return np.array(cluster_labels)
 
 
+def assign_env0_cluster(responsibilities, threshold=0.9):
+    """Points with responsibility lower than threshold in the ENV0 cluster."""
+    n_points = responsibilities.shape[0]
+    env0_labels = np.full(n_points, 0)
+    for i in range(n_points):
+        max_responsibility = np.max(responsibilities[i])
+        if max_responsibility < threshold:
+            env0_labels[i] = 1
+    return env0_labels
+
+
 def sort_states(
     state_list: List[StateUni],
     labels: NDArray[np.int64],
@@ -154,16 +165,18 @@ def _onion_inner(
     sigmas = np.array(
         [np.sqrt(np.trace(cov) / cov.shape[0]) for cov in gmm.covariances_]
     )
-    (tmp_means, tmp_sigmas) = zip(*sorted(zip(means, sigmas)))
-    means = np.asarray(tmp_means, dtype=np.float64)
-    sigmas = np.asarray(tmp_sigmas, dtype=np.float64)
-    g_param = np.array([means, sigmas, gmm.weights_]).T
+    g_param = np.transpose([means, sigmas, gmm.weights_])
 
-    labels = assign_windows(means, sigmas, windows, number_of_sigma)
+    responsibilities = gmm.predict_proba(windows)
+    labels = gmm.predict(windows)
+    env0_labels = assign_env0_cluster(responsibilities, threshold=0.7)
+    labels[env0_labels == 1] = -1
+
+    # labels = assign_windows(means, sigmas, windows, number_of_sigma)
 
     state_list = [StateUni(*elem) for elem in g_param]
 
-    # state_list, labels = sort_states(state_list, labels)
+    state_list, labels = sort_states(state_list, labels)
 
     for label in np.unique(labels):
         if label > -1:

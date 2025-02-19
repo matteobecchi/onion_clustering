@@ -15,7 +15,7 @@ from tropea_clustering._internal.main import _onion_inner
 def onion_uni(
     X: np.ndarray,
     bins: Union[str, int] = "auto",
-    number_of_sigmas: float = 2.0,
+    number_of_sigmas: float = 3.0,
 ):
     """
     Performs onion clustering on the data array 'X'.
@@ -80,7 +80,6 @@ def onion_uni(
     """
 
     est = OnionUni(
-        bins=bins,
         number_of_sigmas=number_of_sigmas,
     )
     est.fit(X)
@@ -153,10 +152,8 @@ class OnionUni(BaseEstimator, ClusterMixin):
 
     def __init__(
         self,
-        bins: Union[str, int] = "auto",
-        number_of_sigmas: float = 2.0,
+        number_of_sigmas: float = 3.0,
     ):
-        self.bins = bins
         self.number_of_sigmas = number_of_sigmas
 
     def fit(self, X, y=None):
@@ -219,7 +216,6 @@ class OnionUni(BaseEstimator, ClusterMixin):
 
     def get_params(self, deep=True):
         return {
-            "bins": self.bins,
             "number_of_sigmas": self.number_of_sigmas,
         }
 

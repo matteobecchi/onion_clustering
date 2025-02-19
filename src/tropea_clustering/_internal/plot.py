@@ -142,7 +142,10 @@ def plot_one_trj_uni(
 
     example_id: int
     """
-    palette = color_palette(len(np.unique(labels)))
+    unique_labels = np.unique(labels)
+    if -1 not in unique_labels:
+        unique_labels = np.insert(unique_labels, 0, -1)
+    palette = color_palette(unique_labels.size)
 
     fig, ax = plt.subplots()
 

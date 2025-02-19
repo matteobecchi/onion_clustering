@@ -1,6 +1,8 @@
-"""Example script for running onion_uni."""
+"""Example script for running onion_uni.
 
-# Author: Becchi Matteo <bechmath@gmail.com>
+* Author: Matteo Becchi <bechmath@gmail.com>
+* Date: February 19, 2025
+"""
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,7 +13,6 @@ from tropea_clustering.plot import (
     plot_one_trj_uni,
     plot_output_uni,
     plot_pop_fractions,
-    plot_sankey,
     plot_state_populations,
     plot_time_res_analysis,
 )
@@ -51,7 +52,7 @@ plot_output_uni(
 plot_one_trj_uni(TAU_WINDOW, 0, input_data, labels, "output_uni/Fig2.png")
 plot_medoids_uni(reshaped_data, labels, "output_uni/Fig3.png")
 plot_state_populations(TAU_WINDOW, labels, n_windows, "output_uni/Fig4.png")
-plot_sankey(labels, n_windows, "output_uni/Fig5.png", [10, 20, 30, 40])
+# plot_sankey(labels, n_windows, "output_uni/Fig5.png", [10, 20, 30, 40])
 
 ### CLUSTERING THE WHOLE RANGE OF TIME RESOLUTIONS ###
 TAU_WINDOWS = np.unique(np.geomspace(2, n_frames, num=20, dtype=int))
@@ -61,6 +62,7 @@ tra = np.zeros((len(TAU_WINDOWS), 3))  # List of number of states and
 list_of_pop = []  # List of the states' population for each tau_window
 
 for i, tau_window in enumerate(TAU_WINDOWS):
+    print(tau_window)
     reshaped_data = helpers.reshape_from_nt(input_data, tau_window)
 
     state_list, labels = onion_uni(reshaped_data)
