@@ -19,7 +19,7 @@ from sklearn.mixture import GaussianMixture
 from tropea_clustering._internal.first_classes import StateUni
 
 
-def find_optimal_gmm_dynamic(
+def _find_optimal_gmm_dynamic(
     windows: NDArray[np.float64],
     threshold=0.01,
 ) -> tuple[int, list[float]]:
@@ -63,7 +63,7 @@ def find_optimal_gmm_dynamic(
     return optimal_k, bic_scores
 
 
-def assign_env0_cluster(responsibilities, threshold):
+def _assign_env0_cluster(responsibilities, threshold):
     """Points with responsibility lower than threshold in the ENV0 cluster."""
     n_points = responsibilities.shape[0]
     env0_labels = np.full(n_points, 0)
@@ -74,7 +74,7 @@ def assign_env0_cluster(responsibilities, threshold):
     return env0_labels
 
 
-def sort_states(
+def _sort_states(
     state_list: List[StateUni],
     labels: NDArray[np.int64],
 ) -> tuple[List[StateUni], NDArray[np.int64]]:
@@ -113,7 +113,7 @@ def _onion_inner(
         - Array with cluster labels
     """
 
-    optimal_k, _ = find_optimal_gmm_dynamic(windows)
+    optimal_k, _ = _find_optimal_gmm_dynamic(windows)
     gmm = GaussianMixture(
         n_components=optimal_k, covariance_type="full", random_state=42
     )
@@ -127,14 +127,14 @@ def _onion_inner(
 
     responsibilities = gmm.predict_proba(windows)
     labels = gmm.predict(windows)
-    env0_labels = assign_env0_cluster(responsibilities, threshold=resp_th)
+    env0_labels = _assign_env0_cluster(responsibilities, threshold=resp_th)
     labels[env0_labels == 1] = -1
 
     # labels = assign_windows(means, sigmas, windows, number_of_sigma)
 
     state_list = [StateUni(*elem) for elem in g_param]
 
-    state_list, labels = sort_states(state_list, labels)
+    state_list, labels = _sort_states(state_list, labels)
 
     for label in np.unique(labels):
         if label > -1:
