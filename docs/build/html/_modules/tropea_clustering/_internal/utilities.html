@@ -6,7 +6,7 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>tropea_clustering._internal.utilities - onion-clustering documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
@@ -209,6 +209,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/tropea_clustering.helpers.html">tropea_clustering.helpers</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of tropea_clustering.helpers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/tropea_clustering.helpers.reshape_from_dnt.html">tropea_clustering.helpers.reshape_from_dnt</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/tropea_clustering.helpers.reshape_from_nt.html">tropea_clustering.helpers.reshape_from_nt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/tropea_clustering.helpers.reshape_to_nt.html">tropea_clustering.helpers.reshape_to_nt</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.html">tropea_clustering.plot</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of tropea_clustering.plot</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -230,6 +231,7 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../_autosummary/tropea_clustering.helpers.html">tropea_clustering.helpers</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of tropea_clustering.helpers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/tropea_clustering.helpers.reshape_from_dnt.html">tropea_clustering.helpers.reshape_from_dnt</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/tropea_clustering.helpers.reshape_from_nt.html">tropea_clustering.helpers.reshape_from_nt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/tropea_clustering.helpers.reshape_to_nt.html">tropea_clustering.helpers.reshape_to_nt</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.html">tropea_clustering.plot</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of tropea_clustering.plot</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -292,57 +294,72 @@
 
 <span class="c1"># Author: Becchi Matteo &lt;bechmath@gmail.com&gt;</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">scipy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy</span>
 
 
 <div class="viewcode-block" id="reshape_from_nt">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.helpers.reshape_from_nt.html#tropea_clustering.helpers.reshape_from_nt">[docs]</a>
-<span class="k">def</span> <span class="nf">reshape_from_nt</span><span class="p">(</span><span class="n">input_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tau_window</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Reshapes the input data from traditional from scikit format.</span>
-
-<span class="sd">    Takes the data array in the (n_particles, n_frames) format and</span>
-<span class="sd">    reshapes it in the format required by scikit-learn.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">reshape_from_nt</span><span class="p">(</span>
+    <span class="n">time_series</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">delta_t</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Split time-series into non-overlapping windows.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
+<span class="sd">    time_series : np.ndarray</span>
+<span class="sd">        The dataset.</span>
 
-<span class="sd">    input_data : np.ndarray of shape (n_particles, n_frames)</span>
-<span class="sd">        The raw data in the traditional shape.</span>
-
-<span class="sd">    tau_window : int</span>
-<span class="sd">        Length of the signal window - the analysis time resolution.</span>
+<span class="sd">    delta_t : int</span>
+<span class="sd">        Length of the windows in which the signals will be split.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-
-<span class="sd">    reshaped_data : np.ndarray of shape (n_particles * n_windows, tau_window)</span>
-<span class="sd">        The raw data in the scikit-required shape.</span>
+<span class="sd">    windows : np.ndarray</span>
+<span class="sd">        List of signal windows.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">n_particles</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">n_frames</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">n_windows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_frames</span> <span class="o">/</span> <span class="n">tau_window</span><span class="p">)</span>
-    <span class="n">frames_in_excess</span> <span class="o">=</span> <span class="n">n_frames</span> <span class="o">-</span> <span class="n">n_windows</span> <span class="o">*</span> <span class="n">tau_window</span>
-
-    <span class="k">if</span> <span class="n">frames_in_excess</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">reshaped_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
-            <span class="n">input_data</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="n">frames_in_excess</span><span class="p">],</span>
-            <span class="p">(</span><span class="n">n_particles</span> <span class="o">*</span> <span class="n">n_windows</span><span class="p">,</span> <span class="n">tau_window</span><span class="p">),</span>
+    <span class="k">if</span> <span class="n">time_series</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">n_windows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_series</span><span class="p">)</span> <span class="o">//</span> <span class="n">delta_t</span>
+        <span class="n">windows</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">time_series</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">delta_t</span> <span class="p">:</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">delta_t</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_windows</span><span class="p">)</span>
+            <span class="p">]</span>
         <span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">reshaped_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
-            <span class="n">input_data</span><span class="p">,</span>
-            <span class="p">(</span><span class="n">n_particles</span> <span class="o">*</span> <span class="n">n_windows</span><span class="p">,</span> <span class="n">tau_window</span><span class="p">),</span>
-        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">windows</span>
 
-    <span class="k">return</span> <span class="n">reshaped_data</span></div>
+    <span class="n">n_windows</span> <span class="o">=</span> <span class="n">time_series</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="n">delta_t</span>
+    <span class="n">windows</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">particle</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">delta_t</span> <span class="p">:</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">delta_t</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_windows</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">particle</span> <span class="ow">in</span> <span class="n">time_series</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">windows</span></div>
+
+
+
+<div class="viewcode-block" id="reshape_to_nt">
+<a class="viewcode-back" href="../../../_autosummary/tropea_clustering.helpers.reshape_to_nt.html#tropea_clustering.helpers.reshape_to_nt">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">reshape_to_nt</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">delta_t</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">n_windows</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="n">reshaped_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+        <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">n_windows</span><span class="p">,</span>
+        <span class="n">order</span><span class="o">=</span><span class="s2">&quot;F&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">reshaped_data</span><span class="p">,</span> <span class="n">repeats</span><span class="o">=</span><span class="n">delta_t</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="reshape_from_dnt">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.helpers.reshape_from_dnt.html#tropea_clustering.helpers.reshape_from_dnt">[docs]</a>
-<span class="k">def</span> <span class="nf">reshape_from_dnt</span><span class="p">(</span><span class="n">input_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tau_window</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">reshape_from_dnt</span><span class="p">(</span><span class="n">input_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tau_window</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reshapes the input data from traditional from scikit format.</span>
 
@@ -380,7 +397,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">butter_lowpass_filter</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">butter_lowpass_filter</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
     <span class="n">nyq</span> <span class="o">=</span> <span class="mf">0.5</span>
     <span class="n">normal_cutoff</span> <span class="o">=</span> <span class="n">cutoff</span> <span class="o">/</span> <span class="n">nyq</span>
     <span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">butter</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">normal_cutoff</span><span class="p">,</span> <span class="n">btype</span><span class="o">=</span><span class="s2">&quot;low&quot;</span><span class="p">,</span> <span class="n">analog</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -388,7 +405,7 @@
     <span class="k">return</span> <span class="n">y</span>
 
 
-<span class="k">def</span> <span class="nf">Savgol_filter</span><span class="p">(</span><span class="n">m</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">Savgol_filter</span><span class="p">(</span><span class="n">m</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
     <span class="c1"># Step 1: Set the polynomial order for the Savitzky-Golay filter.</span>
     <span class="n">poly_order</span> <span class="o">=</span> <span class="mi">2</span>
 
@@ -406,7 +423,7 @@
     <span class="k">return</span> <span class="n">tmp</span><span class="p">[:,</span> <span class="nb">int</span><span class="p">(</span><span class="n">window</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="p">:</span> <span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="n">window</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)]</span>
 
 
-<span class="k">def</span> <span class="nf">normalize_array</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize_array</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
     <span class="c1"># Step 1: Calculate the mean value and the standard deviation of the input array &#39;x&#39;.</span>
     <span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="n">stddev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -424,11 +441,11 @@
     <span class="k">return</span> <span class="n">tmp</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">stddev</span>
 
 
-<span class="k">def</span> <span class="nf">sigmoidal</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sigmoidal</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">b</span> <span class="o">+</span> <span class="n">a</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">gaussian_2d</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">gaussian_2d</span><span class="p">(</span>
     <span class="n">r_points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">x_mean</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">y_mean</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -464,7 +481,7 @@
     <span class="k">return</span> <span class="n">gauss</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
 
 
-<span class="k">def</span> <span class="nf">gaussian_full</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">gaussian_full</span><span class="p">(</span>
     <span class="n">r</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">mx</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">my</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -493,7 +510,7 @@
     <span class="k">return</span> <span class="n">gauss</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
 
 
-<span class="k">def</span> <span class="nf">fit_2D</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">fit_2D</span><span class="p">(</span>
     <span class="n">max_ind</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
     <span class="n">minima</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
     <span class="n">xedges</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>

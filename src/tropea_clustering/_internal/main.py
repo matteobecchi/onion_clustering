@@ -1,7 +1,7 @@
 """Code for clustering of univariate time-series data.
 
-Author: Becchi Matteo <bechmath@gmail.com>
-Date: February 18, 2025
+* Author: Becchi Matteo <bechmath@gmail.com>
+* Date: February 18, 2025
 """
 
 from __future__ import annotations
@@ -63,49 +63,7 @@ def find_optimal_gmm_dynamic(
     return optimal_k, bic_scores
 
 
-def assign_windows(
-    means: NDArray[np.float64],
-    sigmas: NDArray[np.float64],
-    windows: NDArray[np.float64],
-    number_of_sigma: float,
-) -> NDArray[np.int64]:
-    """Assign each signal window to its environment.
-
-    Parameters
-    ----------
-    means : np.ndarray of shape (n_clusters,)
-        Mean value of each cluster.
-
-    sigmas : np.ndarray of shape (n_clusters,)
-        Standard deviation of each cluster.
-
-     windows : np.ndarray
-        List of signal windows.
-
-    number_of_sigma : float
-        Number of standard deviations for the range check.
-
-    Returns
-    -------
-    cluster_labels : np.ndarray of shape (n_windows,)
-        Label for each window. Unclassified windows are labelled -1.
-    """
-    means = means[:, None, None]  # Shape: (n_clusters, 1, 1)
-    sigmas = sigmas[:, None, None]  # Shape: (n_clusters, 1, 1)
-
-    lower_bounds = means - number_of_sigma * sigmas
-    upper_bounds = means + number_of_sigma * sigmas
-
-    windows = windows[None, :, :]  # Shape: (1, n_windows, window_length)
-    within_bounds = (windows >= lower_bounds) & (windows <= upper_bounds)
-    fully_contained = np.all(within_bounds, axis=2)
-    cluster_labels = np.argmax(fully_contained, axis=0)
-    cluster_labels[~np.any(fully_contained, axis=0)] = -1
-
-    return np.array(cluster_labels)
-
-
-def assign_env0_cluster(responsibilities, threshold=0.9):
+def assign_env0_cluster(responsibilities, threshold):
     """Points with responsibility lower than threshold in the ENV0 cluster."""
     n_points = responsibilities.shape[0]
     env0_labels = np.full(n_points, 0)
@@ -136,7 +94,7 @@ def sort_states(
 
 def _onion_inner(
     windows: NDArray[np.float64],
-    number_of_sigma: float,
+    resp_th: float,
 ) -> tuple[List[StateUni], NDArray[np.int64]]:
     """Performs Onion CLustering with GMM implementation.
 
@@ -145,7 +103,7 @@ def _onion_inner(
     time_series : np.ndarray of shape (n_particles, n_frames)
         The signals to be clustered.
 
-    number_of_sigma : float
+    resp_th : float
         Sets the threshold for assigning the windows to a state.
 
     Returns
@@ -169,7 +127,7 @@ def _onion_inner(
 
     responsibilities = gmm.predict_proba(windows)
     labels = gmm.predict(windows)
-    env0_labels = assign_env0_cluster(responsibilities, threshold=0.7)
+    env0_labels = assign_env0_cluster(responsibilities, threshold=resp_th)
     labels[env0_labels == 1] = -1
 
     # labels = assign_windows(means, sigmas, windows, number_of_sigma)

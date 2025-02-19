@@ -1,9 +1,8 @@
-"""onion-clustering for univariate time-series."""
+"""onion-clustering for univariate time-series.
 
-# Author: Becchi Matteo <bechmath@gmail.com>
-# Reference: https://www.pnas.org/doi/abs/10.1073/pnas.2403771121
-
-from typing import Union
+* Author: Becchi Matteo <bechmath@gmail.com>
+* Reference: https://www.pnas.org/doi/abs/10.1073/pnas.2403771121
+"""
 
 import numpy as np
 from sklearn.base import BaseEstimator, ClusterMixin
@@ -14,8 +13,7 @@ from tropea_clustering._internal.main import _onion_inner
 
 def onion_uni(
     X: np.ndarray,
-    bins: Union[str, int] = "auto",
-    number_of_sigmas: float = 3.0,
+    resp_th: float = 0.7,
 ):
     """
     Performs onion clustering on the data array 'X'.
@@ -26,16 +24,10 @@ def onion_uni(
         The raw data. Notice that each signal window is considered as a
         single data point.
 
-    bins : int, default="auto"
-        The number of bins used for the construction of the histograms.
-        Can be an integer value, or "auto".
-        If "auto", the default of numpy.histogram_bin_edges is used
-        (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
-
-    number_of_sigmas : float, default=2.0
+    resp_th : float, default=0.7
         Sets the thresholds for classifing a signal window inside a state:
-        the window is contained in the state if it is entirely contained
-        inside number_of_sigmas * state.sigmas times from state.mean.
+        the window is contained in the state if its responsability in the
+        GMM is higher than resp_th.
 
     Returns
     -------
@@ -80,7 +72,7 @@ def onion_uni(
     """
 
     est = OnionUni(
-        number_of_sigmas=number_of_sigmas,
+        resp_th=resp_th,
     )
     est.fit(X)
 
@@ -93,16 +85,10 @@ class OnionUni(BaseEstimator, ClusterMixin):
 
     Parameters
     ----------
-    bins : int, default="auto"
-        The number of bins used for the construction of the histograms.
-        Can be an integer value, or "auto".
-        If "auto", the default of numpy.histogram_bin_edges is used
-        (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
-
-    number_of_sigmas : float, default=2.0
+    resp_th : float, default=0.7
         Sets the thresholds for classifing a signal window inside a state:
-        the window is contained in the state if it is entirely contained
-        inside number_of_sigmas * state.sigmas times from state.mean.
+        the window is contained in the state if its responsability in the
+        GMM is higher than resp_th.
 
     Attributes
     ----------
@@ -152,9 +138,9 @@ class OnionUni(BaseEstimator, ClusterMixin):
 
     def __init__(
         self,
-        number_of_sigmas: float = 3.0,
+        resp_th: float = 0.7,
     ):
-        self.number_of_sigmas = number_of_sigmas
+        self.resp_th = resp_th
 
     def fit(self, X, y=None):
         """Performs onion clustering on the data array 'X'.
@@ -192,7 +178,7 @@ class OnionUni(BaseEstimator, ClusterMixin):
 
         self.state_list_, self.labels_ = _onion_inner(
             X,
-            self.number_of_sigmas,
+            self.resp_th,
         )
 
         return self
@@ -216,7 +202,7 @@ class OnionUni(BaseEstimator, ClusterMixin):
 
     def get_params(self, deep=True):
         return {
-            "number_of_sigmas": self.number_of_sigmas,
+            "resp_th": self.resp_th,
         }
 
     def set_params(self, **params):

@@ -1,4 +1,4 @@
-﻿tropea\_clustering.helpers
+tropea\_clustering.helpers
 ==========================
 
 .. automodule:: tropea_clustering.helpers

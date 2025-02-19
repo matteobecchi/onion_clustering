@@ -27,7 +27,6 @@
       ~StateUni.mean
       ~StateUni.sigma
       ~StateUni.area
-      ~StateUni.r_2
       ~StateUni.peak
       ~StateUni.th_inf
       ~StateUni.th_sup
