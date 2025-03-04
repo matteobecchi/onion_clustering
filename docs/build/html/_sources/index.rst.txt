@@ -58,7 +58,7 @@ Acknowledgements
 
 We developed this code when working in the Pavan group, https://www.gmpavanlab.com/. Thanks to Andrew Tarzia for all the help with the code formatting and documentation, and to Domiziano Doria, Chiara Lionello and Simone Martino for the beta-testing. 
 
-The work was funded by the European Union and ERC under projects DYNAPOL and the NextGenerationEU project, CAGEX. 
+The work was funded by the European Union and ERC under projects DYNAPOL and the NextGenerationEU project. 
 
 
 Indices and tables
