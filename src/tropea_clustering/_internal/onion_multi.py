@@ -6,26 +6,35 @@
 from typing import Union
 
 import numpy as np
+from numpy.typing import NDArray
 from sklearn.base import BaseEstimator, ClusterMixin
 from sklearn.utils.validation import validate_data
 
+from tropea_clustering._internal.main_2d import StateMulti
 from tropea_clustering._internal.main_2d import _main as _onion_inner
 
 
 def onion_multi(
-    X: np.ndarray,
+    X: NDArray[np.float64],
     ndims: int = 2,
     bins: Union[str, int] = "auto",
     number_of_sigmas: float = 2.0,
-):
+) -> tuple[list[StateMulti], NDArray[np.int64]]:
     """
     Performs onion clustering on the data array 'X'.
 
+    Returns an array of integer labels, one for each signal sequence.
+    Unclassified sequences are labelled "-1".
+
     Parameters
     ----------
-    X : ndarray of shape (n_particles * n_windows, tau_window * n_features)
-        The raw data. Notice that each signal window is considered as a
+    X : ndarray of shape (n_particles * n_seq, delta_t * n_features)
+        The data to cluster. Each signal sequence is considered as a
         single data point.
+
+    ndims : int, default = 2
+        The number of features (dimensions) of the dataset. It can be
+        either 2 or 3.
 
     bins : int, default="auto"
         The number of bins used for the construction of the histograms.
@@ -34,8 +43,8 @@ def onion_multi(
         (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
 
     number_of_sigmas : float, default=2.0
-        Sets the thresholds for classifing a signal window inside a state:
-        the window is contained in the state if it is entirely contained
+        Sets the thresholds for classifing a signal sequence inside a state:
+        the sequence is contained in the state if it is entirely contained
         inside number_of_sigmas * state.sigmas times from state.mean.
 
     Returns
@@ -44,9 +53,9 @@ def onion_multi(
         The list of the identified states.Refer to the documentation of
         StateMulti for accessing the information on the states.
 
-    labels : ndarray of shape (n_particles * n_windows,)
-        Cluster labels for each signal window. Unclassified points are given
-        the label -1.
+    labels : ndarray of shape (n_particles * n_seq,)
+        Cluster labels for each signal sequence. Unclassified points are given
+        the label "-1".
 
     Example
     -------
@@ -57,7 +66,7 @@ def onion_multi(
         from tropea_clustering import onion_multi, helpers
 
         # Select time resolution
-        tau_window = 2
+        delta_t = 2
 
         # Create random input data
         np.random.seed(1234)
@@ -68,7 +77,7 @@ def onion_multi(
         input_data = np.random.rand(n_features, n_particles, n_steps)
 
         # Create input array with the correct shape
-        reshaped_input_data = helpers.reshape_from_dnt(input_data, tau_window)
+        reshaped_input_data = helpers.reshape_from_dnt(input_data, delta_t)
 
         # Run Onion Clustering
         state_list, labels = onion_multi(reshaped_input_data)
@@ -92,8 +101,15 @@ class OnionMulti(BaseEstimator, ClusterMixin):
     """
     Performs onion clustering on a data array.
 
+    Returns an array of integer labels, one for each signal sequence.
+    Unclassified sequences are labelled "-1".
+
     Parameters
     ----------
+    ndims : int, default = 2
+        The number of features (dimensions) of the dataset. It can be
+        either 2 or 3.
+
     bins : int, default="auto"
         The number of bins used for the construction of the histograms.
         Can be an integer value, or "auto".
@@ -101,8 +117,8 @@ class OnionMulti(BaseEstimator, ClusterMixin):
         (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
 
     number_of_sigmas : float, default=2.0
-        Sets the thresholds for classifing a signal window inside a state:
-        the window is contained in the state if it is entirely contained
+        Sets the thresholds for classifing a signal sequence inside a state:
+        the sequence is contained in the state if it is entirely contained
         inside number_of_sigma * state.sigms times from state.mean.
 
     Attributes
@@ -110,9 +126,9 @@ class OnionMulti(BaseEstimator, ClusterMixin):
     state_list_ : List[StateMulti]
         List of the identified states.
 
-    labels_: ndarray of shape (n_particles * n_windows,)
+    labels_: ndarray of shape (n_particles * n_seq,)
         Cluster labels for each point. Unclassified points are given
-        the label -1.
+        the label "-1".
 
     Example
     -------
@@ -123,7 +139,7 @@ class OnionMulti(BaseEstimator, ClusterMixin):
         from tropea_clustering import OnionMulti, helpers
 
         # Select time resolution
-        tau_window = 2
+        delta_t = 2
 
         # Create random input data
         np.random.seed(1234)
@@ -134,7 +150,7 @@ class OnionMulti(BaseEstimator, ClusterMixin):
         input_data = np.random.rand(n_features, n_particles, n_steps)
 
         # Create input array with the correct shape
-        reshaped_input_data = helpers.reshape_from_dnt(input_data, tau_window)
+        reshaped_input_data = helpers.reshape_from_dnt(input_data, delta_t)
 
         # Run Onion Clustering
         clusterer = OnionMulti()
@@ -164,8 +180,8 @@ class OnionMulti(BaseEstimator, ClusterMixin):
 
         Parameters
         ----------
-        X : ndarray of shape (n_particles * n_windows, tau_window * n_features)
-            The raw data. Notice that each signal window is considered as a
+        X : ndarray of shape (n_particles * n_seq, delta_t * n_features)
+            The data to cluster. Each signal sequence is considered as a
             single data point.
 
         Returns
@@ -210,15 +226,15 @@ class OnionMulti(BaseEstimator, ClusterMixin):
 
         Parameters
         ----------
-        X : ndarray of shape (n_particles * n_windows, tau_window * n_features)
-            The raw data. Notice that each signal window is considered as a
+        X : ndarray of shape (n_particles * n_seq, delta_t * n_features)
+            The data to cluster. Each signal sequence is considered as a
             single data point.
 
         Returns
         -------
-        labels_: ndarray of shape (n_particles * n_windows,)
+        labels_: ndarray of shape (n_particles * n_seq,)
             Cluster labels for each point. Unclassified points are given
-            the label -1.
+            the label "-1".
         """
         return self.fit(X).labels_
 

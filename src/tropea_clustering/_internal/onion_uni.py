@@ -28,7 +28,7 @@ def onion_uni(
     Parameters
     ----------
     X : ndarray of shape (n_particles * n_seq, delta_t)
-        The data to cluster. Each signal window is considered as a
+        The data to cluster. Each signal sequence is considered as a
         single data point.
 
     bins : int, default="auto"
@@ -38,7 +38,7 @@ def onion_uni(
         (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
 
     number_of_sigmas : float, default=2.0
-        Sets the thresholds for classifing a signal window inside a state:
+        Sets the thresholds for classifing a signal sequence inside a state:
         the sequence is contained in the state if it is entirely contained
         inside number_of_sigmas * state.sigmas times from state.mean.
 
@@ -173,7 +173,7 @@ class OnionUni(BaseEstimator, ClusterMixin):
         Parameters
         ----------
         X : ndarray of shape (n_particles * n_seq, delta_t)
-            The raw data. Notice that each signal sequence is considered as a
+            The data to cluster. Each signal sequence is considered as a
             single data point.
 
         Returns
@@ -218,14 +218,14 @@ class OnionUni(BaseEstimator, ClusterMixin):
         Parameters
         ----------
         X : ndarray of shape (n_particles * n_seq, delta_t)
-            The raw data. Notice that each signal window is considered as a
+            The data to cluster. Each signal sequence is considered as a
             single data point.
 
         Returns
         -------
         labels_: ndarray of shape (n_particles * n_seq,)
-            Cluster labels for signal window. Unclassified points are given
-            the label -1.
+            Cluster labels for signal sequence. Unclassified points are given
+            the label "-1".
         """
         return self.fit(X).labels_
 
