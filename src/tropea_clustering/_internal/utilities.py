@@ -4,75 +4,84 @@
 
 import numpy as np
 import scipy
+from numpy.typing import NDArray
 
 
-def reshape_from_nt(input_data: np.ndarray, tau_window: int) -> np.ndarray:
+def reshape_from_nt(
+    input_data: NDArray[np.float64],
+    delta_t: int,
+) -> NDArray[np.float64]:
     """
-    Reshapes the input data from traditional from scikit format.
+    Reshapes the input data from traditional to scikit format.
 
-    Takes the data array in the (n_particles, n_frames) format and
-    reshapes it in the format required by scikit-learn.
+    Takes the array containing the univariate time-series data in the
+    (n_particles, n_frames) format and reshapes it in the format required
+    by scikit-learn (-1, delta_t).
 
     Parameters
     ----------
 
     input_data : np.ndarray of shape (n_particles, n_frames)
-        The raw data in the traditional shape.
+        The data to cluster in the traditional shape.
 
-    tau_window : int
-        Length of the signal window - the analysis time resolution.
+    delta_t : int
+        Length of the signal sequence - the analysis time resolution.
 
     Returns
     -------
 
-    reshaped_data : np.ndarray of shape (n_particles * n_windows, tau_window)
-        The raw data in the scikit-required shape.
+    reshaped_data : np.ndarray of shape (n_particles * n_windows, delta_t)
+        The data to cluster in the scikit-required shape.
     """
     n_particles = input_data.shape[0]
     n_frames = input_data.shape[1]
-    n_windows = int(n_frames / tau_window)
-    frames_in_excess = n_frames - n_windows * tau_window
+    n_windows = int(n_frames / delta_t)
+    frames_in_excess = n_frames - n_windows * delta_t
 
     if frames_in_excess > 0:
         reshaped_data = np.reshape(
             input_data[:, :-frames_in_excess],
-            (n_particles * n_windows, tau_window),
+            (n_particles * n_windows, delta_t),
         )
     else:
         reshaped_data = np.reshape(
             input_data,
-            (n_particles * n_windows, tau_window),
+            (n_particles * n_windows, delta_t),
         )
 
     return reshaped_data
 
 
-def reshape_from_dnt(input_data: np.ndarray, tau_window: int) -> np.ndarray:
+def reshape_from_dnt(
+    input_data: NDArray[np.float64],
+    delta_t: int,
+) -> NDArray[np.float64]:
     """
     Reshapes the input data from traditional from scikit format.
 
-    Takes the data array in the (n_dims, n_particles, n_frames) format and
-    reshapes it in the format required by scikit-learn.
+    Takes the array containing the univariate time-series data in the
+    (n_dims, n_particles, n_frames) format and reshapes it in the format
+    required by scikit-learn (-1, delta_t * n_dims).
 
     Parameters
     ----------
 
     input_data : np.ndarray of shape (n_dims, n_particles, n_frames)
-        The raw data in the traditional shape.
+        The data to cluster in the traditional shape.
 
-    tau_window : int
-        Length of the signal window - the analysis time resolution.
+    delta_t : int
+        Length of the signal sequence - the analysis time resolution.
 
     Returns
     -------
 
-    reshaped_data : np.ndarray of shape (n_particles * n_windows, tau_window * n_dim)
-        The raw data in the scikit-required shape.
+    reshaped_data : np.ndarray of shape (n_particles * n_windows, delta_t * n_dim)
+        The data to cluster in the scikit-required shape.
     """
     n_particles = input_data.shape[1]
     n_frames = input_data.shape[2]
-    n_windows = int(n_frames / tau_window)
-    frames_in_excess = n_frames - n_windows * tau_window
+    n_windows = int(n_frames / delta_t)
+    frames_in_excess = n_frames - n_windows * delta_t
 
     if frames_in_excess > 0:
         reshaped_data = np.reshape(
