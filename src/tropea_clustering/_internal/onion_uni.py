@@ -6,24 +6,29 @@
 from typing import Union
 
 import numpy as np
+from numpy.typing import NDArray
 from sklearn.base import BaseEstimator, ClusterMixin
 from sklearn.utils.validation import validate_data
 
+from tropea_clustering._internal.main import StateUni
 from tropea_clustering._internal.main import _main as _onion_inner
 
 
 def onion_uni(
-    X: np.ndarray,
+    X: NDArray[np.float64],
     bins: Union[str, int] = "auto",
     number_of_sigmas: float = 2.0,
-):
+) -> tuple[list[StateUni], NDArray[np.int64]]:
     """
     Performs onion clustering on the data array 'X'.
 
+    Returns an array of integer labels, one for each signal sequence.
+    Unclassified sequences are labelled "-1".
+
     Parameters
     ----------
-    X : ndarray of shape (n_particles * n_windows, tau_window)
-        The raw data. Notice that each signal window is considered as a
+    X : ndarray of shape (n_particles * n_seq, delta_t)
+        The data to cluster. Each signal window is considered as a
         single data point.
 
     bins : int, default="auto"
@@ -34,7 +39,7 @@ def onion_uni(
 
     number_of_sigmas : float, default=2.0
         Sets the thresholds for classifing a signal window inside a state:
-        the window is contained in the state if it is entirely contained
+        the sequence is contained in the state if it is entirely contained
         inside number_of_sigmas * state.sigmas times from state.mean.
 
     Returns
@@ -43,9 +48,9 @@ def onion_uni(
         The list of the identified states. Refer to the documentation of
         StateUni for accessing the information on the states.
 
-    labels : ndarray of shape (n_particles * n_windows,)
-        Cluster labels for each signal window. Unclassified points are given
-        the label -1.
+    labels : ndarray of shape (n_particles * n_seq,)
+        Cluster labels for each signal sequence. Unclassified points are given
+        the label "-1".
 
     Example
     -------
@@ -56,7 +61,7 @@ def onion_uni(
         from tropea_clustering import onion_uni, helpers
 
         # Select time resolution
-        tau_window = 5
+        delta_t = 5
 
         # Create random input data
         np.random.seed(1234)
@@ -67,7 +72,7 @@ def onion_uni(
 
         # Create input array with the correct shape
         reshaped_input_data = helpers.reshape_from_nt(
-            input_data, tau_window,
+            input_data, delta_t,
         )
 
         # Run Onion Clustering
@@ -92,6 +97,9 @@ class OnionUni(BaseEstimator, ClusterMixin):
     """
     Performs onion clustering on a data array.
 
+    Returns an array of integer labels, one for each signal sequence.
+    Unclassified sequences are labelled "-1".
+
     Parameters
     ----------
     bins : int, default="auto"
@@ -101,8 +109,8 @@ class OnionUni(BaseEstimator, ClusterMixin):
         (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
 
     number_of_sigmas : float, default=2.0
-        Sets the thresholds for classifing a signal window inside a state:
-        the window is contained in the state if it is entirely contained
+        Sets the thresholds for classifing a signal sequence inside a state:
+        the sequence is contained in the state if it is entirely contained
         inside number_of_sigmas * state.sigmas times from state.mean.
 
     Attributes
@@ -111,9 +119,9 @@ class OnionUni(BaseEstimator, ClusterMixin):
         List of the identified states. Refer to the documentation of
         StateUni for accessing the information on the states.
 
-    labels_: ndarray of shape (n_particles * n_windows,)
-        Cluster labels for signal window. Unclassified points are given
-        the label -1.
+    labels_: ndarray of shape (n_particles * n_seq,)
+        Cluster labels for signal sequence. Unclassified points are given
+        the label "-1".
 
     Example
     -------
@@ -124,7 +132,7 @@ class OnionUni(BaseEstimator, ClusterMixin):
         from tropea_clustering import OnionUni, helpers
 
         # Select time resolution
-        tau_window = 5
+        delta_t = 5
 
         # Create random input data
         np.random.seed(1234)
@@ -135,7 +143,7 @@ class OnionUni(BaseEstimator, ClusterMixin):
 
         # Create input array with the correct shape
         reshaped_input_data = helpers.reshape_from_nt(
-            input_data, tau_window,
+            input_data, delta_t,
         )
 
         # Run Onion Clustering
@@ -164,8 +172,8 @@ class OnionUni(BaseEstimator, ClusterMixin):
 
         Parameters
         ----------
-        X : ndarray of shape (n_particles * n_windows, tau_window)
-            The raw data. Notice that each signal window is considered as a
+        X : ndarray of shape (n_particles * n_seq, delta_t)
+            The raw data. Notice that each signal sequence is considered as a
             single data point.
 
         Returns
@@ -209,13 +217,13 @@ class OnionUni(BaseEstimator, ClusterMixin):
 
         Parameters
         ----------
-        X : ndarray of shape (n_particles * n_windows, tau_window)
+        X : ndarray of shape (n_particles * n_seq, delta_t)
             The raw data. Notice that each signal window is considered as a
             single data point.
 
         Returns
         -------
-        labels_: ndarray of shape (n_particles * n_windows,)
+        labels_: ndarray of shape (n_particles * n_seq,)
             Cluster labels for signal window. Unclassified points are given
             the label -1.
         """
