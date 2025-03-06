@@ -30,23 +30,50 @@ def reshape_from_nt(
     Returns
     -------
 
-    reshaped_data : np.ndarray of shape (n_particles * n_windows, delta_t)
+    reshaped_data : np.ndarray of shape (n_particles * n_seq, delta_t)
         The data to cluster in the scikit-required shape.
+
+    Example
+    -------
+
+    .. testcode:: reshape_nt-test
+
+        import numpy as np
+        from tropea_clustering import helpers
+
+        # Select time resolution
+        delta_t = 10
+
+        # Create random input data
+        np.random.seed(1234)
+        n_particles = 5
+        n_frames = 1000
+
+        input_data = np.random.rand(n_particles, n_frames)
+
+        # Create input array with the scikit-required shape
+        reshaped_input_data = helpers.reshape_from_nt(
+            input_data, delta_t,
+        )
+
+    .. testcode:: reshape_nt-test
+            :hide:
+
+            assert reshaped_input_data.shape == (500, 10)
     """
-    n_particles = input_data.shape[0]
-    n_frames = input_data.shape[1]
-    n_windows = int(n_frames / delta_t)
-    frames_in_excess = n_frames - n_windows * delta_t
+    n_particles, n_frames = input_data.shape
+    n_seq = n_frames // delta_t
+    frames_in_excess = n_frames - n_seq * delta_t
 
     if frames_in_excess > 0:
         reshaped_data = np.reshape(
             input_data[:, :-frames_in_excess],
-            (n_particles * n_windows, delta_t),
+            (n_particles * n_seq, delta_t),
         )
     else:
         reshaped_data = np.reshape(
             input_data,
-            (n_particles * n_windows, delta_t),
+            (n_particles * n_seq, delta_t),
         )
 
     return reshaped_data
@@ -75,20 +102,48 @@ def reshape_from_dnt(
     Returns
     -------
 
-    reshaped_data : np.ndarray of shape (n_particles * n_windows, delta_t * n_dim)
+    reshaped_data : np.ndarray of shape (n_particles * n_seq, delta_t * n_dim)
         The data to cluster in the scikit-required shape.
+
+    Example
+    -------
+
+    .. testcode:: reshape_dnt-test
+
+        import numpy as np
+        from tropea_clustering import helpers
+
+        # Select time resolution
+        delta_t = 5
+
+        # Create random input data
+        np.random.seed(1234)
+        n_dims = 2
+        n_particles = 5
+        n_frames = 1000
+
+        input_data = np.random.rand(n_dims, n_particles, n_frames)
+
+        # Create input array with the scikit-required shape
+        reshaped_input_data = helpers.reshape_from_dnt(
+            input_data, delta_t,
+        )
+
+    .. testcode:: reshape_dnt-test
+            :hide:
+
+            assert reshaped_input_data.shape == (1000, 10)
     """
-    n_particles = input_data.shape[1]
-    n_frames = input_data.shape[2]
-    n_windows = int(n_frames / delta_t)
-    frames_in_excess = n_frames - n_windows * delta_t
+    _, n_particles, n_frames = input_data.shape
+    n_seq = n_frames // delta_t
+    frames_in_excess = n_frames - n_seq * delta_t
 
     if frames_in_excess > 0:
         reshaped_data = np.reshape(
-            input_data[:, :, :-frames_in_excess], (n_particles * n_windows, -1)
+            input_data[:, :, :-frames_in_excess], (n_particles * n_seq, -1)
         )
     else:
-        reshaped_data = np.reshape(input_data, (n_particles * n_windows, -1))
+        reshaped_data = np.reshape(input_data, (n_particles * n_seq, -1))
 
     return reshaped_data
 
