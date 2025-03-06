@@ -79,7 +79,7 @@ def test_output_files(original_wd: Path, temp_dir: Path):
         state_list_u, labels = onion_uni(reshaped_data_uni)
 
         plot.plot_output_uni(
-            "tmp_fig.png", reshaped_data_uni, n_windows, state_list_u
+            "tmp_fig.png", np.array(random_walk_x), state_list_u
         )
         plot.plot_one_trj_uni(
             "tmp_fig.png", 0, reshaped_data_uni, labels, n_windows

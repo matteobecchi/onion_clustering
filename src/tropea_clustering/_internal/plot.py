@@ -1,7 +1,8 @@
-"""Auxiliary functions for plotting the results of onion-clustering."""
+"""Auxiliary functions for plotting the results of onion-clustering.
 
-# Author: Becchi Matteo <bechmath@gmail.com>
-# Date: November 28, 2024
+* Author: Becchi Matteo <bechmath@gmail.com>
+* Date: November 28, 2024
+"""
 
 import os
 from typing import List
@@ -12,17 +13,18 @@ import plotly.graph_objects as go
 from matplotlib.colors import rgb2hex
 from matplotlib.patches import Ellipse
 from matplotlib.ticker import MaxNLocator
+from numpy.typing import NDArray
 
 from tropea_clustering._internal.functions import gaussian
+from tropea_clustering._internal.main import StateUni
 
 COLORMAP = "viridis"
 
 
 def plot_output_uni(
     title: str,
-    input_data: np.ndarray,
-    n_windows: int,
-    state_list: List,
+    input_data: NDArray[np.float64],
+    state_list: List[StateUni],
 ):
     """Plots clustering output with Gaussians and threshols.
 
@@ -43,19 +45,12 @@ def plot_output_uni(
     title : str
         The path of the .png file the figure will be saved as.
 
-    input_data : ndarray of shape (n_particles * n_windows, tau_window)
+    input_data : ndarray of shape (n_particles, n_frames)
         The input data array.
-
-    n_windows : int
-        The number of windows used.
 
     state_list : List[StateUni]
         The list of the cluster states.
     """
-    n_particles = int(input_data.shape[0] / n_windows)
-    n_frames = n_windows * input_data.shape[1]
-    input_data = np.reshape(input_data, (n_particles, n_frames))
-
     flat_m = input_data.flatten()
     counts, bins = np.histogram(flat_m, bins=100, density=True)
     bins -= (bins[1] - bins[0]) / 2
