@@ -24,10 +24,28 @@ COLORMAP = "viridis"
 def plot_output_uni(
     title: str,
     input_data: NDArray[np.float64],
+    n_particles: int,
     state_list: List[StateUni],
 ):
     """Plots clustering output with Gaussians and threshols.
 
+    Parameters
+    ----------
+
+    title : str
+        The path of the .png file the figure will be saved as.
+
+    input_data : ndarray of shape (n_particles * n_seq, delta_t)
+        The input data array, in the format taken by Onion Clustering.
+
+    n_particles : int
+        The number of particles in the original dataset.
+
+    state_list : List[StateUni]
+        The list of the cluster states.
+
+    Example
+    -------
     Here's an example of the output:
 
     .. image:: ../_static/images/uni_Fig1.png
@@ -38,19 +56,11 @@ def plot_output_uni(
     colored according to the thresholds between the clusters. The left panel
     shows the cumulative data distribution, and the Gaussians fitted to the
     data, corresponding to the identified clusters.
-
-    Parameters
-    ----------
-
-    title : str
-        The path of the .png file the figure will be saved as.
-
-    input_data : ndarray of shape (n_particles, n_frames)
-        The input data array.
-
-    state_list : List[StateUni]
-        The list of the cluster states.
     """
+    n_seq = input_data.shape[0] // n_particles
+    n_frames = n_seq * input_data.shape[1]
+    input_data = np.reshape(input_data, (n_particles, n_frames))
+
     flat_m = input_data.flatten()
     counts, bins = np.histogram(flat_m, bins=100, density=True)
     bins -= (bins[1] - bins[0]) / 2
