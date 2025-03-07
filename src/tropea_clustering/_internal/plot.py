@@ -323,7 +323,7 @@ def plot_medoids_uni(
         The output of the clustering algorithm.
 
     output_to_file : bool, default = False.
-        If true, saves files with the cluster medoids.
+        If True, saves files with the cluster medoids.
 
     Example
     -------
@@ -630,13 +630,34 @@ def plot_pop_fractions(
 
 def plot_medoids_multi(
     title: str,
-    tau_window: int,
-    input_data: np.ndarray,
-    labels: np.ndarray,
+    delta_t: int,
+    input_data: NDArray[np.float64],
+    labels: NDArray[np.int64],
+    output_to_file: bool = False,
 ):
     """
     Compute and plot the average signal sequence inside each state.
 
+    Parameters
+    ----------
+
+    title : str
+        The path of the .png file the figure will be saved as.
+
+    delta_t : int
+        The length of the signal window used.
+
+    input_data : ndarray of shape (n_dims, n_particles, n_frames)
+        The input data array.
+
+    labels : ndarray of shape (n_particles * n_seq,)
+        The output of the clustering algorithm.
+
+    output_to_file : bool, default = False.
+        If True, saves files with the cluster medoids.
+
+    Example
+    -------
     Here's an example of the output:
 
     .. image:: ../_static/images/multi_Fig3.png
@@ -646,30 +667,8 @@ def plot_medoids_multi(
     For each cluster, the average of the signal sequences contained in it is
     shown (large solid points). The unclassififed seqeunces are shown
     individually in purple (thin lines).
-
-    Parameters
-    ----------
-
-    title : str
-        The path of the .png file the figure will be saved as.
-
-    tau_window : int
-        The length of the signal window used.
-
-    input_data : ndarray of shape (n_dims, n_particles, n_frames)
-        The input data array.
-
-    labels : ndarray of shape (n_particles * n_windows,)
-        The output of the clustering algorithm.
-
-    Notes
-    -----
-
-    If there are no assigned window, we still need the "-1" state for
-    consistency
     """
-    ndims = input_data.shape[0]
-    if ndims != 2:
+    if input_data.shape[0] != 2:
         print("plot_medoids_multi() does not work with 3D data.")
         return
 
@@ -681,7 +680,7 @@ def plot_medoids_multi(
     env0 = []
 
     reshaped_data = input_data.transpose(1, 2, 0)
-    labels = np.repeat(labels, tau_window)
+    labels = np.repeat(labels, delta_t)
     reshaped_labels = np.reshape(
         labels, (input_data.shape[1], input_data.shape[2])
     )
@@ -689,10 +688,10 @@ def plot_medoids_multi(
     for ref_label in list_of_labels:
         tmp = []
         for i, mol in enumerate(reshaped_labels):
-            for window, label in enumerate(mol[::tau_window]):
+            for window, label in enumerate(mol[::delta_t]):
                 if label == ref_label:
-                    time_0 = window * tau_window
-                    time_1 = (window + 1) * tau_window
+                    time_0 = window * delta_t
+                    time_1 = (window + 1) * delta_t
                     tmp.append(reshaped_data[i][time_0:time_1])
 
         if len(tmp) > 0 and ref_label > -1:
@@ -700,11 +699,12 @@ def plot_medoids_multi(
         elif len(tmp) > 0:
             env0 = tmp
 
-    center_arr = np.array(center_list)
-    np.save(
-        "medoid_center.npy",
-        center_arr,
-    )
+    if output_to_file:
+        center_arr = np.array(center_list)
+        np.save(
+            "medoid_center.npy",
+            center_arr,
+        )
 
     palette = []
     cmap = plt.get_cmap(COLORMAP, list_of_labels.size)
@@ -996,20 +996,11 @@ def plot_output_multi(
 def plot_one_trj_multi(
     title: str,
     example_id: int,
-    tau_window: int,
-    input_data: np.ndarray,
-    labels: np.ndarray,
+    delta_t: int,
+    input_data: NDArray[np.float64],
+    labels: NDArray[np.int64],
 ):
     """Plots the colored trajectory of an example particle.
-
-    Here's an example of the output:
-
-    .. image:: ../_static/images/multi_Fig2.png
-        :alt: Example Image
-        :width: 600px
-
-    The datapoints are colored according to the cluster they have been
-    assigned to.
 
     Parameters
     ----------
@@ -1020,19 +1011,30 @@ def plot_one_trj_multi(
     example_id : int
         The ID of the selected particle.
 
-    tau_window : int
+    delta_t : int
         The length of the signal window used.
 
     input_data : ndarray of shape (n_dims, n_particles, n_frames)
         The input data array.
 
-    labels : ndarray of shape (n_particles * n_windows,)
+    labels : ndarray of shape (n_particles * n_seq,)
         The output of the clustering algorithm.
+
+    Example
+    -------
+    Here's an example of the output:
+
+    .. image:: ../_static/images/multi_Fig2.png
+        :alt: Example Image
+        :width: 600px
+
+    The datapoints are colored according to the cluster they have been
+    assigned to.
     """
     m_clean = input_data.transpose(1, 2, 0)
-    n_windows = int(m_clean.shape[1] / tau_window)
+    n_windows = int(m_clean.shape[1] / delta_t)
     tmp_labels = labels.reshape((m_clean.shape[0], n_windows))
-    all_the_labels = np.repeat(tmp_labels, tau_window, axis=1)
+    all_the_labels = np.repeat(tmp_labels, delta_t, axis=1)
 
     # Get the signal of the example particle
     sig_x = m_clean[example_id].T[0][: all_the_labels.shape[1]]
