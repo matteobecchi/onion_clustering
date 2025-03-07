@@ -7,13 +7,8 @@ import numpy as np
 
 from tropea_clustering import helpers, onion_uni
 from tropea_clustering.plot import (
-    plot_medoids_uni,
     plot_one_trj_uni,
     plot_output_uni,
-    plot_pop_fractions,
-    plot_sankey,
-    plot_state_populations,
-    plot_time_res_analysis,
 )
 
 #############################################################################
@@ -41,7 +36,9 @@ state_list, labels = onion_uni(reshaped_data)
 
 ### These functions are examples of how to visualize the results
 plot_output_uni("output_uni/Fig1.png", reshaped_data, n_particles, state_list)
-# plot_one_trj_uni("output_uni/Fig2.png", 1234, reshaped_data, labels, n_windows)
+plot_one_trj_uni(
+    "output_uni/Fig2.png", 1234, reshaped_data, n_particles, labels
+)
 # plot_medoids_uni("output_uni/Fig3.png", reshaped_data, labels)
 # plot_state_populations("output_uni/Fig4.png", n_windows, labels)
 # plot_sankey("output_uni/Fig5.png", labels, n_windows, [10, 20, 30, 40])

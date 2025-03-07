@@ -82,7 +82,7 @@ def test_output_files(original_wd: Path, temp_dir: Path):
             "tmp_fig.png", reshaped_data_uni, N_PARTICLES, state_list_u
         )
         plot.plot_one_trj_uni(
-            "tmp_fig.png", 0, reshaped_data_uni, labels, n_windows
+            "tmp_fig.png", 0, reshaped_data_uni, N_PARTICLES, labels
         )
         plot.plot_medoids_uni("tmp_fig.png", reshaped_data_uni, labels)
         plot.plot_state_populations("tmp_fig.png", n_windows, labels)

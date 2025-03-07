@@ -298,8 +298,19 @@
 <h1>tropea_clustering.plot.plot_output_uni<a class="headerlink" href="#tropea-clustering-plot-plot-output-uni" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="tropea_clustering.plot.plot_output_uni">
-<span class="sig-prename descclassname"><span class="pre">tropea_clustering.plot.</span></span><span class="sig-name descname"><span class="pre">plot_output_uni</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_windows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/plot.html#plot_output_uni"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering.plot.plot_output_uni" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tropea_clustering.plot.</span></span><span class="sig-name descname"><span class="pre">plot_output_uni</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_particles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/plot.html#plot_output_uni"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering.plot.plot_output_uni" title="Link to this definition">¶</a></dt>
 <dd><p>Plots clustering output with Gaussians and threshols.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The path of the .png file the figure will be saved as.</p></li>
+<li><p><strong>input_data</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>n_particles * n_seq</em><em>, </em><em>delta_t</em><em>)</em>) – The input data array, in the format taken by Onion Clustering.</p></li>
+<li><p><strong>n_particles</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The number of particles in the original dataset.</p></li>
+<li><p><strong>state_list</strong> (<em>List</em><em>[</em><a class="reference internal" href="tropea_clustering._internal.first_classes.StateUni.html#tropea_clustering._internal.first_classes.StateUni" title="tropea_clustering._internal.first_classes.StateUni"><em>StateUni</em></a><em>]</em>) – The list of the cluster states.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
 <p>Here’s an example of the output:</p>
 <a class="reference internal image-reference" href="../_images/uni_Fig1.png"><img alt="Example Image" src="../_images/uni_Fig1.png" style="width: 600px;" />
 </a>
@@ -307,16 +318,6 @@
 colored according to the thresholds between the clusters. The left panel
 shows the cumulative data distribution, and the Gaussians fitted to the
 data, corresponding to the identified clusters.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The path of the .png file the figure will be saved as.</p></li>
-<li><p><strong>input_data</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>n_particles * n_windows</em><em>, </em><em>tau_window</em><em>)</em>) – The input data array.</p></li>
-<li><p><strong>n_windows</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The number of windows used.</p></li>
-<li><p><strong>state_list</strong> (<em>List</em><em>[</em><a class="reference internal" href="tropea_clustering._internal.first_classes.StateUni.html#tropea_clustering._internal.first_classes.StateUni" title="tropea_clustering._internal.first_classes.StateUni"><em>StateUni</em></a><em>]</em>) – The list of the cluster states.</p></li>
-</ul>
-</dd>
-</dl>
 </dd></dl>
 
 </section>

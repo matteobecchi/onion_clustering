@@ -320,7 +320,7 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    X : ndarray of shape (n_particles * n_seq, delta_t)</span>
-<span class="sd">        The data to cluster. Each signal window is considered as a</span>
+<span class="sd">        The data to cluster. Each signal sequence is considered as a</span>
 <span class="sd">        single data point.</span>
 
 <span class="sd">    bins : int, default=&quot;auto&quot;</span>
@@ -330,7 +330,7 @@
 <span class="sd">        (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).</span>
 
 <span class="sd">    number_of_sigmas : float, default=2.0</span>
-<span class="sd">        Sets the thresholds for classifing a signal window inside a state:</span>
+<span class="sd">        Sets the thresholds for classifing a signal sequence inside a state:</span>
 <span class="sd">        the sequence is contained in the state if it is entirely contained</span>
 <span class="sd">        inside number_of_sigmas * state.sigmas times from state.mean.</span>
 
@@ -414,7 +414,7 @@
 <span class="sd">        List of the identified states. Refer to the documentation of</span>
 <span class="sd">        StateUni for accessing the information on the states.</span>
 
-<span class="sd">    labels_: NDArray of shape (n_particles * n_seq,)</span>
+<span class="sd">    labels_: ndarray of shape (n_particles * n_seq,)</span>
 <span class="sd">        Cluster labels for signal sequence. Unclassified points are given</span>
 <span class="sd">        the label &quot;-1&quot;.</span>
 
@@ -470,7 +470,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        X : ndarray of shape (n_particles * n_seq, delta_t)</span>
-<span class="sd">            The raw data. Notice that each signal sequence is considered as a</span>
+<span class="sd">            The data to cluster. Each signal sequence is considered as a</span>
 <span class="sd">            single data point.</span>
 
 <span class="sd">        Returns</span>
@@ -518,14 +518,14 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        X : ndarray of shape (n_particles * n_seq, delta_t)</span>
-<span class="sd">            The raw data. Notice that each signal window is considered as a</span>
+<span class="sd">            The data to cluster. Each signal sequence is considered as a</span>
 <span class="sd">            single data point.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        labels_: ndarray of shape (n_particles * n_seq,)</span>
-<span class="sd">            Cluster labels for signal window. Unclassified points are given</span>
-<span class="sd">            the label -1.</span>
+<span class="sd">            Cluster labels for signal sequence. Unclassified points are given</span>
+<span class="sd">            the label &quot;-1&quot;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">labels_</span></div>
 

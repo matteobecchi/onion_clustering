@@ -27,7 +27,7 @@ def plot_output_uni(
     n_particles: int,
     state_list: List[StateUni],
 ):
-    """Plots clustering output with Gaussians and threshols.
+    """Plots clustering output with Gaussians and thresholds.
 
     Parameters
     ----------
@@ -160,19 +160,12 @@ def plot_one_trj_uni(
     title: str,
     example_id: int,
     input_data: np.ndarray,
+    n_particles: int,
     labels: np.ndarray,
-    n_windows: int,
 ):
     """Plots the colored trajectory of one example particle.
 
-    Here's an example of the output:
-
-    .. image:: ../_static/images/uni_Fig2.png
-        :alt: Example Image
-        :width: 600px
-
-    The datapoints are colored according to the cluster they have been
-    assigned.
+    Unclassified data points are colored with the darkest color.
 
     Parameters
     ----------
@@ -183,26 +176,35 @@ def plot_one_trj_uni(
     example_id : int
         The ID of the selected particle.
 
-    input_data : ndarray of shape (n_particles * n_windows, tau_window)
+    input_data : ndarray of shape (n_particles * n_seq, delta_t)
         The input data array.
 
-    labels : ndarray of shape (n_particles * n_windows,)
-        The output of the clustering algorithm.
+    n_particles : int
+        The number of particles in the original dataset.
 
-    n_windows : int
-        The number of windows used.
+    labels : ndarray of shape (n_particles * n_seq,)
+        The output of Onion Clustering.
+
+    Example
+    -------
+    Here's an example of the output:
+
+    .. image:: ../_static/images/uni_Fig2.png
+        :alt: Example Image
+        :width: 600px
+
+    The datapoints are colored according to the cluster they have been
+    assigned.
     """
-    tau_window = input_data.shape[1]
-    n_particles = int(input_data.shape[0] / n_windows)
-    n_frames = n_windows * tau_window
+    delta_t = input_data.shape[1]
+    n_seq = input_data.shape[0] // n_particles
+    n_frames = n_seq * delta_t
 
     input_data = np.reshape(input_data, (n_particles, n_frames))
-    labels = np.reshape(labels, (n_particles, n_windows))
-    labels = np.repeat(labels, tau_window, axis=1)
+    labels = np.reshape(labels, (n_particles, n_seq))
+    labels = np.repeat(labels, delta_t, axis=1)
 
-    signal = input_data[example_id][: labels.shape[1]]
-    t_steps = labels.shape[1]
-    time = np.linspace(0, t_steps - 1, t_steps)
+    time = np.linspace(0, n_frames - 1, n_frames)
 
     fig, axes = plt.subplots()
     unique_labels = np.unique(labels)
@@ -215,11 +217,11 @@ def plot_one_trj_uni(
         COLORMAP, np.max(unique_labels) - np.min(unique_labels) + 1
     )
     color = labels[example_id] + 1
-    axes.plot(time, signal, c="black", lw=0.1)
+    axes.plot(time, input_data[example_id], c="black", lw=0.1)
 
     axes.scatter(
         time,
-        signal,
+        input_data[example_id],
         c=color,
         cmap=cmap,
         vmin=np.min(unique_labels) + 1,

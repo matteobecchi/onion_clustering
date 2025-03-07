@@ -298,24 +298,45 @@
 <h1>tropea_clustering.helpers.reshape_from_nt<a class="headerlink" href="#tropea-clustering-helpers-reshape-from-nt" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="tropea_clustering.helpers.reshape_from_nt">
-<span class="sig-prename descclassname"><span class="pre">tropea_clustering.helpers.</span></span><span class="sig-name descname"><span class="pre">reshape_from_nt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_window</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/utilities.html#reshape_from_nt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering.helpers.reshape_from_nt" title="Link to this definition">¶</a></dt>
-<dd><p>Reshapes the input data from traditional from scikit format.</p>
-<p>Takes the data array in the (n_particles, n_frames) format and
-reshapes it in the format required by scikit-learn.</p>
+<span class="sig-prename descclassname"><span class="pre">tropea_clustering.helpers.</span></span><span class="sig-name descname"><span class="pre">reshape_from_nt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/utilities.html#reshape_from_nt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering.helpers.reshape_from_nt" title="Link to this definition">¶</a></dt>
+<dd><p>Reshapes the input data from traditional to scikit format.</p>
+<p>Takes the array containing the univariate time-series data in the
+(n_particles, n_frames) format and reshapes it in the format required
+by scikit-learn (-1, delta_t).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_data</strong> (<em>np.ndarray</em><em> of </em><em>shape</em><em> (</em><em>n_particles</em><em>, </em><em>n_frames</em><em>)</em>) – The raw data in the traditional shape.</p></li>
-<li><p><strong>tau_window</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Length of the signal window - the analysis time resolution.</p></li>
+<li><p><strong>input_data</strong> (<em>np.ndarray</em><em> of </em><em>shape</em><em> (</em><em>n_particles</em><em>, </em><em>n_frames</em><em>)</em>) – The data to cluster in the traditional shape.</p></li>
+<li><p><strong>delta_t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Length of the signal sequence - the analysis time resolution.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>reshaped_data</strong> – The raw data in the scikit-required shape.</p>
+<dd class="field-even"><p><strong>reshaped_data</strong> – The data to cluster in the scikit-required shape.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>np.ndarray of shape (n_particles * n_windows, tau_window)</p>
+<dd class="field-odd"><p>np.ndarray of shape (n_particles * n_seq, delta_t)</p>
 </dd>
 </dl>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tropea_clustering</span><span class="w"> </span><span class="kn">import</span> <span class="n">helpers</span>
+
+<span class="c1"># Select time resolution</span>
+<span class="n">delta_t</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="c1"># Create random input data</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+<span class="n">n_particles</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">n_frames</span> <span class="o">=</span> <span class="mi">1000</span>
+
+<span class="n">input_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> <span class="n">n_frames</span><span class="p">)</span>
+
+<span class="c1"># Create input array with the scikit-required shape</span>
+<span class="n">reshaped_input_data</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">reshape_from_nt</span><span class="p">(</span>
+    <span class="n">input_data</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
