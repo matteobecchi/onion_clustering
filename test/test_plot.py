@@ -85,8 +85,8 @@ def test_output_files(original_wd: Path, temp_dir: Path):
             "tmp_fig.png", 0, reshaped_data_uni, N_PARTICLES, labels
         )
         plot.plot_medoids_uni("tmp_fig.png", reshaped_data_uni, labels)
-        plot.plot_state_populations("tmp_fig.png", n_windows, labels)
-        plot.plot_sankey("tmp_fig.png", labels, n_windows, [1, 3, 5, 7])
+        plot.plot_state_populations("tmp_fig.png", N_PARTICLES, labels)
+        plot.plot_sankey("tmp_fig.png", labels, N_PARTICLES, [1, 3, 5, 7])
 
         state_list_m, labels = onion_multi(reshaped_data_multi)
 

@@ -159,9 +159,9 @@ def plot_output_uni(
 def plot_one_trj_uni(
     title: str,
     example_id: int,
-    input_data: np.ndarray,
+    input_data: NDArray[np.float64],
     n_particles: int,
-    labels: np.ndarray,
+    labels: NDArray[np.int64],
 ):
     """Plots the colored trajectory of one example particle.
 
@@ -208,14 +208,12 @@ def plot_one_trj_uni(
 
     fig, axes = plt.subplots()
     unique_labels = np.unique(labels)
-    # If there are no assigned window, we still need the "0" state
+    # If there are no assigned window, we still need the "-1" state
     # for consistency:
     if -1 not in unique_labels:
         unique_labels = np.insert(unique_labels, 0, -1)
 
-    cmap = plt.get_cmap(
-        COLORMAP, np.max(unique_labels) - np.min(unique_labels) + 1
-    )
+    cmap = plt.get_cmap(COLORMAP, unique_labels.size)
     color = labels[example_id] + 1
     axes.plot(time, input_data[example_id], c="black", lw=0.1)
 
@@ -224,8 +222,8 @@ def plot_one_trj_uni(
         input_data[example_id],
         c=color,
         cmap=cmap,
-        vmin=np.min(unique_labels) + 1,
-        vmax=np.max(unique_labels) + 1,
+        vmin=0,
+        vmax=unique_labels.size - 1,
         s=1.0,
     )
 
@@ -239,20 +237,14 @@ def plot_one_trj_uni(
 
 def plot_state_populations(
     title: str,
-    n_windows: int,
-    labels: np.ndarray,
+    n_particles: int,
+    labels: NDArray[np.int64],
 ):
     """
-    Plot the populations of states over time.
-
-    Here's an example of the output:
-
-    .. image:: ../_static/images/uni_Fig4.png
-        :alt: Example Image
-        :width: 600px
+    Plot the populations of clusters over time.
 
     For each trajectory frame, plots the fraction of the population of each
-    cluster. "ENV0" refers to the unclassified data.
+    cluster. In the legend, "ENV0" refers to the unclassified data.
 
     Parameters
     ----------
@@ -260,14 +252,22 @@ def plot_state_populations(
     title : str
         The path of the .png file the figure will be saved as.
 
-    n_windows : int
-        The number of windows used.
+    n_particles : int
+        The number of particles in the original dataset.
 
-    labels : ndarray of shape (n_particles * n_windows,)
-        The output of the clustering algorithm.
+    labels : ndarray of shape (n_particles * n_seq,)
+        The output of Onion Clustering.
+
+    Example
+    -------
+    Here's an example of the output:
+
+    .. image:: ../_static/images/uni_Fig4.png
+        :alt: Example Image
+        :width: 600px
     """
-    n_particles = int(labels.shape[0] / n_windows)
-    labels = np.reshape(labels, (n_particles, n_windows))
+    n_seq = labels.shape[0] // n_particles
+    labels = np.reshape(labels, (n_particles, -1))
 
     unique_labels = np.unique(labels)
     if -1 not in unique_labels:
@@ -286,12 +286,11 @@ def plot_state_populations(
         palette.append(rgb2hex(rgba))
 
     fig, axes = plt.subplots()
-    t_steps = labels.shape[1]
-    time = np.linspace(0, t_steps - 1, t_steps)
+    time = np.linspace(0, n_seq - 1, n_seq)
     for label, pop in enumerate(list_of_populations):
         axes.plot(time, pop, label=f"ENV{label}", color=palette[label])
-    axes.set_xlabel(r"Time [frame]")
-    axes.set_ylabel(r"Population")
+    axes.set_xlabel(r"Time [frame$\cdot\Delta t$]")
+    axes.set_ylabel(r"Population fraction")
     axes.legend()
 
     fig.savefig(title, dpi=600)
@@ -299,12 +298,30 @@ def plot_state_populations(
 
 def plot_medoids_uni(
     title: str,
-    input_data: np.ndarray,
-    labels: np.ndarray,
+    input_data: NDArray[np.float64],
+    labels: NDArray[np.int64],
+    output_to_file: bool = False,
 ):
     """
     Compute and plot the average signal sequence inside each state.
 
+    Parameters
+    ----------
+
+    title : str
+        The path of the .png file the figure will be saved as.
+
+    input_data : ndarray of shape (n_particles * n_seq, delta_t)
+        The input data array, in the format required by Onion Clustering.
+
+    labels : ndarray of shape (n_particles * n_seq,)
+        The output of the clustering algorithm.
+
+    output_to_file : bool, default = False.
+        If true, saves files with the cluster medoids.
+
+    Example
+    -------
     Here's an example of the output:
 
     .. image:: ../_static/images/uni_Fig3.png
@@ -314,24 +331,6 @@ def plot_medoids_uni(
     For each cluster, the average (solid line) and standard deviation (shaded
     area) of the signal sequences contained in it is shown. The unclassififed
     seqeunces are shown individually in purple.
-
-    Parameters
-    ----------
-
-    title : str
-        The path of the .png file the figure will be saved as.
-
-    input_data : ndarray of shape (n_particles * n_windows, tau_window)
-        The input data array.
-
-    labels : ndarray of shape (n_particles * n_windows,)
-        The output of the clustering algorithm.
-
-    Notes
-    -----
-
-    - If all the points are classified, we still need the "-1" state for consistency.
-    - Prints the output to files.
     """
     center_list = []
     std_list = []
@@ -356,16 +355,17 @@ def plot_medoids_uni(
     center_arr = np.array(center_list)
     std_arr = np.array(std_list)
 
-    np.savetxt(
-        "medoid_center.txt",
-        center_arr,
-        header="Signal average for each ENV",
-    )
-    np.savetxt(
-        "medoid_stddev.txt",
-        std_arr,
-        header="Signal standard deviation for each ENV",
-    )
+    if output_to_file:
+        np.savetxt(
+            "medoid_center.txt",
+            center_arr,
+            header="Signal average for each ENV",
+        )
+        np.savetxt(
+            "medoid_stddev.txt",
+            std_arr,
+            header="Signal standard deviation for each ENV",
+        )
 
     palette = []
     cmap = plt.get_cmap(COLORMAP, list_of_labels.size)
@@ -404,7 +404,6 @@ def plot_medoids_uni(
                 alpha=0.2,
             )
 
-    fig.suptitle("Average time sequence inside each environments")
     axes.set_xlabel(r"Time [frames]")
     axes.set_ylabel(r"Signal")
     axes.xaxis.set_major_locator(MaxNLocator(integer=True))
@@ -414,13 +413,33 @@ def plot_medoids_uni(
 
 def plot_sankey(
     title: str,
-    labels: np.ndarray,
-    n_windows: int,
+    labels: NDArray[np.int64],
+    n_particles: int,
     tmp_frame_list: list[int],
 ):
     """
     Plots the Sankey diagram at the desired frames.
 
+    This function requires the python package Kaleido, and uses plotly
+    instead of matplotlib.pyplot.
+
+    Parameters
+    ----------
+
+    title : str
+        The path of the .png file the figure will be saved as.
+
+    labels : ndarray of shape (n_particles * n_seq,)
+        The output of the clustering algorithm.
+
+    n_particles : int
+        The number of particles in the original dataset.
+
+    tmp_frame_list : List[int]
+        The list of frames at which we want to plot the Sankey.
+
+    Example
+    -------
     Here's an example of the output:
 
     .. image:: ../_static/images/uni_Fig5.png
@@ -430,31 +449,10 @@ def plot_sankey(
     For each of the selected frames, the colored bars width is proportional
     to each cluster population. The gray bands' witdh are proportional to
     the number of data points moving from one cluster to the other between the
-    selected frames. "State -1" refers to the unclassified data.
-
-    Parameters
-    ----------
-
-    title : str
-        The path of the .png file the figure will be saved as.
-
-    labels : ndarray of shape (n_particles * n_windows,)
-        The output of the clustering algorithm.
-
-    n_windows : int
-        The number of windows used.
-
-    tmp_frame_list : List[int]
-        The list of windows at which we want to plot the Sankey.
-
-    Notes
-    -----
-
-    - If there are no assigned window, we still need the "-1" state for consistency
-    - Requires kaleido.
+    selected frames. State "-1" refers to the unclassified data.
     """
-    n_particles = int(labels.shape[0] / n_windows)
-    all_the_labels = np.reshape(labels, (n_particles, n_windows))
+    n_seq = labels.shape[0] // n_particles
+    all_the_labels = np.reshape(labels, (n_particles, n_seq))
     frame_list = np.array(tmp_frame_list)
     unique_labels = np.unique(all_the_labels)
 
@@ -467,8 +465,7 @@ def plot_sankey(
     value = np.empty((frame_list.size - 1) * n_states**2)
 
     count = 0
-    tmp_label1 = []
-    tmp_label2 = []
+    tmp_label = []
 
     # Loop through the frame_list and calculate the transition matrix
     # for each time window.
@@ -492,20 +489,11 @@ def plot_sankey(
                 value[count] = elem
                 count += 1
 
-        # Calculate the starting and ending fractions for each state
-        # and store node labels
-        for j in range(-1, n_states - 1):
-            start_fr = np.sum(trans_mat[j]) / np.sum(trans_mat)
-            end_fr = np.sum(trans_mat.T[j]) / np.sum(trans_mat)
-            if i == -1:
-                tmp_label1.append(f"State {j}: {start_fr * 100:.2f}%")
-            tmp_label2.append(f"State {j}: {end_fr * 100:.2f}%")
+        # Create node labels
+        for j in unique_labels:
+            tmp_label.append(f"State {j}")
 
-    arr_label1 = np.array(tmp_label1)
-    arr_label2 = np.array(tmp_label2).flatten()
-
-    # Concatenate the temporary labels to create the final node labels.
-    label = np.concatenate((arr_label1, arr_label2))
+    state_label = np.array(tmp_label).flatten()
 
     # Generate a color palette for the Sankey diagram.
     palette = []
@@ -518,7 +506,7 @@ def plot_sankey(
     color = np.tile(palette, frame_list.size)
 
     # Create dictionaries to define the Sankey diagram nodes and links.
-    node = {"label": label, "pad": 30, "thickness": 20, "color": color}
+    node = {"label": state_label, "pad": 30, "thickness": 20, "color": color}
     link = {"source": source, "target": target, "value": value}
 
     # Create the Sankey diagram using Plotly.

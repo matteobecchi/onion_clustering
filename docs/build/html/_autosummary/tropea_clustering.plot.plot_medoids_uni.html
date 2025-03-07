@@ -298,28 +298,25 @@
 <h1>tropea_clustering.plot.plot_medoids_uni<a class="headerlink" href="#tropea-clustering-plot-plot-medoids-uni" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="tropea_clustering.plot.plot_medoids_uni">
-<span class="sig-prename descclassname"><span class="pre">tropea_clustering.plot.</span></span><span class="sig-name descname"><span class="pre">plot_medoids_uni</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/plot.html#plot_medoids_uni"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering.plot.plot_medoids_uni" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tropea_clustering.plot.</span></span><span class="sig-name descname"><span class="pre">plot_medoids_uni</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_to_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/plot.html#plot_medoids_uni"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering.plot.plot_medoids_uni" title="Link to this definition">¶</a></dt>
 <dd><p>Compute and plot the average signal sequence inside each state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The path of the .png file the figure will be saved as.</p></li>
+<li><p><strong>input_data</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>n_particles * n_seq</em><em>, </em><em>delta_t</em><em>)</em>) – The input data array, in the format required by Onion Clustering.</p></li>
+<li><p><strong>labels</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>n_particles * n_seq</em><em>,</em><em>)</em>) – The output of the clustering algorithm.</p></li>
+<li><p><strong>output_to_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>default = False.</em>) – If true, saves files with the cluster medoids.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
 <p>Here’s an example of the output:</p>
 <a class="reference internal image-reference" href="../_images/uni_Fig3.png"><img alt="Example Image" src="../_images/uni_Fig3.png" style="width: 600px;" />
 </a>
 <p>For each cluster, the average (solid line) and standard deviation (shaded
 area) of the signal sequences contained in it is shown. The unclassififed
 seqeunces are shown individually in purple.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The path of the .png file the figure will be saved as.</p></li>
-<li><p><strong>input_data</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>n_particles * n_windows</em><em>, </em><em>tau_window</em><em>)</em>) – The input data array.</p></li>
-<li><p><strong>labels</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>n_particles * n_windows</em><em>,</em><em>)</em>) – The output of the clustering algorithm.</p></li>
-</ul>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>If all the points are classified, we still need the “-1” state for consistency.</p></li>
-<li><p>Prints the output to files.</p></li>
-</ul>
 </dd></dl>
 
 </section>
