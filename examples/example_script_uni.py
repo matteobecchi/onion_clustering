@@ -43,7 +43,7 @@ plot_one_trj_uni(
     "output_uni/Fig2.png", 1234, reshaped_data, n_particles, labels
 )
 plot_medoids_uni("output_uni/Fig3.png", reshaped_data, labels)
-plot_state_populations("output_uni/Fig4.png", n_particles, labels)
+plot_state_populations("output_uni/Fig4.png", n_particles, TAU_WINDOW, labels)
 plot_sankey("output_uni/Fig5.png", labels, n_particles, [10, 20, 30, 40])
 
 # ### CLUSTERING THE WHOLE RANGE OF TIME RESOLUTIONS ###

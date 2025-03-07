@@ -49,7 +49,7 @@ plot_output_multi(
 )
 plot_one_trj_multi("output_multi/Fig2.png", 0, TAU_WINDOW, input_data, labels)
 plot_medoids_multi("output_multi/Fig3.png", TAU_WINDOW, input_data, labels)
-plot_state_populations("output_multi/Fig4.png", n_windows, labels)
+plot_state_populations("output_multi/Fig4.png", n_windows, TAU_WINDOW, labels)
 plot_sankey("output_multi/Fig5.png", labels, n_windows, [100, 200, 300, 400])
 
 ### CLUSTERING THE WHOLE RANGE OF TIME RESOLUTIONS ###

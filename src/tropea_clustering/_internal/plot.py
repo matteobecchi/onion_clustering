@@ -238,6 +238,7 @@ def plot_one_trj_uni(
 def plot_state_populations(
     title: str,
     n_particles: int,
+    delta_t: int,
     labels: NDArray[np.int64],
 ):
     """
@@ -255,6 +256,9 @@ def plot_state_populations(
     n_particles : int
         The number of particles in the original dataset.
 
+    delta_t : int
+        The legth of the signal sequences (the analysis time resolution).
+
     labels : ndarray of shape (n_particles * n_seq,)
         The output of Onion Clustering.
 
@@ -266,12 +270,13 @@ def plot_state_populations(
         :alt: Example Image
         :width: 600px
     """
-    n_seq = labels.shape[0] // n_particles
     labels = np.reshape(labels, (n_particles, -1))
 
     unique_labels = np.unique(labels)
     if -1 not in unique_labels:
         unique_labels = np.insert(unique_labels, 0, -1)
+
+    labels = np.repeat(labels, delta_t, axis=1)
 
     list_of_populations = []
     for label in unique_labels:
@@ -279,17 +284,16 @@ def plot_state_populations(
         list_of_populations.append(population / n_particles)
 
     palette = []
-    n_states = unique_labels.size
-    cmap = plt.get_cmap(COLORMAP, n_states)
+    cmap = plt.get_cmap(COLORMAP, unique_labels.size)
     for i in range(cmap.N):
         rgba = cmap(i)
         palette.append(rgb2hex(rgba))
 
     fig, axes = plt.subplots()
-    time = np.linspace(0, n_seq - 1, n_seq)
+    time = range(labels.shape[1])
     for label, pop in enumerate(list_of_populations):
         axes.plot(time, pop, label=f"ENV{label}", color=palette[label])
-    axes.set_xlabel(r"Time [frame$\cdot\Delta t$]")
+    axes.set_xlabel(r"Time [frame]")
     axes.set_ylabel(r"Population fraction")
     axes.legend()
 
