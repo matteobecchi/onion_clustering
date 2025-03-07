@@ -17,6 +17,7 @@ from numpy.typing import NDArray
 
 from tropea_clustering._internal.functions import gaussian
 from tropea_clustering._internal.main import StateUni
+from tropea_clustering._internal.main_2d import StateMulti
 
 COLORMAP = "viridis"
 
@@ -742,23 +743,13 @@ def plot_medoids_multi(
 
 def plot_output_multi(
     title: str,
-    input_data: np.ndarray,
-    state_list: List,
-    labels: np.ndarray,
-    tau_window: int,
+    input_data: NDArray[np.float64],
+    state_list: List[StateMulti],
+    labels: NDArray[np.int64],
+    delta_t: int,
 ):
     """
     Plot a cumulative figure showing trajectories and identified states.
-
-    .. image:: ../_static/images/multi_Fig1.png
-        :alt: Example Image
-        :width: 600px
-
-    All the data are plotted, colored according to the cluster thay have been
-    assigned to. The clusters are shown as black ellipses, whose orizontal and
-    vertical axis length is given by the standard deviation of the Gaussians
-    corresponding to the cluster. Unclassififed data points are colored in
-    purple.
 
     Parameters
     ----------
@@ -769,14 +760,27 @@ def plot_output_multi(
     input_data : ndarray of shape (n_dims, n_particles, n_frames)
         The input data array.
 
-    state_list : List[StateUni]
+    state_list : List[StateMulti]
         The list of the cluster states.
 
-    labels : ndarray of shape (n_particles * n_windows,)
+    labels : ndarray of shape (n_particles * n_seq,)
         The output of the clustering algorithm.
 
-    tau_window : int
-        The length of the signal window used.
+    delta_t : int
+        The length of the signal sequences used.
+
+    Example
+    -------
+
+    .. image:: ../_static/images/multi_Fig1.png
+        :alt: Example Image
+        :width: 600px
+
+    All the data are plotted, colored according to the cluster thay have been
+    assigned to. The clusters are shown as black ellipses, whose orizontal and
+    vertical axis length is given by the standard deviation of the Gaussians
+    corresponding to the cluster. Unclassififed data points are colored in
+    purple.
     """
     n_states = len(state_list) + 1
     tmp = plt.get_cmap(COLORMAP, n_states)
@@ -784,9 +788,9 @@ def plot_output_multi(
     colors_from_cmap[-1] = tmp(1.0)
 
     m_clean = input_data.transpose(1, 2, 0)
-    n_windows = int(m_clean.shape[1] / tau_window)
+    n_windows = m_clean.shape[1] // delta_t
     tmp_labels = labels.reshape((m_clean.shape[0], n_windows))
-    all_the_labels = np.repeat(tmp_labels, tau_window, axis=1)
+    all_the_labels = np.repeat(tmp_labels, delta_t, axis=1)
 
     if m_clean.shape[2] == 3:
         fig, ax = plt.subplots(2, 2, figsize=(6, 6))
