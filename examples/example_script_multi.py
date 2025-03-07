@@ -10,8 +10,10 @@ from tropea_clustering.plot import (
     plot_medoids_multi,
     plot_one_trj_multi,
     plot_output_multi,
+    plot_pop_fractions,
     plot_sankey,
     plot_state_populations,
+    plot_time_res_analysis,
 )
 
 ##############################################################################
@@ -50,28 +52,28 @@ plot_medoids_multi("output_multi/Fig3.png", TAU_WINDOW, input_data, labels)
 plot_state_populations("output_multi/Fig4.png", n_windows, TAU_WINDOW, labels)
 plot_sankey("output_multi/Fig5.png", labels, n_particles, [100, 200, 300, 400])
 
-# ### CLUSTERING THE WHOLE RANGE OF TIME RESOLUTIONS ###
-# TAU_WINDOWS_LIST = np.geomspace(3, n_frames, 20, dtype=int)
+### CLUSTERING THE WHOLE RANGE OF TIME RESOLUTIONS ###
+TAU_WINDOWS_LIST = np.geomspace(3, n_frames, 20, dtype=int)
 
-# tra = np.zeros((len(TAU_WINDOWS_LIST), 3))  # List of number of states and
-# # ENV0 population for each tau_window
-# pop_list = []  # List of the states' population for each tau_window
+tra = np.zeros((len(TAU_WINDOWS_LIST), 3))  # List of number of states and
+# ENV0 population for each tau_window
+pop_list = []  # List of the states' population for each tau_window
 
-# for i, tau_window in enumerate(TAU_WINDOWS_LIST):
-#     reshaped_data = helpers.reshape_from_dnt(input_data, tau_window)
+for i, tau_window in enumerate(TAU_WINDOWS_LIST):
+    reshaped_data = helpers.reshape_from_dnt(input_data, tau_window)
 
-#     state_list, labels = onion_multi(reshaped_data, bins=BINS)
+    state_list, labels = onion_multi(reshaped_data, bins=BINS)
 
-#     list_pop = [state.perc for state in state_list]
-#     list_pop.insert(0, 1 - np.sum(np.array(list_pop)))
+    list_pop = [state.perc for state in state_list]
+    list_pop.insert(0, 1 - np.sum(np.array(list_pop)))
 
-#     tra[i][0] = tau_window
-#     tra[i][1] = len(state_list)
-#     tra[i][2] = list_pop[0]
-#     pop_list.append(list_pop)
+    tra[i][0] = tau_window
+    tra[i][1] = len(state_list)
+    tra[i][2] = list_pop[0]
+    pop_list.append(list_pop)
 
-# ### These functions are examples of how to visualize the results
-# plot_time_res_analysis("output_multi/Fig6.png", tra)
-# plot_pop_fractions("output_multi/Fig7.png", pop_list, tra)
+### These functions are examples of how to visualize the results
+plot_time_res_analysis("output_multi/Fig6.png", tra)
+plot_pop_fractions("output_multi/Fig7.png", pop_list, tra)
 
 plt.show()
