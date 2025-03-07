@@ -76,23 +76,25 @@ def test_output_files(original_wd: Path, temp_dir: Path):
     )
 
     with tempfile.TemporaryDirectory() as _:
-        state_list, labels = onion_uni(reshaped_data_uni)
+        state_list_u, labels = onion_uni(reshaped_data_uni)
 
         plot.plot_output_uni(
-            "tmp_fig.png", reshaped_data_uni, n_windows, state_list
+            "tmp_fig.png", reshaped_data_uni, N_PARTICLES, state_list_u
         )
         plot.plot_one_trj_uni(
-            "tmp_fig.png", 0, reshaped_data_uni, labels, n_windows
+            "tmp_fig.png", 0, reshaped_data_uni, N_PARTICLES, labels
         )
         plot.plot_medoids_uni("tmp_fig.png", reshaped_data_uni, labels)
-        plot.plot_state_populations("tmp_fig.png", n_windows, labels)
-        plot.plot_sankey("tmp_fig.png", labels, n_windows, [1, 3, 5, 7])
+        plot.plot_state_populations(
+            "tmp_fig.png", N_PARTICLES, TAU_WINDOW, labels
+        )
+        plot.plot_sankey("tmp_fig.png", labels, N_PARTICLES, [1, 3, 5, 7])
 
-        state_list, labels = onion_multi(reshaped_data_multi)
+        state_list_m, labels = onion_multi(reshaped_data_multi)
 
         old_input_data = np.array([random_walk_x, random_walk_y])
         plot.plot_output_multi(
-            "tmp_fig.png", old_input_data, state_list, labels, TAU_WINDOW
+            "tmp_fig.png", old_input_data, state_list_m, labels, TAU_WINDOW
         )
         plot.plot_one_trj_multi(
             "tmp_fig.png", 0, TAU_WINDOW, old_input_data, labels

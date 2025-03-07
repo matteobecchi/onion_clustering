@@ -294,46 +294,78 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">scipy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NDArray</span>
 
 
 <div class="viewcode-block" id="reshape_from_nt">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.helpers.reshape_from_nt.html#tropea_clustering.helpers.reshape_from_nt">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">reshape_from_nt</span><span class="p">(</span><span class="n">input_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tau_window</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">reshape_from_nt</span><span class="p">(</span>
+    <span class="n">input_data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+    <span class="n">delta_t</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Reshapes the input data from traditional from scikit format.</span>
+<span class="sd">    Reshapes the input data from traditional to scikit format.</span>
 
-<span class="sd">    Takes the data array in the (n_particles, n_frames) format and</span>
-<span class="sd">    reshapes it in the format required by scikit-learn.</span>
+<span class="sd">    Takes the array containing the univariate time-series data in the</span>
+<span class="sd">    (n_particles, n_frames) format and reshapes it in the format required</span>
+<span class="sd">    by scikit-learn (-1, delta_t).</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 
 <span class="sd">    input_data : np.ndarray of shape (n_particles, n_frames)</span>
-<span class="sd">        The raw data in the traditional shape.</span>
+<span class="sd">        The data to cluster in the traditional shape.</span>
 
-<span class="sd">    tau_window : int</span>
-<span class="sd">        Length of the signal window - the analysis time resolution.</span>
+<span class="sd">    delta_t : int</span>
+<span class="sd">        Length of the signal sequence - the analysis time resolution.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 
-<span class="sd">    reshaped_data : np.ndarray of shape (n_particles * n_windows, tau_window)</span>
-<span class="sd">        The raw data in the scikit-required shape.</span>
+<span class="sd">    reshaped_data : np.ndarray of shape (n_particles * n_seq, delta_t)</span>
+<span class="sd">        The data to cluster in the scikit-required shape.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    .. testcode:: reshape_nt-test</span>
+
+<span class="sd">        import numpy as np</span>
+<span class="sd">        from tropea_clustering import helpers</span>
+
+<span class="sd">        # Select time resolution</span>
+<span class="sd">        delta_t = 10</span>
+
+<span class="sd">        # Create random input data</span>
+<span class="sd">        np.random.seed(1234)</span>
+<span class="sd">        n_particles = 5</span>
+<span class="sd">        n_frames = 1000</span>
+
+<span class="sd">        input_data = np.random.rand(n_particles, n_frames)</span>
+
+<span class="sd">        # Create input array with the scikit-required shape</span>
+<span class="sd">        reshaped_input_data = helpers.reshape_from_nt(</span>
+<span class="sd">            input_data, delta_t,</span>
+<span class="sd">        )</span>
+
+<span class="sd">    .. testcode:: reshape_nt-test</span>
+<span class="sd">            :hide:</span>
+
+<span class="sd">            assert reshaped_input_data.shape == (500, 10)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">n_particles</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">n_frames</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">n_windows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_frames</span> <span class="o">/</span> <span class="n">tau_window</span><span class="p">)</span>
-    <span class="n">frames_in_excess</span> <span class="o">=</span> <span class="n">n_frames</span> <span class="o">-</span> <span class="n">n_windows</span> <span class="o">*</span> <span class="n">tau_window</span>
+    <span class="n">n_particles</span><span class="p">,</span> <span class="n">n_frames</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">n_seq</span> <span class="o">=</span> <span class="n">n_frames</span> <span class="o">//</span> <span class="n">delta_t</span>
+    <span class="n">frames_in_excess</span> <span class="o">=</span> <span class="n">n_frames</span> <span class="o">-</span> <span class="n">n_seq</span> <span class="o">*</span> <span class="n">delta_t</span>
 
     <span class="k">if</span> <span class="n">frames_in_excess</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">reshaped_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
             <span class="n">input_data</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="n">frames_in_excess</span><span class="p">],</span>
-            <span class="p">(</span><span class="n">n_particles</span> <span class="o">*</span> <span class="n">n_windows</span><span class="p">,</span> <span class="n">tau_window</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">n_particles</span> <span class="o">*</span> <span class="n">n_seq</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">),</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">reshaped_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
             <span class="n">input_data</span><span class="p">,</span>
-            <span class="p">(</span><span class="n">n_particles</span> <span class="o">*</span> <span class="n">n_windows</span><span class="p">,</span> <span class="n">tau_window</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">n_particles</span> <span class="o">*</span> <span class="n">n_seq</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">),</span>
         <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">reshaped_data</span></div>
@@ -342,39 +374,71 @@
 
 <div class="viewcode-block" id="reshape_from_dnt">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.helpers.reshape_from_dnt.html#tropea_clustering.helpers.reshape_from_dnt">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">reshape_from_dnt</span><span class="p">(</span><span class="n">input_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tau_window</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">reshape_from_dnt</span><span class="p">(</span>
+    <span class="n">input_data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+    <span class="n">delta_t</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reshapes the input data from traditional from scikit format.</span>
 
-<span class="sd">    Takes the data array in the (n_dims, n_particles, n_frames) format and</span>
-<span class="sd">    reshapes it in the format required by scikit-learn.</span>
+<span class="sd">    Takes the array containing the univariate time-series data in the</span>
+<span class="sd">    (n_dims, n_particles, n_frames) format and reshapes it in the format</span>
+<span class="sd">    required by scikit-learn (-1, delta_t * n_dims).</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 
 <span class="sd">    input_data : np.ndarray of shape (n_dims, n_particles, n_frames)</span>
-<span class="sd">        The raw data in the traditional shape.</span>
+<span class="sd">        The data to cluster in the traditional shape.</span>
 
-<span class="sd">    tau_window : int</span>
-<span class="sd">        Length of the signal window - the analysis time resolution.</span>
+<span class="sd">    delta_t : int</span>
+<span class="sd">        Length of the signal sequence - the analysis time resolution.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 
-<span class="sd">    reshaped_data : np.ndarray of shape (n_particles * n_windows, tau_window * n_dim)</span>
-<span class="sd">        The raw data in the scikit-required shape.</span>
+<span class="sd">    reshaped_data : np.ndarray of shape (n_particles * n_seq, delta_t * n_dim)</span>
+<span class="sd">        The data to cluster in the scikit-required shape.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    .. testcode:: reshape_dnt-test</span>
+
+<span class="sd">        import numpy as np</span>
+<span class="sd">        from tropea_clustering import helpers</span>
+
+<span class="sd">        # Select time resolution</span>
+<span class="sd">        delta_t = 5</span>
+
+<span class="sd">        # Create random input data</span>
+<span class="sd">        np.random.seed(1234)</span>
+<span class="sd">        n_dims = 2</span>
+<span class="sd">        n_particles = 5</span>
+<span class="sd">        n_frames = 1000</span>
+
+<span class="sd">        input_data = np.random.rand(n_dims, n_particles, n_frames)</span>
+
+<span class="sd">        # Create input array with the scikit-required shape</span>
+<span class="sd">        reshaped_input_data = helpers.reshape_from_dnt(</span>
+<span class="sd">            input_data, delta_t,</span>
+<span class="sd">        )</span>
+
+<span class="sd">    .. testcode:: reshape_dnt-test</span>
+<span class="sd">            :hide:</span>
+
+<span class="sd">            assert reshaped_input_data.shape == (1000, 10)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">n_particles</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">n_frames</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-    <span class="n">n_windows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_frames</span> <span class="o">/</span> <span class="n">tau_window</span><span class="p">)</span>
-    <span class="n">frames_in_excess</span> <span class="o">=</span> <span class="n">n_frames</span> <span class="o">-</span> <span class="n">n_windows</span> <span class="o">*</span> <span class="n">tau_window</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">n_particles</span><span class="p">,</span> <span class="n">n_frames</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">n_seq</span> <span class="o">=</span> <span class="n">n_frames</span> <span class="o">//</span> <span class="n">delta_t</span>
+    <span class="n">frames_in_excess</span> <span class="o">=</span> <span class="n">n_frames</span> <span class="o">-</span> <span class="n">n_seq</span> <span class="o">*</span> <span class="n">delta_t</span>
 
     <span class="k">if</span> <span class="n">frames_in_excess</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">reshaped_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
-            <span class="n">input_data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="o">-</span><span class="n">frames_in_excess</span><span class="p">],</span> <span class="p">(</span><span class="n">n_particles</span> <span class="o">*</span> <span class="n">n_windows</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">input_data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="o">-</span><span class="n">frames_in_excess</span><span class="p">],</span> <span class="p">(</span><span class="n">n_particles</span> <span class="o">*</span> <span class="n">n_seq</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">reshaped_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="p">(</span><span class="n">n_particles</span> <span class="o">*</span> <span class="n">n_windows</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">reshaped_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="p">(</span><span class="n">n_particles</span> <span class="o">*</span> <span class="n">n_seq</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">reshaped_data</span></div>
 

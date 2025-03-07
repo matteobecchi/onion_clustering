@@ -296,26 +296,31 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NDArray</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">ClusterMixin</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.utils.validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_data</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">tropea_clustering._internal.main</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateUni</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tropea_clustering._internal.main</span><span class="w"> </span><span class="kn">import</span> <span class="n">_main</span> <span class="k">as</span> <span class="n">_onion_inner</span>
 
 
 <div class="viewcode-block" id="onion_uni">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.onion_uni.html#tropea_clustering.onion_uni">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">onion_uni</span><span class="p">(</span>
-    <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">X</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
     <span class="n">bins</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
     <span class="n">number_of_sigmas</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
-<span class="p">):</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">StateUni</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Performs onion clustering on the data array &#39;X&#39;.</span>
 
+<span class="sd">    Returns an array of integer labels, one for each signal sequence.</span>
+<span class="sd">    Unclassified sequences are labelled &quot;-1&quot;.</span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    X : ndarray of shape (n_particles * n_windows, tau_window)</span>
-<span class="sd">        The raw data. Notice that each signal window is considered as a</span>
+<span class="sd">    X : ndarray of shape (n_particles * n_seq, delta_t)</span>
+<span class="sd">        The data to cluster. Each signal sequence is considered as a</span>
 <span class="sd">        single data point.</span>
 
 <span class="sd">    bins : int, default=&quot;auto&quot;</span>
@@ -325,8 +330,8 @@
 <span class="sd">        (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).</span>
 
 <span class="sd">    number_of_sigmas : float, default=2.0</span>
-<span class="sd">        Sets the thresholds for classifing a signal window inside a state:</span>
-<span class="sd">        the window is contained in the state if it is entirely contained</span>
+<span class="sd">        Sets the thresholds for classifing a signal sequence inside a state:</span>
+<span class="sd">        the sequence is contained in the state if it is entirely contained</span>
 <span class="sd">        inside number_of_sigmas * state.sigmas times from state.mean.</span>
 
 <span class="sd">    Returns</span>
@@ -335,9 +340,9 @@
 <span class="sd">        The list of the identified states. Refer to the documentation of</span>
 <span class="sd">        StateUni for accessing the information on the states.</span>
 
-<span class="sd">    labels : ndarray of shape (n_particles * n_windows,)</span>
-<span class="sd">        Cluster labels for each signal window. Unclassified points are given</span>
-<span class="sd">        the label -1.</span>
+<span class="sd">    labels : ndarray of shape (n_particles * n_seq,)</span>
+<span class="sd">        Cluster labels for each signal sequence. Unclassified points are given</span>
+<span class="sd">        the label &quot;-1&quot;.</span>
 
 <span class="sd">    Example</span>
 <span class="sd">    -------</span>
@@ -348,7 +353,7 @@
 <span class="sd">        from tropea_clustering import onion_uni, helpers</span>
 
 <span class="sd">        # Select time resolution</span>
-<span class="sd">        tau_window = 5</span>
+<span class="sd">        delta_t = 5</span>
 
 <span class="sd">        # Create random input data</span>
 <span class="sd">        np.random.seed(1234)</span>
@@ -359,7 +364,7 @@
 
 <span class="sd">        # Create input array with the correct shape</span>
 <span class="sd">        reshaped_input_data = helpers.reshape_from_nt(</span>
-<span class="sd">            input_data, tau_window,</span>
+<span class="sd">            input_data, delta_t,</span>
 <span class="sd">        )</span>
 
 <span class="sd">        # Run Onion Clustering</span>
@@ -387,6 +392,9 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Performs onion clustering on a data array.</span>
 
+<span class="sd">    Returns an array of integer labels, one for each signal sequence.</span>
+<span class="sd">    Unclassified sequences are labelled &quot;-1&quot;.</span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    bins : int, default=&quot;auto&quot;</span>
@@ -396,8 +404,8 @@
 <span class="sd">        (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).</span>
 
 <span class="sd">    number_of_sigmas : float, default=2.0</span>
-<span class="sd">        Sets the thresholds for classifing a signal window inside a state:</span>
-<span class="sd">        the window is contained in the state if it is entirely contained</span>
+<span class="sd">        Sets the thresholds for classifing a signal sequence inside a state:</span>
+<span class="sd">        the sequence is contained in the state if it is entirely contained</span>
 <span class="sd">        inside number_of_sigmas * state.sigmas times from state.mean.</span>
 
 <span class="sd">    Attributes</span>
@@ -406,9 +414,9 @@
 <span class="sd">        List of the identified states. Refer to the documentation of</span>
 <span class="sd">        StateUni for accessing the information on the states.</span>
 
-<span class="sd">    labels_: ndarray of shape (n_particles * n_windows,)</span>
-<span class="sd">        Cluster labels for signal window. Unclassified points are given</span>
-<span class="sd">        the label -1.</span>
+<span class="sd">    labels_: ndarray of shape (n_particles * n_seq,)</span>
+<span class="sd">        Cluster labels for signal sequence. Unclassified points are given</span>
+<span class="sd">        the label &quot;-1&quot;.</span>
 
 <span class="sd">    Example</span>
 <span class="sd">    -------</span>
@@ -419,7 +427,7 @@
 <span class="sd">        from tropea_clustering import OnionUni, helpers</span>
 
 <span class="sd">        # Select time resolution</span>
-<span class="sd">        tau_window = 5</span>
+<span class="sd">        delta_t = 5</span>
 
 <span class="sd">        # Create random input data</span>
 <span class="sd">        np.random.seed(1234)</span>
@@ -430,7 +438,7 @@
 
 <span class="sd">        # Create input array with the correct shape</span>
 <span class="sd">        reshaped_input_data = helpers.reshape_from_nt(</span>
-<span class="sd">            input_data, tau_window,</span>
+<span class="sd">            input_data, delta_t,</span>
 <span class="sd">        )</span>
 
 <span class="sd">        # Run Onion Clustering</span>
@@ -461,8 +469,8 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        X : ndarray of shape (n_particles * n_windows, tau_window)</span>
-<span class="sd">            The raw data. Notice that each signal window is considered as a</span>
+<span class="sd">        X : ndarray of shape (n_particles * n_seq, delta_t)</span>
+<span class="sd">            The data to cluster. Each signal sequence is considered as a</span>
 <span class="sd">            single data point.</span>
 
 <span class="sd">        Returns</span>
@@ -509,15 +517,15 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        X : ndarray of shape (n_particles * n_windows, tau_window)</span>
-<span class="sd">            The raw data. Notice that each signal window is considered as a</span>
+<span class="sd">        X : ndarray of shape (n_particles * n_seq, delta_t)</span>
+<span class="sd">            The data to cluster. Each signal sequence is considered as a</span>
 <span class="sd">            single data point.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        labels_: ndarray of shape (n_particles * n_windows,)</span>
-<span class="sd">            Cluster labels for signal window. Unclassified points are given</span>
-<span class="sd">            the label -1.</span>
+<span class="sd">        labels_: ndarray of shape (n_particles * n_seq,)</span>
+<span class="sd">            Cluster labels for signal sequence. Unclassified points are given</span>
+<span class="sd">            the label &quot;-1&quot;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">labels_</span></div>
 

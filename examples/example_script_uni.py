@@ -23,8 +23,7 @@ PATH_TO_INPUT_DATA = "onion_example_files/data/univariate_time-series.npy"
 
 ### Load the input data - it's an array of shape (n_particles, n_frames)
 input_data = np.load(PATH_TO_INPUT_DATA)[:, 1:]
-n_particles = input_data.shape[0]
-n_frames = input_data.shape[1]
+n_particles, n_frames = input_data.shape
 
 ### CLUSTERING WITH A SINGLE TIME RESOLUTION ###
 ### Chose the time resolution --> the length of the windows in which the
@@ -41,11 +40,13 @@ reshaped_data = helpers.reshape_from_nt(input_data, TAU_WINDOW)
 state_list, labels = onion_uni(reshaped_data)
 
 ### These functions are examples of how to visualize the results
-plot_output_uni("output_uni/Fig1.png", reshaped_data, n_windows, state_list)
-plot_one_trj_uni("output_uni/Fig2.png", 1234, reshaped_data, labels, n_windows)
+plot_output_uni("output_uni/Fig1.png", reshaped_data, n_particles, state_list)
+plot_one_trj_uni(
+    "output_uni/Fig2.png", 1234, reshaped_data, n_particles, labels
+)
 plot_medoids_uni("output_uni/Fig3.png", reshaped_data, labels)
-plot_state_populations("output_uni/Fig4.png", n_windows, labels)
-plot_sankey("output_uni/Fig5.png", labels, n_windows, [10, 20, 30, 40])
+plot_state_populations("output_uni/Fig4.png", n_particles, TAU_WINDOW, labels)
+plot_sankey("output_uni/Fig5.png", labels, n_particles, [10, 20, 30, 40])
 
 ### CLUSTERING THE WHOLE RANGE OF TIME RESOLUTIONS ###
 TAU_WINDOWS = np.unique(np.geomspace(2, n_frames, num=20, dtype=int))

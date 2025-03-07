@@ -1,4 +1,4 @@
-Results of doctest builder run on 2025-03-04 16:12:02
+Results of doctest builder run on 2025-03-07 11:30:05
 =====================================================
 
 Document: _autosummary/tropea_clustering.OnionMulti
@@ -13,6 +13,22 @@ Document: _autosummary/tropea_clustering.OnionUni
 -------------------------------------------------
 1 item passed all tests:
    2 tests in OnionUni-test
+2 tests in 1 item.
+2 passed.
+Test passed.
+
+Document: _autosummary/tropea_clustering.helpers.reshape_from_dnt
+-----------------------------------------------------------------
+1 item passed all tests:
+   2 tests in reshape_dnt-test
+2 tests in 1 item.
+2 passed.
+Test passed.
+
+Document: _autosummary/tropea_clustering.helpers.reshape_from_nt
+----------------------------------------------------------------
+1 item passed all tests:
+   2 tests in reshape_nt-test
 2 tests in 1 item.
 2 passed.
 Test passed.
@@ -35,7 +51,7 @@ Test passed.
 
 Doctest summary
 ===============
-    8 tests
+   12 tests
     0 failures in tests
     0 failures in setup code
     0 failures in cleanup code

@@ -298,22 +298,24 @@
 <h1>tropea_clustering.plot.plot_state_populations<a class="headerlink" href="#tropea-clustering-plot-plot-state-populations" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="tropea_clustering.plot.plot_state_populations">
-<span class="sig-prename descclassname"><span class="pre">tropea_clustering.plot.</span></span><span class="sig-name descname"><span class="pre">plot_state_populations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_windows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/plot.html#plot_state_populations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering.plot.plot_state_populations" title="Link to this definition">¶</a></dt>
-<dd><p>Plot the populations of states over time.</p>
-<p>Here’s an example of the output:</p>
-<a class="reference internal image-reference" href="../_images/uni_Fig4.png"><img alt="Example Image" src="../_images/uni_Fig4.png" style="width: 600px;" />
-</a>
+<span class="sig-prename descclassname"><span class="pre">tropea_clustering.plot.</span></span><span class="sig-name descname"><span class="pre">plot_state_populations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_particles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/plot.html#plot_state_populations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering.plot.plot_state_populations" title="Link to this definition">¶</a></dt>
+<dd><p>Plot the populations of clusters over time.</p>
 <p>For each trajectory frame, plots the fraction of the population of each
-cluster. “ENV0” refers to the unclassified data.</p>
+cluster. In the legend, “ENV0” refers to the unclassified data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The path of the .png file the figure will be saved as.</p></li>
-<li><p><strong>n_windows</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The number of windows used.</p></li>
-<li><p><strong>labels</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>n_particles * n_windows</em><em>,</em><em>)</em>) – The output of the clustering algorithm.</p></li>
+<li><p><strong>n_particles</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The number of particles in the original dataset.</p></li>
+<li><p><strong>delta_t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The legth of the signal sequences (the analysis time resolution).</p></li>
+<li><p><strong>labels</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>n_particles * n_seq</em><em>,</em><em>)</em>) – The output of Onion Clustering.</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Example</p>
+<p>Here’s an example of the output:</p>
+<a class="reference internal image-reference" href="../_images/uni_Fig4.png"><img alt="Example Image" src="../_images/uni_Fig4.png" style="width: 600px;" />
+</a>
 </dd></dl>
 
 </section>

@@ -288,10 +288,11 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for tropea_clustering._internal.plot</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Auxiliary functions for plotting the results of onion-clustering.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Auxiliary functions for plotting the results of onion-clustering.</span>
 
-<span class="c1"># Author: Becchi Matteo &lt;bechmath@gmail.com&gt;</span>
-<span class="c1"># Date: November 28, 2024</span>
+<span class="sd">* Author: Becchi Matteo &lt;bechmath@gmail.com&gt;</span>
+<span class="sd">* Date: November 28, 2024</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
@@ -302,8 +303,11 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.colors</span><span class="w"> </span><span class="kn">import</span> <span class="n">rgb2hex</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ellipse</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.ticker</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaxNLocator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NDArray</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">tropea_clustering._internal.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">gaussian</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tropea_clustering._internal.main</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateUni</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tropea_clustering._internal.main_2d</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateMulti</span>
 
 <span class="n">COLORMAP</span> <span class="o">=</span> <span class="s2">&quot;viridis&quot;</span>
 
@@ -312,12 +316,29 @@
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_output_uni.html#tropea_clustering.plot.plot_output_uni">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_output_uni</span><span class="p">(</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">input_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">n_windows</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">state_list</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span>
+    <span class="n">input_data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+    <span class="n">n_particles</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">state_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">StateUni</span><span class="p">],</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plots clustering output with Gaussians and threshols.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plots clustering output with Gaussians and thresholds.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    title : str</span>
+<span class="sd">        The path of the .png file the figure will be saved as.</span>
+
+<span class="sd">    input_data : ndarray of shape (n_particles * n_seq, delta_t)</span>
+<span class="sd">        The input data array, in the format taken by Onion Clustering.</span>
+
+<span class="sd">    n_particles : int</span>
+<span class="sd">        The number of particles in the original dataset.</span>
+
+<span class="sd">    state_list : List[StateUni]</span>
+<span class="sd">        The list of the cluster states.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
 <span class="sd">    Here&#39;s an example of the output:</span>
 
 <span class="sd">    .. image:: ../_static/images/uni_Fig1.png</span>
@@ -328,24 +349,9 @@
 <span class="sd">    colored according to the thresholds between the clusters. The left panel</span>
 <span class="sd">    shows the cumulative data distribution, and the Gaussians fitted to the</span>
 <span class="sd">    data, corresponding to the identified clusters.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-
-<span class="sd">    title : str</span>
-<span class="sd">        The path of the .png file the figure will be saved as.</span>
-
-<span class="sd">    input_data : ndarray of shape (n_particles * n_windows, tau_window)</span>
-<span class="sd">        The input data array.</span>
-
-<span class="sd">    n_windows : int</span>
-<span class="sd">        The number of windows used.</span>
-
-<span class="sd">    state_list : List[StateUni]</span>
-<span class="sd">        The list of the cluster states.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">n_particles</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">n_windows</span><span class="p">)</span>
-    <span class="n">n_frames</span> <span class="o">=</span> <span class="n">n_windows</span> <span class="o">*</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">n_seq</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="n">n_particles</span>
+    <span class="n">n_frames</span> <span class="o">=</span> <span class="n">n_seq</span> <span class="o">*</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">input_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> <span class="n">n_frames</span><span class="p">))</span>
 
     <span class="n">flat_m</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
@@ -449,20 +455,13 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_one_trj_uni</span><span class="p">(</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">example_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">input_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">n_windows</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">input_data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+    <span class="n">n_particles</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">],</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Plots the colored trajectory of one example particle.</span>
 
-<span class="sd">    Here&#39;s an example of the output:</span>
-
-<span class="sd">    .. image:: ../_static/images/uni_Fig2.png</span>
-<span class="sd">        :alt: Example Image</span>
-<span class="sd">        :width: 600px</span>
-
-<span class="sd">    The datapoints are colored according to the cluster they have been</span>
-<span class="sd">    assigned.</span>
+<span class="sd">    Unclassified data points are colored with the darkest color.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -473,47 +472,54 @@
 <span class="sd">    example_id : int</span>
 <span class="sd">        The ID of the selected particle.</span>
 
-<span class="sd">    input_data : ndarray of shape (n_particles * n_windows, tau_window)</span>
+<span class="sd">    input_data : ndarray of shape (n_particles * n_seq, delta_t)</span>
 <span class="sd">        The input data array.</span>
 
-<span class="sd">    labels : ndarray of shape (n_particles * n_windows,)</span>
-<span class="sd">        The output of the clustering algorithm.</span>
+<span class="sd">    n_particles : int</span>
+<span class="sd">        The number of particles in the original dataset.</span>
 
-<span class="sd">    n_windows : int</span>
-<span class="sd">        The number of windows used.</span>
+<span class="sd">    labels : ndarray of shape (n_particles * n_seq,)</span>
+<span class="sd">        The output of Onion Clustering.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    Here&#39;s an example of the output:</span>
+
+<span class="sd">    .. image:: ../_static/images/uni_Fig2.png</span>
+<span class="sd">        :alt: Example Image</span>
+<span class="sd">        :width: 600px</span>
+
+<span class="sd">    The datapoints are colored according to the cluster they have been</span>
+<span class="sd">    assigned.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">tau_window</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">n_particles</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">n_windows</span><span class="p">)</span>
-    <span class="n">n_frames</span> <span class="o">=</span> <span class="n">n_windows</span> <span class="o">*</span> <span class="n">tau_window</span>
+    <span class="n">delta_t</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">n_seq</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="n">n_particles</span>
+    <span class="n">n_frames</span> <span class="o">=</span> <span class="n">n_seq</span> <span class="o">*</span> <span class="n">delta_t</span>
 
     <span class="n">input_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> <span class="n">n_frames</span><span class="p">))</span>
-    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> <span class="n">n_windows</span><span class="p">))</span>
-    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">tau_window</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> <span class="n">n_seq</span><span class="p">))</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="n">signal</span> <span class="o">=</span> <span class="n">input_data</span><span class="p">[</span><span class="n">example_id</span><span class="p">][:</span> <span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
-    <span class="n">t_steps</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">t_steps</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">t_steps</span><span class="p">)</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_frames</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_frames</span><span class="p">)</span>
 
     <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
     <span class="n">unique_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
-    <span class="c1"># If there are no assigned window, we still need the &quot;0&quot; state</span>
+    <span class="c1"># If there are no assigned window, we still need the &quot;-1&quot; state</span>
     <span class="c1"># for consistency:</span>
     <span class="k">if</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">unique_labels</span><span class="p">:</span>
         <span class="n">unique_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">unique_labels</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span>
-        <span class="n">COLORMAP</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">unique_labels</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">unique_labels</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-    <span class="p">)</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">COLORMAP</span><span class="p">,</span> <span class="n">unique_labels</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
     <span class="n">color</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">example_id</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
-    <span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">signal</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">input_data</span><span class="p">[</span><span class="n">example_id</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
 
     <span class="n">axes</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
         <span class="n">time</span><span class="p">,</span>
-        <span class="n">signal</span><span class="p">,</span>
+        <span class="n">input_data</span><span class="p">[</span><span class="n">example_id</span><span class="p">],</span>
         <span class="n">c</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
         <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
-        <span class="n">vmin</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">unique_labels</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">vmax</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">unique_labels</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">vmax</span><span class="o">=</span><span class="n">unique_labels</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">s</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
     <span class="p">)</span>
 
@@ -530,20 +536,15 @@
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_state_populations.html#tropea_clustering.plot.plot_state_populations">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_state_populations</span><span class="p">(</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">n_windows</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">n_particles</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">delta_t</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">],</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Plot the populations of states over time.</span>
-
-<span class="sd">    Here&#39;s an example of the output:</span>
-
-<span class="sd">    .. image:: ../_static/images/uni_Fig4.png</span>
-<span class="sd">        :alt: Example Image</span>
-<span class="sd">        :width: 600px</span>
+<span class="sd">    Plot the populations of clusters over time.</span>
 
 <span class="sd">    For each trajectory frame, plots the fraction of the population of each</span>
-<span class="sd">    cluster. &quot;ENV0&quot; refers to the unclassified data.</span>
+<span class="sd">    cluster. In the legend, &quot;ENV0&quot; refers to the unclassified data.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -551,18 +552,30 @@
 <span class="sd">    title : str</span>
 <span class="sd">        The path of the .png file the figure will be saved as.</span>
 
-<span class="sd">    n_windows : int</span>
-<span class="sd">        The number of windows used.</span>
+<span class="sd">    n_particles : int</span>
+<span class="sd">        The number of particles in the original dataset.</span>
 
-<span class="sd">    labels : ndarray of shape (n_particles * n_windows,)</span>
-<span class="sd">        The output of the clustering algorithm.</span>
+<span class="sd">    delta_t : int</span>
+<span class="sd">        The legth of the signal sequences (the analysis time resolution).</span>
+
+<span class="sd">    labels : ndarray of shape (n_particles * n_seq,)</span>
+<span class="sd">        The output of Onion Clustering.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    Here&#39;s an example of the output:</span>
+
+<span class="sd">    .. image:: ../_static/images/uni_Fig4.png</span>
+<span class="sd">        :alt: Example Image</span>
+<span class="sd">        :width: 600px</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">n_particles</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">n_windows</span><span class="p">)</span>
-    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> <span class="n">n_windows</span><span class="p">))</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
 
     <span class="n">unique_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
     <span class="k">if</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">unique_labels</span><span class="p">:</span>
         <span class="n">unique_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">unique_labels</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="n">list_of_populations</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">unique_labels</span><span class="p">:</span>
@@ -570,19 +583,17 @@
         <span class="n">list_of_populations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">population</span> <span class="o">/</span> <span class="n">n_particles</span><span class="p">)</span>
 
     <span class="n">palette</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">n_states</span> <span class="o">=</span> <span class="n">unique_labels</span><span class="o">.</span><span class="n">size</span>
-    <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">COLORMAP</span><span class="p">,</span> <span class="n">n_states</span><span class="p">)</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">COLORMAP</span><span class="p">,</span> <span class="n">unique_labels</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cmap</span><span class="o">.</span><span class="n">N</span><span class="p">):</span>
         <span class="n">rgba</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
         <span class="n">palette</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rgb2hex</span><span class="p">(</span><span class="n">rgba</span><span class="p">))</span>
 
     <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-    <span class="n">t_steps</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">t_steps</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">t_steps</span><span class="p">)</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
     <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">pop</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">list_of_populations</span><span class="p">):</span>
         <span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">pop</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;ENV</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">palette</span><span class="p">[</span><span class="n">label</span><span class="p">])</span>
     <span class="n">axes</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Time [frame]&quot;</span><span class="p">)</span>
-    <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Population&quot;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Population fraction&quot;</span><span class="p">)</span>
     <span class="n">axes</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 
     <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span></div>
@@ -593,12 +604,30 @@
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_medoids_uni.html#tropea_clustering.plot.plot_medoids_uni">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_medoids_uni</span><span class="p">(</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">input_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">input_data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+    <span class="n">labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">],</span>
+    <span class="n">output_to_file</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute and plot the average signal sequence inside each state.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    title : str</span>
+<span class="sd">        The path of the .png file the figure will be saved as.</span>
+
+<span class="sd">    input_data : ndarray of shape (n_particles * n_seq, delta_t)</span>
+<span class="sd">        The input data array, in the format required by Onion Clustering.</span>
+
+<span class="sd">    labels : ndarray of shape (n_particles * n_seq,)</span>
+<span class="sd">        The output of the clustering algorithm.</span>
+
+<span class="sd">    output_to_file : bool, default = False.</span>
+<span class="sd">        If True, saves files with the cluster medoids.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
 <span class="sd">    Here&#39;s an example of the output:</span>
 
 <span class="sd">    .. image:: ../_static/images/uni_Fig3.png</span>
@@ -608,24 +637,6 @@
 <span class="sd">    For each cluster, the average (solid line) and standard deviation (shaded</span>
 <span class="sd">    area) of the signal sequences contained in it is shown. The unclassififed</span>
 <span class="sd">    seqeunces are shown individually in purple.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-
-<span class="sd">    title : str</span>
-<span class="sd">        The path of the .png file the figure will be saved as.</span>
-
-<span class="sd">    input_data : ndarray of shape (n_particles * n_windows, tau_window)</span>
-<span class="sd">        The input data array.</span>
-
-<span class="sd">    labels : ndarray of shape (n_particles * n_windows,)</span>
-<span class="sd">        The output of the clustering algorithm.</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-
-<span class="sd">    - If all the points are classified, we still need the &quot;-1&quot; state for consistency.</span>
-<span class="sd">    - Prints the output to files.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">center_list</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">std_list</span> <span class="o">=</span> <span class="p">[]</span>
@@ -650,16 +661,17 @@
     <span class="n">center_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">center_list</span><span class="p">)</span>
     <span class="n">std_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">std_list</span><span class="p">)</span>
 
-    <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span>
-        <span class="s2">&quot;medoid_center.txt&quot;</span><span class="p">,</span>
-        <span class="n">center_arr</span><span class="p">,</span>
-        <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Signal average for each ENV&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span>
-        <span class="s2">&quot;medoid_stddev.txt&quot;</span><span class="p">,</span>
-        <span class="n">std_arr</span><span class="p">,</span>
-        <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Signal standard deviation for each ENV&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">output_to_file</span><span class="p">:</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span>
+            <span class="s2">&quot;medoid_center.txt&quot;</span><span class="p">,</span>
+            <span class="n">center_arr</span><span class="p">,</span>
+            <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Signal average for each ENV&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span>
+            <span class="s2">&quot;medoid_stddev.txt&quot;</span><span class="p">,</span>
+            <span class="n">std_arr</span><span class="p">,</span>
+            <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Signal standard deviation for each ENV&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="n">palette</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">COLORMAP</span><span class="p">,</span> <span class="n">list_of_labels</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
@@ -698,7 +710,6 @@
                 <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
             <span class="p">)</span>
 
-    <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Average time sequence inside each environments&quot;</span><span class="p">)</span>
     <span class="n">axes</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Time [frames]&quot;</span><span class="p">)</span>
     <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Signal&quot;</span><span class="p">)</span>
     <span class="n">axes</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">MaxNLocator</span><span class="p">(</span><span class="n">integer</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
@@ -711,13 +722,33 @@
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_sankey.html#tropea_clustering.plot.plot_sankey">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_sankey</span><span class="p">(</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">n_windows</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">],</span>
+    <span class="n">n_particles</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">tmp_frame_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plots the Sankey diagram at the desired frames.</span>
 
+<span class="sd">    This function requires the python package Kaleido, and uses plotly</span>
+<span class="sd">    instead of matplotlib.pyplot.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    title : str</span>
+<span class="sd">        The path of the .png file the figure will be saved as.</span>
+
+<span class="sd">    labels : ndarray of shape (n_particles * n_seq,)</span>
+<span class="sd">        The output of the clustering algorithm.</span>
+
+<span class="sd">    n_particles : int</span>
+<span class="sd">        The number of particles in the original dataset.</span>
+
+<span class="sd">    tmp_frame_list : List[int]</span>
+<span class="sd">        The list of frames at which we want to plot the Sankey.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
 <span class="sd">    Here&#39;s an example of the output:</span>
 
 <span class="sd">    .. image:: ../_static/images/uni_Fig5.png</span>
@@ -727,31 +758,10 @@
 <span class="sd">    For each of the selected frames, the colored bars width is proportional</span>
 <span class="sd">    to each cluster population. The gray bands&#39; witdh are proportional to</span>
 <span class="sd">    the number of data points moving from one cluster to the other between the</span>
-<span class="sd">    selected frames. &quot;State -1&quot; refers to the unclassified data.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-
-<span class="sd">    title : str</span>
-<span class="sd">        The path of the .png file the figure will be saved as.</span>
-
-<span class="sd">    labels : ndarray of shape (n_particles * n_windows,)</span>
-<span class="sd">        The output of the clustering algorithm.</span>
-
-<span class="sd">    n_windows : int</span>
-<span class="sd">        The number of windows used.</span>
-
-<span class="sd">    tmp_frame_list : List[int]</span>
-<span class="sd">        The list of windows at which we want to plot the Sankey.</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-
-<span class="sd">    - If there are no assigned window, we still need the &quot;-1&quot; state for consistency</span>
-<span class="sd">    - Requires kaleido.</span>
+<span class="sd">    selected frames. State &quot;-1&quot; refers to the unclassified data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">n_particles</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">n_windows</span><span class="p">)</span>
-    <span class="n">all_the_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> <span class="n">n_windows</span><span class="p">))</span>
+    <span class="n">n_seq</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="n">n_particles</span>
+    <span class="n">all_the_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> <span class="n">n_seq</span><span class="p">))</span>
     <span class="n">frame_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tmp_frame_list</span><span class="p">)</span>
     <span class="n">unique_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">all_the_labels</span><span class="p">)</span>
 
@@ -764,8 +774,7 @@
     <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">frame_list</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">n_states</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">tmp_label1</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">tmp_label2</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">tmp_label</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="c1"># Loop through the frame_list and calculate the transition matrix</span>
     <span class="c1"># for each time window.</span>
@@ -789,20 +798,11 @@
                 <span class="n">value</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="n">elem</span>
                 <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="c1"># Calculate the starting and ending fractions for each state</span>
-        <span class="c1"># and store node labels</span>
-        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_states</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="n">start_fr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">trans_mat</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">trans_mat</span><span class="p">)</span>
-            <span class="n">end_fr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">trans_mat</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">trans_mat</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                <span class="n">tmp_label1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;State </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">start_fr</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
-            <span class="n">tmp_label2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;State </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">end_fr</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+        <span class="c1"># Create node labels</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">unique_labels</span><span class="p">:</span>
+            <span class="n">tmp_label</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;State </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="n">arr_label1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tmp_label1</span><span class="p">)</span>
-    <span class="n">arr_label2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tmp_label2</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-
-    <span class="c1"># Concatenate the temporary labels to create the final node labels.</span>
-    <span class="n">label</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">arr_label1</span><span class="p">,</span> <span class="n">arr_label2</span><span class="p">))</span>
+    <span class="n">state_label</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tmp_label</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 
     <span class="c1"># Generate a color palette for the Sankey diagram.</span>
     <span class="n">palette</span> <span class="o">=</span> <span class="p">[]</span>
@@ -815,7 +815,7 @@
     <span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">palette</span><span class="p">,</span> <span class="n">frame_list</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
 
     <span class="c1"># Create dictionaries to define the Sankey diagram nodes and links.</span>
-    <span class="n">node</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span> <span class="s2">&quot;pad&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;thickness&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="n">color</span><span class="p">}</span>
+    <span class="n">node</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">state_label</span><span class="p">,</span> <span class="s2">&quot;pad&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;thickness&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="n">color</span><span class="p">}</span>
     <span class="n">link</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="n">source</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="n">target</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">}</span>
 
     <span class="c1"># Create the Sankey diagram using Plotly.</span>
@@ -833,11 +833,24 @@
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_time_res_analysis.html#tropea_clustering.plot.plot_time_res_analysis">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_time_res_analysis</span><span class="p">(</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">tra</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">tra</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plots the results of clustering at different time resolutions.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    title : str</span>
+<span class="sd">        The path of the .png file the figure will be saved as.</span>
+
+<span class="sd">    tra : ndarray of shape (n_seq, 3)</span>
+<span class="sd">        tra[j][0] must contain the j-th value used as delta_t;</span>
+<span class="sd">        tra[j][1] must contain the corresponding number of states;</span>
+<span class="sd">        tra[j][2] must contain the corresponding unclassified fraction.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
 <span class="sd">    Here&#39;s an example of the output:</span>
 
 <span class="sd">    .. image:: ../_static/images/uni_Fig6.png</span>
@@ -847,28 +860,18 @@
 <span class="sd">    For each of the analyzed time resolutions, the blue curve shows the number</span>
 <span class="sd">    of identified clusters (not including the unclassified data); the orange</span>
 <span class="sd">    line shows the fraction of unclassififed data.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-
-<span class="sd">    title : str</span>
-<span class="sd">        The path of the .png file the figure will be saved as.</span>
-
-<span class="sd">    tra : ndarray of shape (n_windows, 3)</span>
-<span class="sd">        Contains the number of states and the population of ENV0 at every</span>
-<span class="sd">        tau_window.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-    <span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tra</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">tra</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">)</span>
-    <span class="n">axes</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Time resolution $\Delta t$ [frame]&quot;</span><span class="p">)</span>
-    <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;# environments&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;#1f77b4&quot;</span><span class="p">)</span>
-    <span class="n">axes</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
-    <span class="n">axes</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">tra</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="mf">0.2</span><span class="p">)</span>
-    <span class="n">axes</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">MaxNLocator</span><span class="p">(</span><span class="n">integer</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-    <span class="n">axesr</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
-    <span class="n">axesr</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tra</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">tra</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;#ff7f0e&quot;</span><span class="p">)</span>
-    <span class="n">axesr</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Population of env 0&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;#ff7f0e&quot;</span><span class="p">)</span>
-    <span class="n">axesr</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">)</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tra</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">tra</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Time resolution $\Delta t$ [frame]&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;# environments&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;#1f77b4&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">tra</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">MaxNLocator</span><span class="p">(</span><span class="n">integer</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="n">ax_r</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+    <span class="n">ax_r</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tra</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">tra</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;#ff7f0e&quot;</span><span class="p">)</span>
+    <span class="n">ax_r</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Unclassified fraction&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;#ff7f0e&quot;</span><span class="p">)</span>
+    <span class="n">ax_r</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">)</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span></div>
 
 
@@ -878,11 +881,27 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_pop_fractions</span><span class="p">(</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">list_of_pop</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
-    <span class="n">tra</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">tra</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Plot, for every time resolution, the populations of the ENVs.</span>
+<span class="sd">    Plot, for every time resolution, the populations of the clusters.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    title : str</span>
+<span class="sd">        The path of the .png file the figure will be saved as.</span>
+
+<span class="sd">    list_of_pop : List[List[float]]</span>
+<span class="sd">        For every delta_t, this is the list of the populations of all the</span>
+<span class="sd">        states (the first one is the unclassified data points).</span>
+
+<span class="sd">    tra : ndarray of shape (n_seq, 3)</span>
+<span class="sd">        tra[j][0] must contain the j-th value used as delta_t;</span>
+<span class="sd">        tra[j][1] must contain the corresponding number of states;</span>
+<span class="sd">        tra[j][2] must contain the corresponding unclassified fraction.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
 <span class="sd">    Here&#39;s an example of the output:</span>
 
 <span class="sd">    .. image:: ../_static/images/uni_Fig7.png</span>
@@ -893,23 +912,6 @@
 <span class="sd">    points classified in each cluster. Clusters are ordered according to the</span>
 <span class="sd">    value of their Gaussian&#39;s mean; the bottom cluster is always the</span>
 <span class="sd">    unclassified data points.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    title : str</span>
-<span class="sd">        The path of the .png file the figure will be saved as.</span>
-
-<span class="sd">    list_of_pop : List[List[float]]</span>
-<span class="sd">        For every tau_window, this is the list of the populations of all the</span>
-<span class="sd">        states (the first one is ENV0).</span>
-
-<span class="sd">    tra : ndarray of shape (n_windows, 3)</span>
-<span class="sd">        Contains the number of states and the population of ENV0 at every</span>
-<span class="sd">        tau_window.</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    The bottom state is the ENV0.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Pad the lists in list_of_pop to ensure they all have the same length</span>
     <span class="n">max_num_of_states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">pop_list</span><span class="p">)</span> <span class="k">for</span> <span class="n">pop_list</span> <span class="ow">in</span> <span class="n">list_of_pop</span><span class="p">])</span>
@@ -930,7 +932,7 @@
         <span class="n">bottom</span> <span class="o">+=</span> <span class="n">state</span>
 
     <span class="n">axes</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Time resolution $\Delta t$ [frames]&quot;</span><span class="p">)</span>
-    <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Population&#39;s fractions&quot;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Populations fractions&quot;</span><span class="p">)</span>
     <span class="n">axes</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
 
     <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span></div>
@@ -941,13 +943,34 @@
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_medoids_multi.html#tropea_clustering.plot.plot_medoids_multi">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_medoids_multi</span><span class="p">(</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">tau_window</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">input_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">delta_t</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">input_data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+    <span class="n">labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">],</span>
+    <span class="n">output_to_file</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute and plot the average signal sequence inside each state.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    title : str</span>
+<span class="sd">        The path of the .png file the figure will be saved as.</span>
+
+<span class="sd">    delta_t : int</span>
+<span class="sd">        The length of the signal window used.</span>
+
+<span class="sd">    input_data : ndarray of shape (n_dims, n_particles, n_frames)</span>
+<span class="sd">        The input data array.</span>
+
+<span class="sd">    labels : ndarray of shape (n_particles * n_seq,)</span>
+<span class="sd">        The output of the clustering algorithm.</span>
+
+<span class="sd">    output_to_file : bool, default = False.</span>
+<span class="sd">        If True, saves files with the cluster medoids.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
 <span class="sd">    Here&#39;s an example of the output:</span>
 
 <span class="sd">    .. image:: ../_static/images/multi_Fig3.png</span>
@@ -957,30 +980,8 @@
 <span class="sd">    For each cluster, the average of the signal sequences contained in it is</span>
 <span class="sd">    shown (large solid points). The unclassififed seqeunces are shown</span>
 <span class="sd">    individually in purple (thin lines).</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-
-<span class="sd">    title : str</span>
-<span class="sd">        The path of the .png file the figure will be saved as.</span>
-
-<span class="sd">    tau_window : int</span>
-<span class="sd">        The length of the signal window used.</span>
-
-<span class="sd">    input_data : ndarray of shape (n_dims, n_particles, n_frames)</span>
-<span class="sd">        The input data array.</span>
-
-<span class="sd">    labels : ndarray of shape (n_particles * n_windows,)</span>
-<span class="sd">        The output of the clustering algorithm.</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-
-<span class="sd">    If there are no assigned window, we still need the &quot;-1&quot; state for</span>
-<span class="sd">    consistency</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ndims</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">ndims</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;plot_medoids_multi() does not work with 3D data.&quot;</span><span class="p">)</span>
         <span class="k">return</span>
 
@@ -992,7 +993,7 @@
     <span class="n">env0</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="n">reshaped_data</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">tau_window</span><span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
     <span class="n">reshaped_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
         <span class="n">labels</span><span class="p">,</span> <span class="p">(</span><span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
     <span class="p">)</span>
@@ -1000,10 +1001,10 @@
     <span class="k">for</span> <span class="n">ref_label</span> <span class="ow">in</span> <span class="n">list_of_labels</span><span class="p">:</span>
         <span class="n">tmp</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">mol</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">reshaped_labels</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">window</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mol</span><span class="p">[::</span><span class="n">tau_window</span><span class="p">]):</span>
+            <span class="k">for</span> <span class="n">window</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mol</span><span class="p">[::</span><span class="n">delta_t</span><span class="p">]):</span>
                 <span class="k">if</span> <span class="n">label</span> <span class="o">==</span> <span class="n">ref_label</span><span class="p">:</span>
-                    <span class="n">time_0</span> <span class="o">=</span> <span class="n">window</span> <span class="o">*</span> <span class="n">tau_window</span>
-                    <span class="n">time_1</span> <span class="o">=</span> <span class="p">(</span><span class="n">window</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">tau_window</span>
+                    <span class="n">time_0</span> <span class="o">=</span> <span class="n">window</span> <span class="o">*</span> <span class="n">delta_t</span>
+                    <span class="n">time_1</span> <span class="o">=</span> <span class="p">(</span><span class="n">window</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">delta_t</span>
                     <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reshaped_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">time_0</span><span class="p">:</span><span class="n">time_1</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">ref_label</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
@@ -1011,11 +1012,12 @@
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">env0</span> <span class="o">=</span> <span class="n">tmp</span>
 
-    <span class="n">center_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">center_list</span><span class="p">)</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
-        <span class="s2">&quot;medoid_center.npy&quot;</span><span class="p">,</span>
-        <span class="n">center_arr</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">output_to_file</span><span class="p">:</span>
+        <span class="n">center_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">center_list</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+            <span class="s2">&quot;medoid_center.npy&quot;</span><span class="p">,</span>
+            <span class="n">center_arr</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="n">palette</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">COLORMAP</span><span class="p">,</span> <span class="n">list_of_labels</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
@@ -1057,23 +1059,13 @@
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_output_multi.html#tropea_clustering.plot.plot_output_multi">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_output_multi</span><span class="p">(</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">input_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">state_list</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span>
-    <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">tau_window</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">input_data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+    <span class="n">state_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">StateMulti</span><span class="p">],</span>
+    <span class="n">labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">],</span>
+    <span class="n">delta_t</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot a cumulative figure showing trajectories and identified states.</span>
-
-<span class="sd">    .. image:: ../_static/images/multi_Fig1.png</span>
-<span class="sd">        :alt: Example Image</span>
-<span class="sd">        :width: 600px</span>
-
-<span class="sd">    All the data are plotted, colored according to the cluster thay have been</span>
-<span class="sd">    assigned to. The clusters are shown as black ellipses, whose orizontal and</span>
-<span class="sd">    vertical axis length is given by the standard deviation of the Gaussians</span>
-<span class="sd">    corresponding to the cluster. Unclassififed data points are colored in</span>
-<span class="sd">    purple.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1084,14 +1076,27 @@
 <span class="sd">    input_data : ndarray of shape (n_dims, n_particles, n_frames)</span>
 <span class="sd">        The input data array.</span>
 
-<span class="sd">    state_list : List[StateUni]</span>
+<span class="sd">    state_list : List[StateMulti]</span>
 <span class="sd">        The list of the cluster states.</span>
 
-<span class="sd">    labels : ndarray of shape (n_particles * n_windows,)</span>
+<span class="sd">    labels : ndarray of shape (n_particles * n_seq,)</span>
 <span class="sd">        The output of the clustering algorithm.</span>
 
-<span class="sd">    tau_window : int</span>
-<span class="sd">        The length of the signal window used.</span>
+<span class="sd">    delta_t : int</span>
+<span class="sd">        The length of the signal sequences used.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    .. image:: ../_static/images/multi_Fig1.png</span>
+<span class="sd">        :alt: Example Image</span>
+<span class="sd">        :width: 600px</span>
+
+<span class="sd">    All the data are plotted, colored according to the cluster thay have been</span>
+<span class="sd">    assigned to. The clusters are shown as black ellipses, whose orizontal and</span>
+<span class="sd">    vertical axis length is given by the standard deviation of the Gaussians</span>
+<span class="sd">    corresponding to the cluster. Unclassififed data points are colored in</span>
+<span class="sd">    purple.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">n_states</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_list</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
     <span class="n">tmp</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">COLORMAP</span><span class="p">,</span> <span class="n">n_states</span><span class="p">)</span>
@@ -1099,9 +1104,9 @@
     <span class="n">colors_from_cmap</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
 
     <span class="n">m_clean</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">n_windows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">m_clean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">tau_window</span><span class="p">)</span>
+    <span class="n">n_windows</span> <span class="o">=</span> <span class="n">m_clean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="n">delta_t</span>
     <span class="n">tmp_labels</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">m_clean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n_windows</span><span class="p">))</span>
-    <span class="n">all_the_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">tmp_labels</span><span class="p">,</span> <span class="n">tau_window</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">all_the_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">tmp_labels</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">m_clean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
@@ -1310,20 +1315,11 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_one_trj_multi</span><span class="p">(</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">example_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">tau_window</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">input_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">delta_t</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">input_data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+    <span class="n">labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">],</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Plots the colored trajectory of an example particle.</span>
-
-<span class="sd">    Here&#39;s an example of the output:</span>
-
-<span class="sd">    .. image:: ../_static/images/multi_Fig2.png</span>
-<span class="sd">        :alt: Example Image</span>
-<span class="sd">        :width: 600px</span>
-
-<span class="sd">    The datapoints are colored according to the cluster they have been</span>
-<span class="sd">    assigned to.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1334,19 +1330,30 @@
 <span class="sd">    example_id : int</span>
 <span class="sd">        The ID of the selected particle.</span>
 
-<span class="sd">    tau_window : int</span>
+<span class="sd">    delta_t : int</span>
 <span class="sd">        The length of the signal window used.</span>
 
 <span class="sd">    input_data : ndarray of shape (n_dims, n_particles, n_frames)</span>
 <span class="sd">        The input data array.</span>
 
-<span class="sd">    labels : ndarray of shape (n_particles * n_windows,)</span>
+<span class="sd">    labels : ndarray of shape (n_particles * n_seq,)</span>
 <span class="sd">        The output of the clustering algorithm.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    Here&#39;s an example of the output:</span>
+
+<span class="sd">    .. image:: ../_static/images/multi_Fig2.png</span>
+<span class="sd">        :alt: Example Image</span>
+<span class="sd">        :width: 600px</span>
+
+<span class="sd">    The datapoints are colored according to the cluster they have been</span>
+<span class="sd">    assigned to.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">m_clean</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">n_windows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">m_clean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">tau_window</span><span class="p">)</span>
+    <span class="n">n_windows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">m_clean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">delta_t</span><span class="p">)</span>
     <span class="n">tmp_labels</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">m_clean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n_windows</span><span class="p">))</span>
-    <span class="n">all_the_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">tmp_labels</span><span class="p">,</span> <span class="n">tau_window</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">all_the_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">tmp_labels</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># Get the signal of the example particle</span>
     <span class="n">sig_x</span> <span class="o">=</span> <span class="n">m_clean</span><span class="p">[</span><span class="n">example_id</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span> <span class="n">all_the_labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
