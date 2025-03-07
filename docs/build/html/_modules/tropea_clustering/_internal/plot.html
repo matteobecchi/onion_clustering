@@ -832,11 +832,24 @@
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_time_res_analysis.html#tropea_clustering.plot.plot_time_res_analysis">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_time_res_analysis</span><span class="p">(</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">tra</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">tra</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plots the results of clustering at different time resolutions.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    title : str</span>
+<span class="sd">        The path of the .png file the figure will be saved as.</span>
+
+<span class="sd">    tra : ndarray of shape (n_seq, 3)</span>
+<span class="sd">        tra[j][0] must contain the j-th value used as delta_t;</span>
+<span class="sd">        tra[j][1] must contain the corresponding number of states;</span>
+<span class="sd">        tra[j][2] must contain the corresponding unclassified fraction.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
 <span class="sd">    Here&#39;s an example of the output:</span>
 
 <span class="sd">    .. image:: ../_static/images/uni_Fig6.png</span>
@@ -846,28 +859,18 @@
 <span class="sd">    For each of the analyzed time resolutions, the blue curve shows the number</span>
 <span class="sd">    of identified clusters (not including the unclassified data); the orange</span>
 <span class="sd">    line shows the fraction of unclassififed data.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-
-<span class="sd">    title : str</span>
-<span class="sd">        The path of the .png file the figure will be saved as.</span>
-
-<span class="sd">    tra : ndarray of shape (n_windows, 3)</span>
-<span class="sd">        Contains the number of states and the population of ENV0 at every</span>
-<span class="sd">        tau_window.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-    <span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tra</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">tra</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">)</span>
-    <span class="n">axes</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Time resolution $\Delta t$ [frame]&quot;</span><span class="p">)</span>
-    <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;# environments&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;#1f77b4&quot;</span><span class="p">)</span>
-    <span class="n">axes</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
-    <span class="n">axes</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">tra</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="mf">0.2</span><span class="p">)</span>
-    <span class="n">axes</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">MaxNLocator</span><span class="p">(</span><span class="n">integer</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-    <span class="n">axesr</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
-    <span class="n">axesr</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tra</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">tra</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;#ff7f0e&quot;</span><span class="p">)</span>
-    <span class="n">axesr</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Population of env 0&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;#ff7f0e&quot;</span><span class="p">)</span>
-    <span class="n">axesr</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">)</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tra</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">tra</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Time resolution $\Delta t$ [frame]&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;# environments&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;#1f77b4&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">tra</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">MaxNLocator</span><span class="p">(</span><span class="n">integer</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="n">ax_r</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+    <span class="n">ax_r</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tra</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">tra</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;#ff7f0e&quot;</span><span class="p">)</span>
+    <span class="n">ax_r</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Unclassified fraction&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;#ff7f0e&quot;</span><span class="p">)</span>
+    <span class="n">ax_r</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">)</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span></div>
 
 
@@ -877,11 +880,27 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_pop_fractions</span><span class="p">(</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">list_of_pop</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
-    <span class="n">tra</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">tra</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Plot, for every time resolution, the populations of the ENVs.</span>
+<span class="sd">    Plot, for every time resolution, the populations of the clusters.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    title : str</span>
+<span class="sd">        The path of the .png file the figure will be saved as.</span>
+
+<span class="sd">    list_of_pop : List[List[float]]</span>
+<span class="sd">        For every delta_t, this is the list of the populations of all the</span>
+<span class="sd">        states (the first one is the unclassified data points).</span>
+
+<span class="sd">    tra : ndarray of shape (n_seq, 3)</span>
+<span class="sd">        tra[j][0] must contain the j-th value used as delta_t;</span>
+<span class="sd">        tra[j][1] must contain the corresponding number of states;</span>
+<span class="sd">        tra[j][2] must contain the corresponding unclassified fraction.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
 <span class="sd">    Here&#39;s an example of the output:</span>
 
 <span class="sd">    .. image:: ../_static/images/uni_Fig7.png</span>
@@ -892,23 +911,6 @@
 <span class="sd">    points classified in each cluster. Clusters are ordered according to the</span>
 <span class="sd">    value of their Gaussian&#39;s mean; the bottom cluster is always the</span>
 <span class="sd">    unclassified data points.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    title : str</span>
-<span class="sd">        The path of the .png file the figure will be saved as.</span>
-
-<span class="sd">    list_of_pop : List[List[float]]</span>
-<span class="sd">        For every tau_window, this is the list of the populations of all the</span>
-<span class="sd">        states (the first one is ENV0).</span>
-
-<span class="sd">    tra : ndarray of shape (n_windows, 3)</span>
-<span class="sd">        Contains the number of states and the population of ENV0 at every</span>
-<span class="sd">        tau_window.</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    The bottom state is the ENV0.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Pad the lists in list_of_pop to ensure they all have the same length</span>
     <span class="n">max_num_of_states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">pop_list</span><span class="p">)</span> <span class="k">for</span> <span class="n">pop_list</span> <span class="ow">in</span> <span class="n">list_of_pop</span><span class="p">])</span>
@@ -929,7 +931,7 @@
         <span class="n">bottom</span> <span class="o">+=</span> <span class="n">state</span>
 
     <span class="n">axes</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Time resolution $\Delta t$ [frames]&quot;</span><span class="p">)</span>
-    <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Population&#39;s fractions&quot;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Populations fractions&quot;</span><span class="p">)</span>
     <span class="n">axes</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
 
     <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span></div>

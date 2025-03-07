@@ -525,11 +525,24 @@ def plot_sankey(
 
 def plot_time_res_analysis(
     title: str,
-    tra: np.ndarray,
+    tra: NDArray[np.float64],
 ):
     """
     Plots the results of clustering at different time resolutions.
 
+    Parameters
+    ----------
+
+    title : str
+        The path of the .png file the figure will be saved as.
+
+    tra : ndarray of shape (n_seq, 3)
+        tra[j][0] must contain the j-th value used as delta_t;
+        tra[j][1] must contain the corresponding number of states;
+        tra[j][2] must contain the corresponding unclassified fraction.
+
+    Example
+    -------
     Here's an example of the output:
 
     .. image:: ../_static/images/uni_Fig6.png
@@ -539,39 +552,45 @@ def plot_time_res_analysis(
     For each of the analyzed time resolutions, the blue curve shows the number
     of identified clusters (not including the unclassified data); the orange
     line shows the fraction of unclassififed data.
-
-    Parameters
-    ----------
-
-    title : str
-        The path of the .png file the figure will be saved as.
-
-    tra : ndarray of shape (n_windows, 3)
-        Contains the number of states and the population of ENV0 at every
-        tau_window.
     """
-    fig, axes = plt.subplots()
-    axes.plot(tra[:, 0], tra[:, 1], marker="o")
-    axes.set_xlabel(r"Time resolution $\Delta t$ [frame]")
-    axes.set_ylabel(r"# environments", weight="bold", c="#1f77b4")
-    axes.set_xscale("log")
-    axes.set_ylim(-0.2, np.max(tra[:, 1]) + 0.2)
-    axes.yaxis.set_major_locator(MaxNLocator(integer=True))
-    axesr = axes.twinx()
-    axesr.plot(tra[:, 0], tra[:, 2], marker="o", c="#ff7f0e")
-    axesr.set_ylabel("Population of env 0", weight="bold", c="#ff7f0e")
-    axesr.set_ylim(-0.02, 1.02)
+    fig, ax = plt.subplots()
+    ax.plot(tra[:, 0], tra[:, 1], marker="o")
+    ax.set_xlabel(r"Time resolution $\Delta t$ [frame]")
+    ax.set_ylabel(r"# environments", weight="bold", c="#1f77b4")
+    ax.set_xscale("log")
+    ax.set_ylim(-0.2, np.max(tra[:, 1]) + 0.2)
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+    ax_r = ax.twinx()
+    ax_r.plot(tra[:, 0], tra[:, 2], marker="o", c="#ff7f0e")
+    ax_r.set_ylabel("Unclassified fraction", weight="bold", c="#ff7f0e")
+    ax_r.set_ylim(-0.02, 1.02)
     fig.savefig(title, dpi=600)
 
 
 def plot_pop_fractions(
     title: str,
     list_of_pop: List[List[float]],
-    tra: np.ndarray,
+    tra: NDArray[np.float64],
 ):
     """
-    Plot, for every time resolution, the populations of the ENVs.
+    Plot, for every time resolution, the populations of the clusters.
 
+    Parameters
+    ----------
+    title : str
+        The path of the .png file the figure will be saved as.
+
+    list_of_pop : List[List[float]]
+        For every delta_t, this is the list of the populations of all the
+        states (the first one is the unclassified data points).
+
+    tra : ndarray of shape (n_seq, 3)
+        tra[j][0] must contain the j-th value used as delta_t;
+        tra[j][1] must contain the corresponding number of states;
+        tra[j][2] must contain the corresponding unclassified fraction.
+
+    Example
+    -------
     Here's an example of the output:
 
     .. image:: ../_static/images/uni_Fig7.png
@@ -582,23 +601,6 @@ def plot_pop_fractions(
     points classified in each cluster. Clusters are ordered according to the
     value of their Gaussian's mean; the bottom cluster is always the
     unclassified data points.
-
-    Parameters
-    ----------
-    title : str
-        The path of the .png file the figure will be saved as.
-
-    list_of_pop : List[List[float]]
-        For every tau_window, this is the list of the populations of all the
-        states (the first one is ENV0).
-
-    tra : ndarray of shape (n_windows, 3)
-        Contains the number of states and the population of ENV0 at every
-        tau_window.
-
-    Notes
-    -----
-    The bottom state is the ENV0.
     """
     # Pad the lists in list_of_pop to ensure they all have the same length
     max_num_of_states = np.max([len(pop_list) for pop_list in list_of_pop])
@@ -619,7 +621,7 @@ def plot_pop_fractions(
         bottom += state
 
     axes.set_xlabel(r"Time resolution $\Delta t$ [frames]")
-    axes.set_ylabel(r"Population's fractions")
+    axes.set_ylabel(r"Populations fractions")
     axes.set_xscale("log")
 
     fig.savefig(title, dpi=600)
