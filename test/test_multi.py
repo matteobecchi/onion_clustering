@@ -85,3 +85,15 @@ def test_output_files(original_wd: Path, temp_dir: Path):
         # Compare the contents of the expected and actual output
         expected_output = np.load(expected_output_path)
         assert np.allclose(expected_output, labels)
+
+        # Test if also the 3D case works
+        random_input = rng.random((3, 100, 200))
+        reshaped_input_data = helpers.reshape_from_dnt(
+            random_input, TAU_WINDOW
+        )
+        state_list, labels = onion_multi(reshaped_input_data, ndims=3)
+
+        expected_output_path = original_dir / "output_multi/labels_3D.npy"
+
+        expected_output = np.load(expected_output_path)
+        assert np.allclose(expected_output, labels)
