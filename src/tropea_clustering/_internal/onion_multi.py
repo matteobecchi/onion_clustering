@@ -90,6 +90,7 @@ def onion_multi(
 
     est = OnionMulti(
         bins=bins,
+        ndims=ndims,
         number_of_sigmas=number_of_sigmas,
     )
     est.fit(X)
