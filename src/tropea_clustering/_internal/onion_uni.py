@@ -220,7 +220,8 @@ class OnionUni:
             Cluster labels for signal sequence. Unclassified points are given
             the label "-1".
         """
-        return self.fit(X).labels_
+        self.fit(X)
+        return self.labels_
 
     def get_params(self, deep=True):
         return {

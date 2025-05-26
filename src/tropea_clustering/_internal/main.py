@@ -21,7 +21,6 @@ from tropea_clustering._internal.first_classes import (
 )
 from tropea_clustering._internal.functions import (
     gaussian,
-    max_prob_assignment,
     relabel_states,
     set_final_states,
 )
@@ -132,7 +131,7 @@ def gauss_fit_max(
     ----------
 
     """
-    mask = tmp_labels == -1
+    mask = tmp_labels == 0
     flat_m = matrix[mask].flatten()
 
     try:
@@ -234,7 +233,7 @@ def find_stable_trj(
     env_0 : bool
         Indicates if there are still unclassified data points.
     """
-    mask_unclassified = tmp_labels == -1
+    mask_unclassified = tmp_labels == 0
     mask_inf = matrix >= state.th_inf[0]
     mask_sup = matrix <= state.th_sup[0]
     mask = mask_unclassified & mask_inf & mask_sup
@@ -250,7 +249,6 @@ def find_stable_trj(
         for start, end in zip(starts, ends):
             if end - start >= delta_t:
                 mask_stable[i, start:end] = True
-
 
     tmp_labels[mask_stable] = lim + 1
     fraction = np.sum(mask_stable) / matrix.size
@@ -392,7 +390,7 @@ def iterative_search(
     ----------
 
     """
-    tmp_labels = -np.ones(matrix.shape, dtype=int)
+    tmp_labels = np.zeros(matrix.shape, dtype=int)
     tmp_states_list = []
     states_counter = 0
 
@@ -430,13 +428,16 @@ def iterative_search(
         #         break
 
         state.perc = counter
-        print(state.mean, state.sigma, state.perc)
         tmp_states_list.append(state)
         states_counter += 1
 
     labels, state_list = relabel_states(tmp_labels, tmp_states_list)
 
-    return state_list, labels
+    for state in state_list:
+        print(state.mean, state.sigma, state.perc)
+    print(np.unique(labels - 1))
+
+    return state_list, labels - 1
 
 
 def _main(
@@ -489,6 +490,7 @@ def _main(
             AREA_MAX_OVERLAP,
         )
     else:
+        state_list = tmp_state_list
         labels = -np.ones(matrix.shape)
 
     return state_list, labels

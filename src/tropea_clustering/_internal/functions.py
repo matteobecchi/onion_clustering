@@ -88,7 +88,7 @@ def gaussian(
         Gaussian function values computed at the input points.
     """
     return (
-        np.exp(-0.5*(((x_points - x_mean) / sigma) ** 2))
+        np.exp(-0.5 * (((x_points - x_mean) / sigma) ** 2))
         * area
         / (np.sqrt(np.pi * 2) * sigma)
     )
@@ -620,13 +620,15 @@ def set_final_states(
     relabel_dic = {}
     for pair in best_merge:
         relabel_dic[pair[0]] = pair[1]
-    if_env0 = np.any(np.unique(all_the_labels) == 0)
+    if_env0 = np.any(np.unique(all_the_labels) == -1)
+    print(relabel_dic, if_env0)
 
     relabel_map = np.zeros(max(np.unique(all_the_labels) + 1), dtype=int)
     for i, _ in enumerate(relabel_map):
         relabel_map[i] = i
     for key, value in relabel_dic.items():
         relabel_map[key + 1] = value + 1
+    print(relabel_map)
 
     all_the_labels = relabel_map[all_the_labels.flatten()].reshape(
         all_the_labels.shape
@@ -646,6 +648,7 @@ def set_final_states(
         if i not in states_to_remove
     ]
 
+    print(np.unique(all_the_labels))
     return updated_states, all_the_labels
 
 
