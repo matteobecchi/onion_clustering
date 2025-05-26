@@ -10,6 +10,7 @@ from typing import List, Tuple, Union
 
 import numpy as np
 import scipy.signal
+from numpy.typing import NDArray
 from scipy.optimize import OptimizeWarning
 from scipy.stats import gaussian_kde
 
@@ -17,7 +18,6 @@ from tropea_clustering._internal.classes import ClusteringObject1D
 from tropea_clustering._internal.first_classes import (
     Parameters,
     StateUni,
-    UniData,
 )
 from tropea_clustering._internal.functions import (
     gaussian,
@@ -27,52 +27,6 @@ from tropea_clustering._internal.functions import (
 )
 
 AREA_MAX_OVERLAP = 0.8
-
-
-def all_the_input_stuff(
-    matrix: np.ndarray,
-    bins: Union[int, str],
-    number_of_sigmas: float,
-) -> ClusteringObject1D:
-    """
-    Data preprocessing for the analysis.
-
-    Parameters
-    ----------
-    matrix : ndarray of shape (n_particles * n_windows, tau_window)
-        The values of the signal for each particle at each frame.
-
-    bins: Union[str, int] = "auto"
-        The number of bins used for the construction of the histograms.
-        Can be an integer value, or "auto".
-        If "auto", the default of numpy.histogram_bin_edges is used
-        (see https://numpy.org/doc/stable/reference/generated/
-        numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
-
-    number_of_sigma : float = 2.0
-        Sets the thresholds for classifing a signal window inside a state:
-        the window is contained in the state if it is entirely contained
-        inside number_of_sigma * state.sigms times from state.mean.
-
-    Returns
-    -------
-
-    clustering_object : ClusteringObject1D
-
-    Notes
-    -----
-
-    - Reads analysis parameters
-    - Reads input data
-    - Creates and returns the ClusteringObject1D for the analysis
-    """
-    tau_window = matrix.shape[1]
-
-    par = Parameters(tau_window, bins, number_of_sigmas)
-    data = UniData(matrix)
-    clustering_object = ClusteringObject1D(par, data)
-
-    return clustering_object
 
 
 def perform_gauss_fit(
@@ -165,53 +119,32 @@ def perform_gauss_fit(
 
 
 def gauss_fit_max(
-    m_clean: np.ndarray, par: Parameters
-) -> Union[StateUni, None]:
+    matrix: np.ndarray,
+    tmp_labels: np.ndarray,
+    delta_t: int,
+    bins: int | str,
+    number_of_sigmas: float,
+) -> StateUni | None:
     """
     Selection of the optimal interval and parameters in order to fit a state.
 
     Parameters
     ----------
 
-    m_clean : ndarray
-        The data points.
-
-    par : Parameters
-        Object containing parameters for the analysis.
-
-    Returns
-    -------
-
-    state : StateUni
-        Object containing Gaussian fit parameters (mu, sigma, area),
-        or None if the fit fails.
-
-    Notes
-    -----
-
-    - Computes the data histogram
-    - If the bins are more than 50, smooths the histogram with gap = 3
-    - Finds the maximum
-    - Finds the interval between the two surriunding minima
-    - Tries to perform the Gaussian fit in it
-    - Finds the interval between the two half heigth points
-    - Tries to perform the Gaussian fit in it
-    - Compares the two fits and choose the one with higher goodness
-    - Create the State object
-    - Prints State's information to file
     """
-    flat_m = m_clean.flatten()
+    mask = tmp_labels == -1
+    flat_m = matrix[mask].flatten()
 
     try:
         kde = gaussian_kde(flat_m)
     except ValueError:
         return None
 
-    if par.bins == "auto":
-        bins = np.linspace(np.min(flat_m), np.max(flat_m), 100)
+    if bins == "auto":
+        binning = np.linspace(np.min(flat_m), np.max(flat_m), 100)
     else:
-        bins = np.linspace(np.min(flat_m), np.max(flat_m), int(par.bins))
-    counts = kde.evaluate(bins)
+        binning = np.linspace(np.min(flat_m), np.max(flat_m), int(bins))
+    counts = kde.evaluate(binning)
 
     gap = 3
     max_val = counts.max()
@@ -225,7 +158,7 @@ def gauss_fit_max(
         min_id1 += 1
 
     fit_param = [min_id0, min_id1, max_ind, flat_m.size]
-    fit_data = [bins, counts]
+    fit_data = [binning, counts]
     flag_min, r_2_min, popt_min, _ = perform_gauss_fit(
         fit_param, fit_data, "Min"
     )
@@ -238,7 +171,7 @@ def gauss_fit_max(
         half_id1 += 1
 
     fit_param = [half_id0, half_id1, max_ind, flat_m.size]
-    fit_data = [bins, counts]
+    fit_data = [binning, counts]
     flag_half, r_2_half, popt_half, _ = perform_gauss_fit(
         fit_param, fit_data, "Half"
     )
@@ -259,17 +192,18 @@ def gauss_fit_max(
         return None
 
     state = StateUni(popt[0], popt[1], popt[2], r_2)
-    state._build_boundaries(par.number_of_sigmas)
+    state._build_boundaries(number_of_sigmas)
 
     return state
 
 
 def find_stable_trj(
-    cl_ob: ClusteringObject1D,
-    state: StateUni,
+    matrix: np.ndarray,
     tmp_labels: np.ndarray,
+    state: StateUni,
+    delta_t: int,
     lim: int,
-) -> Tuple[np.ndarray, float, bool]:
+) -> Tuple[np.ndarray, float]:
     """
     Identification of windows contained in a certain state.
 
@@ -299,41 +233,29 @@ def find_stable_trj(
 
     env_0 : bool
         Indicates if there are still unclassified data points.
-
-    Notes
-    -----
-
-    - Initializes some useful variables
-    - Selects the data windows contained inside the state
-    - Updates tmp_labels with the newly classified data windows
-    - Calculates the fraction of stable windows found and prints it
-    - Creates a np.ndarray to store still unclassified windows
-    - Sets the value of env_0 to signal still unclassified data points
     """
-    m_clean = cl_ob.data.matrix
-
-    mask_unclassified = tmp_labels < 0.5
-    mask_inf = np.min(m_clean, axis=1) >= state.th_inf[0]
-    mask_sup = np.max(m_clean, axis=1) <= state.th_sup[0]
+    mask_unclassified = tmp_labels == -1
+    mask_inf = matrix >= state.th_inf[0]
+    mask_sup = matrix <= state.th_sup[0]
     mask = mask_unclassified & mask_inf & mask_sup
 
-    tmp_labels[mask] = lim + 1
-    counter = np.sum(mask)
+    mask_stable = np.zeros_like(matrix, dtype=bool)
+    for i, particle in enumerate(matrix):
+        row_mask = mask[i]
+        padded = np.concatenate(([False], row_mask, [False]))
+        diff = np.diff(padded.astype(int))
+        starts = np.where(diff == 1)[0]
+        ends = np.where(diff == -1)[0]
 
-    mask_remaining = mask_unclassified & ~mask
-    remaning_data = m_clean[mask_remaining]
-    m2_array = np.array(remaning_data)
+        for start, end in zip(starts, ends):
+            if end - start >= delta_t:
+                mask_stable[i, start:end] = True
 
-    if tmp_labels.size == 0:
-        return m2_array, 0.0, False
-    else:
-        window_fraction = counter / tmp_labels.size
 
-    env_0 = True
-    if len(m2_array) == 0:
-        env_0 = False
+    tmp_labels[mask_stable] = lim + 1
+    fraction = np.sum(mask_stable) / matrix.size
 
-    return m2_array, window_fraction, env_0
+    return tmp_labels, fraction
 
 
 def fit_local_maxima(
@@ -458,124 +380,71 @@ def fit_local_maxima(
 
 
 def iterative_search(
-    cl_ob: ClusteringObject1D,
-) -> Tuple[ClusteringObject1D, np.ndarray, bool]:
+    matrix: np.ndarray,
+    delta_t: int,
+    bins: Union[int, str],
+    number_of_sigmas: float,
+) -> tuple[list[StateUni], NDArray[np.int64]]:
     """
     Iterative search for stable windows in the trajectory.
 
     Parameters
     ----------
 
-    cl_ob : ClusteringObject1D)
-        The clustering object.
-
-    Returns
-    -------
-
-    cl_ob : ClusteringObject1D
-        Updated with the clustering results.
-
-    atl : ndarray
-        Temporary array of labels.
-
-    env_0 : bool
-        Indicates if there are unclassified data points.
-
-    Notes
-    -----
-
-    - Initializes some useful variables
-    - At each ieration:
-        - performs the Gaussian fit and identifies the new proposed state
-        - if no state is identified, break
-        - finds the windows contained inside the proposed state
-        - if no data points are remaining, break
-        - otherwise, repeats
-    - Updates the clusering object with the number of iterations
-    - Calls "relable_states" to sort and clean the state list, and updates
-    the clustering object
     """
-    tmp_labels = np.zeros((cl_ob.data.matrix.shape[0],)).astype(int)
-
-    states_list = []
-    m_copy = cl_ob.data.matrix
-    iteration_id = 1
+    tmp_labels = -np.ones(matrix.shape, dtype=int)
+    tmp_states_list = []
     states_counter = 0
-    env_0 = False
 
     while True:
-        state = gauss_fit_max(m_copy, cl_ob.par)
+        state = gauss_fit_max(
+            matrix,
+            tmp_labels,
+            delta_t,
+            bins,
+            number_of_sigmas,
+        )
         if state is None:
             break
 
-        m_next, counter, env_0 = find_stable_trj(
-            cl_ob, state, tmp_labels, states_counter
+        tmp_labels, counter = find_stable_trj(
+            matrix,
+            tmp_labels,
+            state,
+            delta_t,
+            states_counter,
         )
 
-        if counter <= 0.0:
-            state, m_next, counter, env_0 = fit_local_maxima(
-                cl_ob,
-                m_copy,
-                cl_ob.par,
-                tmp_labels,
-                states_counter,
-            )
+        if counter == 0.0:
+            break
 
-            if counter == 0 or state is None:
-                break
+        # if counter == 0.0:
+        #     state, m_next, counter = fit_local_maxima(
+        #         m_copy,
+        #         cl_ob.par,
+        #         tmp_labels,
+        #         states_counter,
+        #     )
+
+        #     if counter == 0 or state is None:
+        #         break
 
         state.perc = counter
-        states_list.append(state)
+        print(state.mean, state.sigma, state.perc)
+        tmp_states_list.append(state)
         states_counter += 1
-        iteration_id += 1
-        m_copy = m_next
 
-    cl_ob.iterations = len(states_list)
+    labels, state_list = relabel_states(tmp_labels, tmp_states_list)
 
-    atl, lis = relabel_states(tmp_labels, states_list)
-    cl_ob.state_list = lis
-
-    return cl_ob, atl, env_0
-
-
-def full_output_analysis(cl_ob: ClusteringObject1D):
-    """
-    The complete clustering analysis with the input parameters.
-
-    Parameters
-    ----------
-
-    cl_ob : ClusteringObject1D
-        The clustering object.
-    """
-    cl_ob, tmp_labels, _ = iterative_search(cl_ob)
-
-    if len(cl_ob.state_list) > 0:
-        list_of_states, tmp_labels = set_final_states(
-            cl_ob.state_list,
-            tmp_labels,
-            AREA_MAX_OVERLAP,
-        )
-
-        cl_ob.data.labels, cl_ob.state_list = max_prob_assignment(
-            list_of_states,
-            cl_ob.data.matrix,
-            tmp_labels,
-            cl_ob.data.ranges,
-            cl_ob.par.tau_w,
-            cl_ob.par.number_of_sigmas,
-        )
-
-        cl_ob.data.labels = cl_ob.create_all_the_labels()
-    else:
-        cl_ob.data.labels = -np.ones(cl_ob.data.matrix.shape)
+    return state_list, labels
 
 
 def _main(
     matrix: np.ndarray,
-    bins: Union[int, str],
+    delta_t: int,
+    bins: int | str,
     number_of_sigmas: float,
-) -> ClusteringObject1D:
+) -> tuple[list[StateUni], NDArray[np.int64]]:
     """
     Returns the clustering object with the analysis.
 
@@ -598,15 +467,28 @@ def _main(
 
     Returns
     -------
-    clustering_object : ClusteringObject1D
-        The final clustering object.
+    states_list : List[StateUni]
+        The list of the identified states. Refer to the documentation of
+        StateUni for accessing the information on the states.
+
+    labels : ndarray of shape (n_particles * n_seq,)
+        Cluster labels for each signal sequence. Unclassified points are given
+        the label "-1".
     """
-    clustering_object = all_the_input_stuff(
+    tmp_state_list, tmp_labels = iterative_search(
         matrix,
+        delta_t,
         bins,
         number_of_sigmas,
     )
 
-    full_output_analysis(clustering_object)
+    if len(tmp_state_list) > 0:
+        state_list, labels = set_final_states(
+            tmp_state_list,
+            tmp_labels,
+            AREA_MAX_OVERLAP,
+        )
+    else:
+        labels = -np.ones(matrix.shape)
 
-    return clustering_object
+    return state_list, labels

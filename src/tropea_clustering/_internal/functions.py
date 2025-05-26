@@ -88,9 +88,9 @@ def gaussian(
         Gaussian function values computed at the input points.
     """
     return (
-        np.exp(-(((x_points - x_mean) / sigma) ** 2))
+        np.exp(-0.5*(((x_points - x_mean) / sigma) ** 2))
         * area
-        / (np.sqrt(np.pi) * sigma)
+        / (np.sqrt(np.pi * 2) * sigma)
     )
 
 

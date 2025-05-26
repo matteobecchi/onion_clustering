@@ -10,7 +10,7 @@ from typing import Generator
 import numpy as np
 import pytest
 
-from tropea_clustering import OnionUni, helpers, onion_uni
+from tropea_clustering import OnionUni, onion_uni
 
 
 @pytest.fixture
@@ -37,34 +37,31 @@ def temp_dir(original_wd: Path) -> Generator[Path, None, None]:
 # Define the actual test
 def test_output_files(original_wd: Path, temp_dir: Path):
     ### Set all the analysis parameters ###
-    N_PARTICLES = 5
-    N_STEPS = 1000
-    TAU_WINDOW = 10
+    n_atoms = 100
+    n_steps = 1000
+    delta_t = 10
 
     ## Create the input data ###
     rng = np.random.default_rng(12345)
-    random_walk = []
-    for _ in range(N_PARTICLES):
-        tmp = [0.0]
-        for _ in range(N_STEPS - 1):
+    random_walk = np.zeros((n_atoms, n_steps))
+    for i in range(n_atoms):
+        print(i)
+        for j in range(1, n_steps):
             d_x = rng.normal()
-            x_new = tmp[-1] + d_x
-            tmp.append(x_new)
-        random_walk.append(tmp)
-
-    reshaped_input_data = helpers.reshape_from_nt(
-        np.array(random_walk), TAU_WINDOW
-    )
+            random_walk[i][j] = random_walk[i][j - 1] + d_x
 
     with tempfile.TemporaryDirectory() as _:
         # Test the class methods
-        tmp = OnionUni()
-        tmp_params = {"bins": 100, "number_of_sigmas": 2.0}
+        tmp = OnionUni(delta_t)
+        tmp_params = {"bins": "auto", "number_of_sigmas": 2.0}
         tmp.set_params(**tmp_params)
         _ = tmp.get_params()
-        tmp.fit_predict(reshaped_input_data)
+        tmp.fit_predict(random_walk)
 
-        state_list, labels = onion_uni(reshaped_input_data)
+        state_list, labels = onion_uni(random_walk, delta_t)
+
+        print(len(state_list))
+        print(np.unique(labels))
 
         _ = state_list[0].get_attributes()
 

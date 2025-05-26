@@ -1,4 +1,4 @@
-Results of doctest builder run on 2025-03-14 15:29:29
+Results of doctest builder run on 2025-05-26 14:10:44
 =====================================================
 
 Document: _autosummary/tropea_clustering.OnionMulti

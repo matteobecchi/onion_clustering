@@ -7,7 +7,6 @@ from typing import Union
 
 import numpy as np
 from numpy.typing import NDArray
-from sklearn.base import BaseEstimator, ClusterMixin
 from sklearn.utils.validation import validate_data
 
 from tropea_clustering._internal.main import StateUni
@@ -16,6 +15,7 @@ from tropea_clustering._internal.main import _main as _onion_inner
 
 def onion_uni(
     X: NDArray[np.float64],
+    delta_t: int,
     bins: Union[str, int] = "auto",
     number_of_sigmas: float = 2.0,
 ) -> tuple[list[StateUni], NDArray[np.int64]]:
@@ -30,6 +30,10 @@ def onion_uni(
     X : ndarray of shape (n_particles * n_seq, delta_t)
         The data to cluster. Each signal sequence is considered as a
         single data point.
+
+    delta_t : int
+        The minimum lifetime required for the clusters. Also referred to as
+        the "time resolution" of the clustering analysis.
 
     bins : int, default="auto"
         The number of bins used for the construction of the histograms.
@@ -70,13 +74,8 @@ def onion_uni(
 
         input_data = np.random.rand(n_particles, n_steps)
 
-        # Create input array with the correct shape
-        reshaped_input_data = helpers.reshape_from_nt(
-            input_data, delta_t,
-        )
-
         # Run Onion Clustering
-        state_list, labels = onion_uni(reshaped_input_data)
+        state_list, labels = onion_uni(input_data, delta_t)
 
     .. testcode:: onionuni-test
             :hide:
@@ -85,6 +84,7 @@ def onion_uni(
     """
 
     est = OnionUni(
+        delta_t=delta_t,
         bins=bins,
         number_of_sigmas=number_of_sigmas,
     )
@@ -93,15 +93,19 @@ def onion_uni(
     return est.state_list_, est.labels_
 
 
-class OnionUni(BaseEstimator, ClusterMixin):
+class OnionUni:
     """
     Performs onion clustering on a data array.
 
-    Returns an array of integer labels, one for each signal sequence.
-    Unclassified sequences are labelled "-1".
+    Returns an array of integer labels.
+    Unclassified frames are labelled "-1".
 
     Parameters
     ----------
+    delta_t : int
+        The minimum lifetime required for the clusters. Also referred to as
+        the "time resolution" of the clustering analysis.
+
     bins : int, default="auto"
         The number of bins used for the construction of the histograms.
         Can be an integer value, or "auto".
@@ -119,9 +123,8 @@ class OnionUni(BaseEstimator, ClusterMixin):
         List of the identified states. Refer to the documentation of
         StateUni for accessing the information on the states.
 
-    labels_: ndarray of shape (n_particles * n_seq,)
-        Cluster labels for signal sequence. Unclassified points are given
-        the label "-1".
+    labels_: ndarray of shape (n_particles, f_frames)
+        Cluster labels. Unclassified points are given the label "-1".
 
     Example
     -------
@@ -131,9 +134,6 @@ class OnionUni(BaseEstimator, ClusterMixin):
         import numpy as np
         from tropea_clustering import OnionUni, helpers
 
-        # Select time resolution
-        delta_t = 5
-
         # Create random input data
         np.random.seed(1234)
         n_particles = 5
@@ -141,16 +141,11 @@ class OnionUni(BaseEstimator, ClusterMixin):
 
         input_data = np.random.rand(n_particles, n_steps)
 
-        # Create input array with the correct shape
-        reshaped_input_data = helpers.reshape_from_nt(
-            input_data, delta_t,
-        )
-
         # Run Onion Clustering
         clusterer = OnionUni()
-        clust_params = {"bins": 100, "number_of_sigmas": 2.0}
+        clust_params = {"delta_t": 5, "bins": 100, "number_of_sigmas": 2.0}
         clusterer.set_params(**clust_params)
-        clusterer.fit(reshaped_input_data)
+        clusterer.fit(input_data)
 
     .. testcode:: OnionUni-test
             :hide:
@@ -161,9 +156,11 @@ class OnionUni(BaseEstimator, ClusterMixin):
 
     def __init__(
         self,
+        delta_t: int,
         bins: Union[str, int] = "auto",
         number_of_sigmas: float = 2.0,
     ):
+        self.delta_t = delta_t
         self.bins = bins
         self.number_of_sigmas = number_of_sigmas
 
@@ -172,7 +169,7 @@ class OnionUni(BaseEstimator, ClusterMixin):
 
         Parameters
         ----------
-        X : ndarray of shape (n_particles * n_seq, delta_t)
+        X : ndarray of shape (n_particles, n_frames)
             The data to cluster. Each signal sequence is considered as a
             single data point.
 
@@ -186,11 +183,11 @@ class OnionUni(BaseEstimator, ClusterMixin):
         if X.ndim != 2:
             raise ValueError("Expected 2-dimensional input data.")
 
-        if X.shape[0] <= 1:
-            raise ValueError("n_samples = 1")
+        if X.shape[0] == 0:
+            raise ValueError("Empty dataset.")
 
         if X.shape[1] <= 1:
-            raise ValueError("n_features = 1")
+            raise ValueError("n_frames = 1.")
 
         # Check for complex input
         if not (
@@ -201,16 +198,12 @@ class OnionUni(BaseEstimator, ClusterMixin):
 
         X = X.copy()  # copy to avoid in-place modification
 
-        cl_ob = _onion_inner(
+        self.state_list_, self.labels_ = _onion_inner(
             X,
+            self.delta_t,
             self.bins,
             self.number_of_sigmas,
         )
-
-        self.state_list_ = cl_ob.state_list
-        self.labels_ = cl_ob.data.labels
-
-        return self
 
     def fit_predict(self, X, y=None):
         """Computes clusters on the data array 'X' and returns labels.
@@ -231,6 +224,7 @@ class OnionUni(BaseEstimator, ClusterMixin):
 
     def get_params(self, deep=True):
         return {
+            "delta_t": self.delta_t,
             "bins": self.bins,
             "number_of_sigmas": self.number_of_sigmas,
         }
