@@ -25,13 +25,13 @@ path_to_input = "onion_example_files/data/multivariate_time-series.npy"
 
 ### Load the input data - it's an array of shape
 ### (n_dims, n_particles, n_frames)
-input_data = np.load(path_to_input)
-n_dims, n_particles, n_frames = input_data.shape
+input_data = np.load(path_to_input).transpose(1, 2, 0)
+n_particles, n_frames, n_dims = input_data.shape
 
 ### CLUSTERING WITH A SINGLE TIME RESOLUTION ###
 ### Chose the time resolution --> the length of the windows in which the
 ### time-series will be divided
-delta_t = 10
+delta_t = 20
 bins = 25  # For mutlivariate clustering, setting BINS is often important
 
 ### onion_multi() returns the list of states and the label for each
@@ -42,7 +42,7 @@ state_list, labels = onion_multi(input_data, delta_t, bins=bins)
 output_path = Path("output_multi")
 plot_output_multi(output_path / "Fig1.png", input_data, state_list, labels)
 plot_one_trj_multi(output_path / "Fig2.png", 0, input_data, labels)
-plot_medoids_multi(output_path / "Fig3.png", input_data, labels)
+# plot_medoids_multi(output_path / "Fig3.png", input_data, labels)
 plot_state_populations(output_path / "Fig4.png", labels)
 plot_sankey(output_path / "Fig5.png", labels, [100, 200, 300, 400])
 
@@ -50,10 +50,10 @@ plot_sankey(output_path / "Fig5.png", labels, [100, 200, 300, 400])
 delta_t_list = np.geomspace(3, n_frames, 20, dtype=int)
 
 tra = np.zeros((delta_t_list.size, 3))  # List of number of states and
-# ENV0 population for each tau_window
-pop_list = []  # List of the states' population for each tau_window
+# ENV0 population for each delta_t
+pop_list = []  # List of the states' population for each delta_t
 
-for i, tau_window in enumerate(delta_t_list):
+for i, delta_t in enumerate(delta_t_list):
     state_list, labels = onion_multi(input_data, delta_t, bins=bins)
 
     list_pop = [state.perc for state in state_list]

@@ -14,7 +14,7 @@ def onion_multi(
     X: NDArray[np.float64],
     delta_t: int,
     bins: str | int = "auto",
-    number_of_sigmas: float = 2.5,
+    number_of_sigmas: float = 3.0,
     max_area_overlap: float = 0.8,
 ) -> tuple[list[StateMulti], NDArray[np.int64]]:
     """
@@ -168,7 +168,7 @@ class OnionMulti:
         self,
         delta_t: int,
         bins: str | int = "auto",
-        number_of_sigmas: float = 2.5,
+        number_of_sigmas: float = 3.0,
         max_area_overlap: float = 0.8,
     ):
         self.delta_t = delta_t
