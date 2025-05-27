@@ -1,21 +1,85 @@
-Results of doctest builder run on 2025-05-26 14:10:44
+Results of doctest builder run on 2025-05-27 12:06:13
 =====================================================
 
 Document: _autosummary/tropea_clustering.OnionMulti
 ---------------------------------------------------
-1 item passed all tests:
-   2 tests in OnionMulti-test
+**********************************************************************
+File "../../src/tropea_clustering/_internal/onion_multi.py", line ?, in OnionMulti-test
+Failed example:
+    assert np.isclose(
+        clusterer.state_list_[0].mean[0], 0.6680603111724006)
+Exception raised:
+    Traceback (most recent call last):
+      File "/opt/anaconda3/envs/onion2/lib/python3.13/doctest.py", line 1395, in __run
+        exec(compile(example.source, filename, "single",
+        ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     compileflags, True), test.globs)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "<doctest OnionMulti-test[0]>", line 1, in <module>
+        assert np.isclose(
+               ~~~~~~~~~~^
+            clusterer.state_list_[0].mean[0], 0.6680603111724006)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    AssertionError
+**********************************************************************
+1 item had failures:
+   1 of   2 in OnionMulti-test
 2 tests in 1 item.
-2 passed.
-Test passed.
+1 passed and 1 failed.
+***Test Failed*** 1 failure.
 
 Document: _autosummary/tropea_clustering.OnionUni
 -------------------------------------------------
-1 item passed all tests:
-   2 tests in OnionUni-test
+**********************************************************************
+File "../../src/tropea_clustering/_internal/onion_uni.py", line ?, in OnionUni-test
+Failed example:
+    import numpy as np
+    from tropea_clustering import OnionUni, helpers
+
+    # Create random input data
+    np.random.seed(1234)
+    n_particles = 5
+    n_steps = 1000
+
+    input_data = np.random.rand(n_particles, n_steps)
+
+    # Run Onion Clustering
+    clusterer = OnionUni()
+    clust_params = {"delta_t": 5, "bins": 100, "number_of_sigmas": 2.0}
+    clusterer.set_params(**clust_params)
+    clusterer.fit(input_data)
+Exception raised:
+    Traceback (most recent call last):
+      File "/opt/anaconda3/envs/onion2/lib/python3.13/doctest.py", line 1395, in __run
+        exec(compile(example.source, filename, "single",
+        ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     compileflags, True), test.globs)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "<doctest OnionUni-test[0]>", line 12, in <module>
+        clusterer = OnionUni()
+    TypeError: OnionUni.__init__() missing 1 required positional argument: 'delta_t'
+**********************************************************************
+File "../../src/tropea_clustering/_internal/onion_uni.py", line ?, in OnionUni-test
+Failed example:
+    assert np.isclose(
+        clusterer.state_list_[0].mean, 0.5789299753284055)
+Exception raised:
+    Traceback (most recent call last):
+      File "/opt/anaconda3/envs/onion2/lib/python3.13/doctest.py", line 1395, in __run
+        exec(compile(example.source, filename, "single",
+        ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     compileflags, True), test.globs)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "<doctest OnionUni-test[0]>", line 2, in <module>
+        clusterer.state_list_[0].mean, 0.5789299753284055)
+        ^^^^^^^^^
+    NameError: name 'clusterer' is not defined
+**********************************************************************
+1 item had failures:
+   2 of   2 in OnionUni-test
 2 tests in 1 item.
-2 passed.
-Test passed.
+0 passed and 2 failed.
+***Test Failed*** 2 failures.
 
 Document: _autosummary/tropea_clustering.helpers.reshape_from_dnt
 -----------------------------------------------------------------
@@ -35,11 +99,27 @@ Test passed.
 
 Document: _autosummary/tropea_clustering.onion_multi
 ----------------------------------------------------
-1 item passed all tests:
-   2 tests in onionmulti-test
+**********************************************************************
+File "../../src/tropea_clustering/_internal/onion_multi.py", line ?, in onionmulti-test
+Failed example:
+    assert np.isclose(state_list[0].mean[0], 0.6675701490204133)
+Exception raised:
+    Traceback (most recent call last):
+      File "/opt/anaconda3/envs/onion2/lib/python3.13/doctest.py", line 1395, in __run
+        exec(compile(example.source, filename, "single",
+        ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     compileflags, True), test.globs)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "<doctest onionmulti-test[0]>", line 1, in <module>
+        assert np.isclose(state_list[0].mean[0], 0.6675701490204133)
+               ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    AssertionError
+**********************************************************************
+1 item had failures:
+   1 of   2 in onionmulti-test
 2 tests in 1 item.
-2 passed.
-Test passed.
+1 passed and 1 failed.
+***Test Failed*** 1 failure.
 
 Document: _autosummary/tropea_clustering.onion_uni
 --------------------------------------------------
@@ -52,6 +132,6 @@ Test passed.
 Doctest summary
 ===============
    12 tests
-    0 failures in tests
+    4 failures in tests
     0 failures in setup code
     0 failures in cleanup code

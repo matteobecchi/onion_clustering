@@ -433,9 +433,6 @@ def iterative_search(
 
     labels, state_list = relabel_states(tmp_labels, tmp_states_list)
 
-    for state in state_list:
-        print(state.mean, state.sigma, state.perc)
-
     return state_list, labels - 1
 
 

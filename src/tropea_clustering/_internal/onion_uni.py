@@ -3,8 +3,6 @@
 # Author: Becchi Matteo <bechmath@gmail.com>
 # Reference: https://www.pnas.org/doi/abs/10.1073/pnas.2403771121
 
-from typing import Union
-
 import numpy as np
 from numpy.typing import NDArray
 from sklearn.utils.validation import validate_data
@@ -16,7 +14,7 @@ from tropea_clustering._internal.main import _main as _onion_inner
 def onion_uni(
     X: NDArray[np.float64],
     delta_t: int,
-    bins: Union[str, int] = "auto",
+    bins: str | int = "auto",
     number_of_sigmas: float = 2.0,
 ) -> tuple[list[StateUni], NDArray[np.int64]]:
     """
@@ -157,7 +155,7 @@ class OnionUni:
     def __init__(
         self,
         delta_t: int,
-        bins: Union[str, int] = "auto",
+        bins: str | int = "auto",
         number_of_sigmas: float = 2.0,
     ):
         self.delta_t = delta_t

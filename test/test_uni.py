@@ -36,32 +36,29 @@ def temp_dir(original_wd: Path) -> Generator[Path, None, None]:
 
 # Define the actual test
 def test_output_files(original_wd: Path, temp_dir: Path):
-    ### Set all the analysis parameters ###
-    n_atoms = 100
-    n_steps = 1000
-    delta_t = 10
-
-    ## Create the input data ###
     rng = np.random.default_rng(12345)
-    random_walk = np.zeros((n_atoms, n_steps))
-    for i in range(n_atoms):
-        print(i)
-        for j in range(1, n_steps):
-            d_x = rng.normal()
-            random_walk[i][j] = random_walk[i][j - 1] + d_x
+    input_data = np.array(
+        [
+            np.concatenate(
+                (rng.normal(0.0, 0.1, 500), rng.normal(1.0, 0.1, 500))
+            )
+            for _ in range(100)
+        ]
+    )
+
+    delta_t = 10
 
     with tempfile.TemporaryDirectory() as _:
         # Test the class methods
-        tmp = OnionUni(delta_t)
+        on_cl = OnionUni(delta_t)
         tmp_params = {"bins": "auto", "number_of_sigmas": 2.0}
-        tmp.set_params(**tmp_params)
-        _ = tmp.get_params()
-        tmp.fit_predict(random_walk)
+        on_cl.set_params(**tmp_params)
+        _ = on_cl.get_params()
+        on_cl.fit(input_data)
+        on_cl.fit_predict(input_data)
 
-        state_list, labels = onion_uni(random_walk, delta_t)
-
-        print(len(state_list))
-        print(np.unique(labels))
+        # Test the function
+        state_list, labels = onion_uni(input_data, delta_t)
 
         _ = state_list[0].get_attributes()
 
@@ -69,8 +66,17 @@ def test_output_files(original_wd: Path, temp_dir: Path):
         original_dir = original_wd / "test/"
         expected_output_path = original_dir / "output_uni/labels.npy"
 
-        # np.save(expected_output_path, labels)
+        np.save(expected_output_path, labels)
 
         # Compare the contents of the expected and actual output
         expected_output = np.load(expected_output_path)
         assert np.allclose(expected_output, labels)
+
+        # Test wrong input
+        input_data = np.ones(10)  # 1D array
+        with pytest.raises(ValueError):
+            on_cl.fit(input_data)
+
+        input_data = np.zeros((100, 1))  # just one frame
+        with pytest.raises(ValueError):
+            on_cl.fit(input_data)

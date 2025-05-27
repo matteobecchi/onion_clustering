@@ -5,6 +5,7 @@
 """
 
 import os
+from pathlib import Path
 from typing import List
 
 import matplotlib.pyplot as plt
@@ -23,9 +24,8 @@ COLORMAP = "viridis"
 
 
 def plot_output_uni(
-    title: str,
+    title: Path,
     input_data: NDArray[np.float64],
-    n_particles: int,
     state_list: List[StateUni],
 ):
     """Plots clustering output with Gaussians and thresholds.
@@ -38,9 +38,6 @@ def plot_output_uni(
 
     input_data : ndarray of shape (n_particles * n_seq, delta_t)
         The input data array, in the format taken by Onion Clustering.
-
-    n_particles : int
-        The number of particles in the original dataset.
 
     state_list : List[StateUni]
         The list of the cluster states.
@@ -58,9 +55,8 @@ def plot_output_uni(
     shows the cumulative data distribution, and the Gaussians fitted to the
     data, corresponding to the identified clusters.
     """
-    n_seq = input_data.shape[0] // n_particles
-    n_frames = n_seq * input_data.shape[1]
-    input_data = np.reshape(input_data, (n_particles, n_frames))
+
+    n_particles, t_steps = input_data.shape
 
     flat_m = input_data.flatten()
     counts, bins = np.histogram(flat_m, bins=100, density=True)
@@ -86,7 +82,6 @@ def plot_output_uni(
         rgba = cmap(i)
         palette.append(rgb2hex(rgba))
 
-    t_steps = input_data.shape[1]
     time = np.linspace(0, t_steps - 1, t_steps)
 
     step = 1
@@ -158,10 +153,9 @@ def plot_output_uni(
 
 
 def plot_one_trj_uni(
-    title: str,
+    title: Path,
     example_id: int,
     input_data: NDArray[np.float64],
-    n_particles: int,
     labels: NDArray[np.int64],
 ):
     """Plots the colored trajectory of one example particle.
@@ -180,9 +174,6 @@ def plot_one_trj_uni(
     input_data : ndarray of shape (n_particles * n_seq, delta_t)
         The input data array.
 
-    n_particles : int
-        The number of particles in the original dataset.
-
     labels : ndarray of shape (n_particles * n_seq,)
         The output of Onion Clustering.
 
@@ -197,14 +188,7 @@ def plot_one_trj_uni(
     The datapoints are colored according to the cluster they have been
     assigned.
     """
-    delta_t = input_data.shape[1]
-    n_seq = input_data.shape[0] // n_particles
-    n_frames = n_seq * delta_t
-
-    input_data = np.reshape(input_data, (n_particles, n_frames))
-    labels = np.reshape(labels, (n_particles, n_seq))
-    labels = np.repeat(labels, delta_t, axis=1)
-
+    n_particles, n_frames = input_data.shape
     time = np.linspace(0, n_frames - 1, n_frames)
 
     fig, axes = plt.subplots()
@@ -237,9 +221,7 @@ def plot_one_trj_uni(
 
 
 def plot_state_populations(
-    title: str,
-    n_particles: int,
-    delta_t: int,
+    title: Path,
     labels: NDArray[np.int64],
 ):
     """
@@ -254,12 +236,6 @@ def plot_state_populations(
     title : str
         The path of the .png file the figure will be saved as.
 
-    n_particles : int
-        The number of particles in the original dataset.
-
-    delta_t : int
-        The legth of the signal sequences (the analysis time resolution).
-
     labels : ndarray of shape (n_particles * n_seq,)
         The output of Onion Clustering.
 
@@ -271,13 +247,10 @@ def plot_state_populations(
         :alt: Example Image
         :width: 600px
     """
-    labels = np.reshape(labels, (n_particles, -1))
-
+    n_particles, n_frames = labels.shape
     unique_labels = np.unique(labels)
     if -1 not in unique_labels:
         unique_labels = np.insert(unique_labels, 0, -1)
-
-    labels = np.repeat(labels, delta_t, axis=1)
 
     list_of_populations = []
     for label in unique_labels:
@@ -291,7 +264,7 @@ def plot_state_populations(
         palette.append(rgb2hex(rgba))
 
     fig, axes = plt.subplots()
-    time = range(labels.shape[1])
+    time = range(n_frames)
     for label, pop in enumerate(list_of_populations):
         axes.plot(time, pop, label=f"ENV{label}", color=palette[label])
     axes.set_xlabel(r"Time [frame]")
@@ -302,7 +275,7 @@ def plot_state_populations(
 
 
 def plot_medoids_uni(
-    title: str,
+    title: Path,
     input_data: NDArray[np.float64],
     labels: NDArray[np.int64],
     output_to_file: bool = False,
@@ -417,10 +390,9 @@ def plot_medoids_uni(
 
 
 def plot_sankey(
-    title: str,
+    title: Path,
     labels: NDArray[np.int64],
-    n_particles: int,
-    tmp_frame_list: list[int],
+    tmp_frame_list: list[int] | NDArray[np.int64],
 ):
     """
     Plots the Sankey diagram at the desired frames.
@@ -456,10 +428,8 @@ def plot_sankey(
     the number of data points moving from one cluster to the other between the
     selected frames. State "-1" refers to the unclassified data.
     """
-    n_seq = labels.shape[0] // n_particles
-    all_the_labels = np.reshape(labels, (n_particles, n_seq))
     frame_list = np.array(tmp_frame_list)
-    unique_labels = np.unique(all_the_labels)
+    unique_labels = np.unique(labels)
 
     if -1 not in unique_labels:
         unique_labels = np.insert(unique_labels, 0, -1)
@@ -482,7 +452,7 @@ def plot_sankey(
 
         # Iterate through the current time window and increment
         # the transition counts in trans_mat
-        for label in all_the_labels:
+        for label in labels:
             trans_mat[label[t_0] + 1][label[t_0 + t_jump] + 1] += 1
 
         # Store the source, target, and value for the Sankey diagram
@@ -525,7 +495,7 @@ def plot_sankey(
 
 
 def plot_time_res_analysis(
-    title: str,
+    title: Path,
     tra: NDArray[np.float64],
 ):
     """
@@ -569,7 +539,7 @@ def plot_time_res_analysis(
 
 
 def plot_pop_fractions(
-    title: str,
+    title: Path,
     list_of_pop: List[List[float]],
     tra: NDArray[np.float64],
 ):
@@ -629,8 +599,7 @@ def plot_pop_fractions(
 
 
 def plot_medoids_multi(
-    title: str,
-    delta_t: int,
+    title: Path,
     input_data: NDArray[np.float64],
     labels: NDArray[np.int64],
     output_to_file: bool = False,
@@ -680,18 +649,14 @@ def plot_medoids_multi(
     env0 = []
 
     reshaped_data = input_data.transpose(1, 2, 0)
-    labels = np.repeat(labels, delta_t)
-    reshaped_labels = np.reshape(
-        labels, (input_data.shape[1], input_data.shape[2])
-    )
 
     for ref_label in list_of_labels:
         tmp = []
-        for i, mol in enumerate(reshaped_labels):
-            for window, label in enumerate(mol[::delta_t]):
+        for i, mol in enumerate(labels):
+            for window, label in enumerate(mol):
                 if label == ref_label:
-                    time_0 = window * delta_t
-                    time_1 = (window + 1) * delta_t
+                    time_0 = window
+                    time_1 = window + 1
                     tmp.append(reshaped_data[i][time_0:time_1])
 
         if len(tmp) > 0 and ref_label > -1:
@@ -742,11 +707,10 @@ def plot_medoids_multi(
 
 
 def plot_output_multi(
-    title: str,
+    title: Path,
     input_data: NDArray[np.float64],
     state_list: List[StateMulti],
     labels: NDArray[np.int64],
-    delta_t: int,
 ):
     """
     Plot a cumulative figure showing trajectories and identified states.
@@ -788,9 +752,6 @@ def plot_output_multi(
     colors_from_cmap[-1] = tmp(1.0)
 
     m_clean = input_data.transpose(1, 2, 0)
-    n_windows = m_clean.shape[1] // delta_t
-    tmp_labels = labels.reshape((m_clean.shape[0], n_windows))
-    all_the_labels = np.repeat(tmp_labels, delta_t, axis=1)
 
     if m_clean.shape[2] == 3:
         fig, ax = plt.subplots(2, 2, figsize=(6, 6))
@@ -813,7 +774,7 @@ def plot_output_multi(
                     id_min = idx
 
             line_w = 0.05
-            max_t = all_the_labels.shape[1]
+            max_t = labels.shape[1]
             m_resized = m_clean[:, :max_t:, :]
             step = 5 if m_resized.size > 1000000 else 1
 
@@ -826,7 +787,7 @@ def plot_output_multi(
                     rasterized=True,
                     zorder=0,
                 )
-                color_list = all_the_labels[i * step] + 1
+                color_list = labels[i * step] + 1
                 ax[a_0][a_1].scatter(
                     mol.T[d_0],
                     mol.T[d_1],
@@ -838,7 +799,7 @@ def plot_output_multi(
                     rasterized=True,
                 )
 
-                color_list = all_the_labels[id_min] + 1
+                color_list = labels[id_min] + 1
                 ax[a_0][a_1].plot(
                     m_resized[id_min].T[d_0],
                     m_resized[id_min].T[d_1],
@@ -857,7 +818,7 @@ def plot_output_multi(
                     s=0.5,
                     rasterized=True,
                 )
-                color_list = all_the_labels[id_max] + 1
+                color_list = labels[id_max] + 1
                 ax[a_0][a_1].plot(
                     m_resized[id_max].T[d_0],
                     m_resized[id_max].T[d_1],
@@ -910,7 +871,7 @@ def plot_output_multi(
                 id_min = idx
 
         line_w = 0.05
-        max_t = all_the_labels.shape[1]
+        max_t = labels.shape[1]
         m_resized = m_clean[:, :max_t:, :]
         step = 5 if m_resized.size > 1000000 else 1
 
@@ -923,7 +884,7 @@ def plot_output_multi(
                 rasterized=True,
                 zorder=0,
             )
-            color_list = all_the_labels[i * step] + 1
+            color_list = labels[i * step] + 1
             ax.scatter(
                 mol.T[0],
                 mol.T[1],
@@ -935,7 +896,7 @@ def plot_output_multi(
                 rasterized=True,
             )
 
-        color_list = all_the_labels[id_min] + 1
+        color_list = labels[id_min] + 1
         ax.plot(
             m_resized[id_min].T[0],
             m_resized[id_min].T[1],
@@ -954,7 +915,7 @@ def plot_output_multi(
             s=0.5,
             rasterized=True,
         )
-        color_list = all_the_labels[id_max] + 1
+        color_list = labels[id_max] + 1
         ax.plot(
             m_resized[id_max].T[0],
             m_resized[id_max].T[1],
@@ -994,9 +955,8 @@ def plot_output_multi(
 
 
 def plot_one_trj_multi(
-    title: str,
+    title: Path,
     example_id: int,
-    delta_t: int,
     input_data: NDArray[np.float64],
     labels: NDArray[np.int64],
 ):
@@ -1032,26 +992,19 @@ def plot_one_trj_multi(
     assigned to.
     """
     m_clean = input_data.transpose(1, 2, 0)
-    n_windows = int(m_clean.shape[1] / delta_t)
-    tmp_labels = labels.reshape((m_clean.shape[0], n_windows))
-    all_the_labels = np.repeat(tmp_labels, delta_t, axis=1)
 
     # Get the signal of the example particle
-    sig_x = m_clean[example_id].T[0][: all_the_labels.shape[1]]
-    sig_y = m_clean[example_id].T[1][: all_the_labels.shape[1]]
+    sig_x = m_clean[example_id].T[0][: labels.shape[1]]
+    sig_y = m_clean[example_id].T[1][: labels.shape[1]]
 
     fig, ax = plt.subplots(figsize=(6, 6))
 
     # Create a colormap to map colors to the labels
     cmap = plt.get_cmap(
         COLORMAP,
-        int(
-            np.max(np.unique(all_the_labels))
-            - np.min(np.unique(all_the_labels))
-            + 1
-        ),
+        int(np.max(np.unique(labels)) - np.min(np.unique(labels)) + 1),
     )
-    color = all_the_labels[example_id]
+    color = labels[example_id]
     ax.plot(sig_x, sig_y, c="black", lw=0.1)
 
     ax.scatter(
@@ -1059,8 +1012,8 @@ def plot_one_trj_multi(
         sig_y,
         c=color,
         cmap=cmap,
-        vmin=np.min(np.unique(all_the_labels)),
-        vmax=np.max(np.unique(all_the_labels)),
+        vmin=np.min(np.unique(labels)),
+        vmax=np.max(np.unique(labels)),
         s=1.0,
         zorder=10,
     )
