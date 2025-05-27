@@ -5,7 +5,6 @@
 
 import numpy as np
 from numpy.typing import NDArray
-from sklearn.utils.validation import validate_data
 
 from tropea_clustering._internal.main import StateUni
 from tropea_clustering._internal.main import _main as _onion_inner
@@ -16,6 +15,7 @@ def onion_uni(
     delta_t: int,
     bins: str | int = "auto",
     number_of_sigmas: float = 2.0,
+    max_area_overlap: float = 0.8,
 ) -> tuple[list[StateUni], NDArray[np.int64]]:
     """
     Performs onion clustering on the data array 'X'.
@@ -85,6 +85,7 @@ def onion_uni(
         delta_t=delta_t,
         bins=bins,
         number_of_sigmas=number_of_sigmas,
+        max_area_overlap=max_area_overlap,
     )
     est.fit(X)
 
@@ -157,10 +158,12 @@ class OnionUni:
         delta_t: int,
         bins: str | int = "auto",
         number_of_sigmas: float = 2.0,
+        max_area_overlap: float = 0.8,
     ):
         self.delta_t = delta_t
         self.bins = bins
         self.number_of_sigmas = number_of_sigmas
+        self.max_area_overlap = max_area_overlap
 
     def fit(self, X, y=None):
         """Performs onion clustering on the data array 'X'.
@@ -176,7 +179,7 @@ class OnionUni:
         self : object
             A fitted instance of self.
         """
-        X = validate_data(self, X=X, y=y, accept_sparse=False)
+        # X = validate_data(self, X=X, y=y, accept_sparse=False)
 
         if X.ndim != 2:
             raise ValueError("Expected 2-dimensional input data.")
@@ -201,7 +204,10 @@ class OnionUni:
             self.delta_t,
             self.bins,
             self.number_of_sigmas,
+            self.max_area_overlap,
         )
+
+        return self
 
     def fit_predict(self, X, y=None):
         """Computes clusters on the data array 'X' and returns labels.
@@ -218,14 +224,14 @@ class OnionUni:
             Cluster labels for signal sequence. Unclassified points are given
             the label "-1".
         """
-        self.fit(X)
-        return self.labels_
+        return self.fit(X).labels_
 
     def get_params(self, deep=True):
         return {
             "delta_t": self.delta_t,
             "bins": self.bins,
             "number_of_sigmas": self.number_of_sigmas,
+            "max_area_overlap": self.max_area_overlap,
         }
 
     def set_params(self, **params):

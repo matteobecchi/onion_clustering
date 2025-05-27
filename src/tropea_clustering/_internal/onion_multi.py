@@ -3,12 +3,8 @@
 # Author: Becchi Matteo <bechmath@gmail.com>
 # Reference: https://www.pnas.org/doi/abs/10.1073/pnas.2403771121
 
-from typing import Union
-
 import numpy as np
 from numpy.typing import NDArray
-from sklearn.base import BaseEstimator, ClusterMixin
-from sklearn.utils.validation import validate_data
 
 from tropea_clustering._internal.main_2d import StateMulti
 from tropea_clustering._internal.main_2d import _main as _onion_inner
@@ -16,9 +12,10 @@ from tropea_clustering._internal.main_2d import _main as _onion_inner
 
 def onion_multi(
     X: NDArray[np.float64],
-    ndims: int = 2,
-    bins: Union[str, int] = "auto",
+    delta_t: int,
+    bins: str | int = "auto",
     number_of_sigmas: float = 2.0,
+    max_area_overlap: float = 0.8,
 ) -> tuple[list[StateMulti], NDArray[np.int64]]:
     """
     Performs onion clustering on the data array 'X'.
@@ -89,16 +86,17 @@ def onion_multi(
     """
 
     est = OnionMulti(
+        delta_t=delta_t,
         bins=bins,
-        ndims=ndims,
         number_of_sigmas=number_of_sigmas,
+        max_area_overlap=max_area_overlap,
     )
     est.fit(X)
 
     return est.state_list_, est.labels_
 
 
-class OnionMulti(BaseEstimator, ClusterMixin):
+class OnionMulti:
     """
     Performs onion clustering on a data array.
 
@@ -168,13 +166,15 @@ class OnionMulti(BaseEstimator, ClusterMixin):
 
     def __init__(
         self,
-        ndims: int = 2,
-        bins: Union[str, int] = "auto",
+        delta_t: int,
+        bins: str | int = "auto",
         number_of_sigmas: float = 2.0,
+        max_area_overlap: float = 0.8,
     ):
-        self.ndims = ndims
+        self.delta_t = delta_t
         self.bins = bins
         self.number_of_sigmas = number_of_sigmas
+        self.max_area_overlap = max_area_overlap
 
     def fit(self, X, y=None):
         """Performs onion clustering on the data array 'X'.
@@ -190,10 +190,10 @@ class OnionMulti(BaseEstimator, ClusterMixin):
         self : object
             A fitted instance of self.
         """
-        X = validate_data(self, X=X, y=y, accept_sparse=False)
+        # X = validate_data(self, X=X, y=y, accept_sparse=False)
 
-        if X.ndim != 2:
-            raise ValueError("Expected 2-dimensional input data.")
+        if X.ndim != 3:
+            raise ValueError("Expected 3-dimensional input data.")
 
         if X.shape[0] <= 1:
             raise ValueError("n_samples = 1")
@@ -210,15 +210,13 @@ class OnionMulti(BaseEstimator, ClusterMixin):
 
         X = X.copy()  # copy to avoid in-place modification
 
-        cl_ob = _onion_inner(
+        self.state_list_, self.labels_ = _onion_inner(
             X,
-            self.ndims,
+            self.delta_t,
             self.bins,
             self.number_of_sigmas,
+            self.max_area_overlap,
         )
-
-        self.state_list_ = cl_ob.state_list
-        self.labels_ = cl_ob.data.labels
 
         return self
 
@@ -241,9 +239,10 @@ class OnionMulti(BaseEstimator, ClusterMixin):
 
     def get_params(self, deep=True):
         return {
-            "ndims": self.ndims,
+            "delta_t": self.delta_t,
             "bins": self.bins,
             "number_of_sigmas": self.number_of_sigmas,
+            "max_area_overlap": self.max_area_overlap,
         }
 
     def set_params(self, **params):

@@ -6,7 +6,7 @@ See the documentation for all the details.
 # Author: Becchi Matteo <bechmath@gmail.com>
 
 import warnings
-from typing import List, Tuple, Union
+from typing import Tuple
 
 import numpy as np
 import scipy.signal
@@ -25,11 +25,9 @@ from tropea_clustering._internal.functions import (
     set_final_states,
 )
 
-AREA_MAX_OVERLAP = 0.8
-
 
 def perform_gauss_fit(
-    param: List[int], data: List[np.ndarray], int_type: str
+    param: list[int], data: list[np.ndarray], int_type: str
 ) -> Tuple[bool, int, np.ndarray, np.ndarray]:
     """
     Gaussian fit on the data histogram.
@@ -120,7 +118,6 @@ def perform_gauss_fit(
 def gauss_fit_max(
     matrix: np.ndarray,
     tmp_labels: np.ndarray,
-    delta_t: int,
     bins: int | str,
     number_of_sigmas: float,
 ) -> StateUni | None:
@@ -239,7 +236,7 @@ def find_stable_trj(
     mask = mask_unclassified & mask_inf & mask_sup
 
     mask_stable = np.zeros_like(matrix, dtype=bool)
-    for i, particle in enumerate(matrix):
+    for i, _ in enumerate(matrix):
         row_mask = mask[i]
         padded = np.concatenate(([False], row_mask, [False]))
         diff = np.diff(padded.astype(int))
@@ -380,7 +377,7 @@ def fit_local_maxima(
 def iterative_search(
     matrix: np.ndarray,
     delta_t: int,
-    bins: Union[int, str],
+    bins: int | str,
     number_of_sigmas: float,
 ) -> tuple[list[StateUni], NDArray[np.int64]]:
     """
@@ -398,7 +395,6 @@ def iterative_search(
         state = gauss_fit_max(
             matrix,
             tmp_labels,
-            delta_t,
             bins,
             number_of_sigmas,
         )
@@ -412,7 +408,6 @@ def iterative_search(
             delta_t,
             states_counter,
         )
-
         if counter == 0.0:
             break
 
@@ -441,6 +436,7 @@ def _main(
     delta_t: int,
     bins: int | str,
     number_of_sigmas: float,
+    max_area_overlap: float,
 ) -> tuple[list[StateUni], NDArray[np.int64]]:
     """
     Returns the clustering object with the analysis.
@@ -483,7 +479,7 @@ def _main(
         state_list, labels = set_final_states(
             tmp_state_list,
             tmp_labels,
-            AREA_MAX_OVERLAP,
+            max_area_overlap,
         )
     else:
         state_list = tmp_state_list
