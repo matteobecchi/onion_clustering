@@ -2,6 +2,8 @@ import numpy as np
 
 from tropea_clustering import onion_multi
 
+NDIM = 3
+
 
 def main():
     ## Create the input data ###
@@ -10,8 +12,8 @@ def main():
         [
             np.concatenate(
                 (
-                    rng.normal(0.0, 0.1, (500, 2)),
-                    rng.normal(1.0, 0.1, (500, 2)),
+                    rng.normal(0.0, 0.1, (500, NDIM)),
+                    rng.normal(1.0, 0.1, (500, NDIM)),
                 )
             )
             for _ in range(100)

@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 
-from tropea_clustering import onion_uni, plot
+from tropea_clustering import onion_multi, onion_uni, plot
 
 
 @pytest.fixture
@@ -47,28 +47,35 @@ def test_output_files(original_wd: Path, temp_dir: Path):
             for _ in range(100)
         ]
     )
+    input_data_2d = np.array(
+        [
+            np.concatenate(
+                (
+                    rng.normal(0.0, 0.1, (500, 2)),
+                    rng.normal(1.0, 0.1, (500, 2)),
+                )
+            )
+            for _ in range(100)
+        ]
+    )
 
     delta_t = 10
 
     with tempfile.TemporaryDirectory() as _:
+        out_path = Path("tmp_fig.png")
+
         state_list_u, labels = onion_uni(input_data, delta_t)
 
-        out_path = Path("tmp_fig.png")
         plot.plot_output_uni(out_path, input_data, state_list_u)
         plot.plot_one_trj_uni(out_path, 0, input_data, labels)
         # plot.plot_medoids_uni("tmp_fig.png", reshaped_data_uni, labels)
         plot.plot_state_populations(out_path, labels)
         plot.plot_sankey(out_path, labels, [1, 3, 5, 7])
 
-        # state_list_m, labels = onion_multi(reshaped_data_multi)
+        state_list_m, labels = onion_multi(input_data_2d, delta_t)
 
-        # old_input_data = np.array([random_walk_x, random_walk_y])
-        # plot.plot_output_multi(
-        #     "tmp_fig.png", old_input_data, state_list_m, labels, TAU_WINDOW
-        # )
-        # plot.plot_one_trj_multi(
-        #     "tmp_fig.png", 0, TAU_WINDOW, old_input_data, labels
-        # )
+        plot.plot_output_multi(out_path, input_data_2d, state_list_m, labels)
+        plot.plot_one_trj_multi(out_path, 0, input_data_2d, labels)
         # plot.plot_medoids_multi(
         #     "tmp_fig.png", TAU_WINDOW, old_input_data, labels
         # )

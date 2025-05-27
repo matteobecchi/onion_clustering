@@ -751,9 +751,7 @@ def plot_output_multi(
     colors_from_cmap = tmp(np.arange(0, 1, 1 / n_states))
     colors_from_cmap[-1] = tmp(1.0)
 
-    m_clean = input_data.transpose(1, 2, 0)
-
-    if m_clean.shape[2] == 3:
+    if input_data.shape[2] == 3:
         fig, ax = plt.subplots(2, 2, figsize=(6, 6))
         dir0 = [0, 0, 1]
         dir1 = [1, 2, 2]
@@ -767,15 +765,15 @@ def plot_output_multi(
             a_1 = ax1[k]
             # Plot the individual trajectories
             id_max, id_min = 0, 0
-            for idx, mol in enumerate(m_clean):
-                if np.max(mol) == np.max(m_clean):
+            for idx, mol in enumerate(input_data):
+                if np.max(mol) == np.max(input_data):
                     id_max = idx
-                if np.min(mol) == np.min(m_clean):
+                if np.min(mol) == np.min(input_data):
                     id_min = idx
 
             line_w = 0.05
             max_t = labels.shape[1]
-            m_resized = m_clean[:, :max_t:, :]
+            m_resized = input_data[:, :max_t:, :]
             step = 5 if m_resized.size > 1000000 else 1
 
             for i, mol in enumerate(m_resized[::step]):
@@ -859,20 +857,20 @@ def plot_output_multi(
         fig.savefig(title, dpi=600)
         plt.close(fig)
 
-    elif m_clean.shape[2] == 2:
+    elif input_data.shape[2] == 2:
         fig, ax = plt.subplots(figsize=(6, 6))
 
         # Plot the individual trajectories
         id_max, id_min = 0, 0
-        for idx, mol in enumerate(m_clean):
-            if np.max(mol) == np.max(m_clean):
+        for idx, mol in enumerate(input_data):
+            if np.max(mol) == np.max(input_data):
                 id_max = idx
-            if np.min(mol) == np.min(m_clean):
+            if np.min(mol) == np.min(input_data):
                 id_min = idx
 
         line_w = 0.05
         max_t = labels.shape[1]
-        m_resized = m_clean[:, :max_t:, :]
+        m_resized = input_data[:, :max_t:, :]
         step = 5 if m_resized.size > 1000000 else 1
 
         for i, mol in enumerate(m_resized[::step]):
@@ -991,11 +989,9 @@ def plot_one_trj_multi(
     The datapoints are colored according to the cluster they have been
     assigned to.
     """
-    m_clean = input_data.transpose(1, 2, 0)
-
     # Get the signal of the example particle
-    sig_x = m_clean[example_id].T[0][: labels.shape[1]]
-    sig_y = m_clean[example_id].T[1][: labels.shape[1]]
+    sig_x = input_data[example_id].T[0]
+    sig_y = input_data[example_id].T[1]
 
     fig, ax = plt.subplots(figsize=(6, 6))
 

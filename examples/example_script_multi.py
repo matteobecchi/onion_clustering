@@ -54,7 +54,7 @@ tra = np.zeros((delta_t_list.size, 3))  # List of number of states and
 pop_list = []  # List of the states' population for each tau_window
 
 for i, tau_window in enumerate(delta_t_list):
-    state_list, labels = onion_multi(input_data, bins=bins)
+    state_list, labels = onion_multi(input_data, delta_t, bins=bins)
 
     list_pop = [state.perc for state in state_list]
     list_pop.insert(0, 1 - np.sum(np.array(list_pop)))
