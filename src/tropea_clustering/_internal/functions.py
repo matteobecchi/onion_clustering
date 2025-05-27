@@ -620,25 +620,27 @@ def set_final_states(
     relabel_dic = {}
     for pair in best_merge:
         relabel_dic[pair[0]] = pair[1]
-    if_env0 = np.any(np.unique(all_the_labels) == -1)
-    print(relabel_dic, if_env0)
+    _ = np.any(np.unique(all_the_labels) == -1)
 
     relabel_map = np.zeros(max(np.unique(all_the_labels) + 1), dtype=int)
     for i, _ in enumerate(relabel_map):
         relabel_map[i] = i
     for key, value in relabel_dic.items():
-        relabel_map[key + 1] = value + 1
-    print(relabel_map)
+        relabel_map[key] = value
 
-    all_the_labels = relabel_map[all_the_labels.flatten()].reshape(
-        all_the_labels.shape
-    )
+    mask = all_the_labels >= 0
+    new_labels = all_the_labels.copy()
+    new_labels[mask] = relabel_map[all_the_labels[mask]]
 
-    final_map = np.zeros(max(np.unique(all_the_labels)) + 1, dtype=int)
-    for i, el in enumerate(np.unique(all_the_labels)):
-        final_map[el] = i + 1 * (1 - if_env0)
-    for i, _ in enumerate(all_the_labels):
-        all_the_labels[i] = final_map[el]
+    valid_labels = np.unique(new_labels[new_labels != -1])
+    new_ids = np.arange(len(valid_labels))
+    remap_dict = dict(zip(valid_labels, new_ids))
+
+    def relabel(x):
+        return remap_dict.get(x, -1)  # keep -1 as is
+
+    vectorized_relabel = np.vectorize(relabel)
+    all_the_labels = vectorized_relabel(new_labels)
 
     # Remove merged states from the state list
     states_to_remove = set(s0 for s0, s1 in best_merge)
@@ -648,7 +650,9 @@ def set_final_states(
         if i not in states_to_remove
     ]
 
-    print(np.unique(all_the_labels))
+    for i, state in enumerate(updated_states):
+        state.perc = np.sum(all_the_labels == i) / all_the_labels.size
+
     return updated_states, all_the_labels
 
 

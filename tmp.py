@@ -18,7 +18,6 @@ def main():
     tmp_params = {"bins": "auto", "number_of_sigmas": 2.0}
     tmp.set_params(**tmp_params)
     _ = tmp.get_params()
-    tmp.fit_predict(input_data)
 
     state_list, labels = onion_uni(input_data, delta_t)
 

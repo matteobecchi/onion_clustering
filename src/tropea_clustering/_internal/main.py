@@ -435,7 +435,6 @@ def iterative_search(
 
     for state in state_list:
         print(state.mean, state.sigma, state.perc)
-    print(np.unique(labels - 1))
 
     return state_list, labels - 1
 
