@@ -246,7 +246,6 @@ def iterative_search(
             break
 
         state.perc = counter
-        print(state.mean, state.perc)
         tmp_states_list.append(state)
         states_counter += 1
 

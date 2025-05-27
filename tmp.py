@@ -21,7 +21,7 @@ def main():
     )
 
     delta_t = 10
-    state_list, labels = onion_multi(input_data, delta_t)
+    state_list, labels = onion_multi(input_data, delta_t, number_of_sigmas=3.0)
 
     for state in state_list:
         print(state.mean, state.sigma, state.perc)

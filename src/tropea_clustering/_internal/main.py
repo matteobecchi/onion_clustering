@@ -14,12 +14,11 @@ from numpy.typing import NDArray
 from scipy.optimize import OptimizeWarning
 from scipy.stats import gaussian_kde
 
-from tropea_clustering._internal.classes import ClusteringObject1D
 from tropea_clustering._internal.first_classes import (
-    Parameters,
     StateUni,
 )
 from tropea_clustering._internal.functions import (
+    final_state_settings,
     gaussian,
     relabel_states,
     set_final_states,
@@ -254,11 +253,12 @@ def find_stable_trj(
 
 
 def fit_local_maxima(
-    cl_ob: ClusteringObject1D,
-    m_clean: np.ndarray,
-    par: Parameters,
+    matrix: np.ndarray,
     tmp_labels: np.ndarray,
+    delta_t: int,
     lim: int,
+    bins: int | str,
+    number_of_sigmas: float,
 ):
     """
     This functions takes care of particular cases where the
@@ -285,14 +285,15 @@ def fit_local_maxima(
     lim : int
         Offset value for classifying stable windows.
     """
-    flat_m = m_clean.flatten()
+    mask = tmp_labels == 0
+    flat_m = matrix[mask].flatten()
 
     kde = gaussian_kde(flat_m)
-    if par.bins == "auto":
-        bins = np.linspace(np.min(flat_m), np.max(flat_m), 100)
+    if bins == "auto":
+        binning = np.linspace(np.min(flat_m), np.max(flat_m), 100)
     else:
-        bins = np.linspace(np.min(flat_m), np.max(flat_m), int(par.bins))
-    counts = kde.evaluate(bins)
+        binning = np.linspace(np.min(flat_m), np.max(flat_m), int(bins))
+    counts = kde.evaluate(binning)
 
     gap = 3
 
@@ -310,7 +311,7 @@ def fit_local_maxima(
             min_id1 += 1
 
         fit_param = [min_id0, min_id1, m_ind, flat_m.size]
-        fit_data = [bins, counts]
+        fit_data = [binning, counts]
         flag_min, r_2_min, popt_min, _ = perform_gauss_fit(
             fit_param, fit_data, "Min"
         )
@@ -323,7 +324,7 @@ def fit_local_maxima(
             half_id1 += 1
 
         fit_param = [half_id0, half_id1, m_ind, flat_m.size]
-        fit_data = [bins, counts]
+        fit_data = [binning, counts]
         flag_half, r_2_half, popt_half, _ = perform_gauss_fit(
             fit_param, fit_data, "Half"
         )
@@ -344,34 +345,31 @@ def fit_local_maxima(
             continue
 
         state = StateUni(popt[0], popt[1], popt[2], r_2)
-        state._build_boundaries(par.number_of_sigmas)
+        state._build_boundaries(number_of_sigmas)
 
-        m_clean = cl_ob.data.matrix
-
-        mask_unclassified = tmp_labels < 0.5
-        mask_inf = np.min(m_clean, axis=1) >= state.th_inf[0]
-        mask_sup = np.max(m_clean, axis=1) <= state.th_sup[0]
+        mask_unclassified = tmp_labels == 0
+        mask_inf = matrix >= state.th_inf[0]
+        mask_sup = matrix <= state.th_sup[0]
         mask = mask_unclassified & mask_inf & mask_sup
 
-        tmp_labels[mask] = lim + 1
-        counter = np.sum(mask)
+        mask_stable = np.zeros_like(matrix, dtype=bool)
+        for i, _ in enumerate(matrix):
+            row_mask = mask[i]
+            padded = np.concatenate(([False], row_mask, [False]))
+            diff = np.diff(padded.astype(int))
+            starts = np.where(diff == 1)[0]
+            ends = np.where(diff == -1)[0]
 
-        mask_remaining = mask_unclassified & ~mask
-        remaning_data = m_clean[mask_remaining]
-        m2_array = np.array(remaning_data)
+            for start, end in zip(starts, ends):
+                if end - start >= delta_t:
+                    mask_stable[i, start:end] = True
 
-        if tmp_labels.size == 0:
-            return None, None, None, None
-        else:
-            window_fraction = counter / tmp_labels.size
+        tmp_labels[mask_stable] = lim + 1
+        fraction = np.sum(mask_stable) / matrix.size
 
-        one_last_state = True
-        if len(m2_array) == 0:
-            one_last_state = False
+        return state, fraction
 
-        return state, m2_array, window_fraction, one_last_state
-
-    return None, None, None, None
+    return None, 0.0
 
 
 def iterative_search(
@@ -411,16 +409,18 @@ def iterative_search(
         if counter == 0.0:
             break
 
-        # if counter == 0.0:
-        #     state, m_next, counter = fit_local_maxima(
-        #         m_copy,
-        #         cl_ob.par,
-        #         tmp_labels,
-        #         states_counter,
-        #     )
+        if counter == 0.0:
+            state, counter = fit_local_maxima(
+                matrix,
+                tmp_labels,
+                delta_t,
+                states_counter,
+                bins,
+                number_of_sigmas,
+            )
 
-        #     if counter == 0 or state is None:
-        #         break
+            if state is None:
+                break
 
         state.perc = counter
         tmp_states_list.append(state)
@@ -480,6 +480,10 @@ def _main(
             tmp_state_list,
             tmp_labels,
             max_area_overlap,
+        )
+
+        state_list = final_state_settings(
+            state_list, np.array([np.min(matrix), np.max(matrix)])
         )
     else:
         state_list = tmp_state_list

@@ -637,7 +637,7 @@ def plot_medoids_multi(
     shown (large solid points). The unclassififed seqeunces are shown
     individually in purple (thin lines).
     """
-    if input_data.shape[0] != 2:
+    if input_data.shape[2] != 2:
         print("plot_medoids_multi() does not work with 3D data.")
         return
 
@@ -645,27 +645,18 @@ def plot_medoids_multi(
     if -1 not in list_of_labels:
         list_of_labels = np.insert(list_of_labels, 0, -1)
 
-    center_list = []
-    env0 = []
+    center_arr = np.zeros((list_of_labels.size - 1, input_data.shape[2]))
 
-    reshaped_data = input_data.transpose(1, 2, 0)
-
-    for ref_label in list_of_labels:
-        tmp = []
-        for i, mol in enumerate(labels):
-            for window, label in enumerate(mol):
-                if label == ref_label:
-                    time_0 = window
-                    time_1 = window + 1
-                    tmp.append(reshaped_data[i][time_0:time_1])
-
-        if len(tmp) > 0 and ref_label > -1:
-            center_list.append(np.mean(tmp, axis=0))
-        elif len(tmp) > 0:
-            env0 = tmp
+    i = 0
+    for _, ref_label in enumerate(list_of_labels):
+        mask = labels == ref_label
+        if ref_label == -1:
+            env0 = input_data[mask]
+        else:
+            center_arr[i] = np.mean(input_data[mask], axis=(0, 1))
+            i += 1
 
     if output_to_file:
-        center_arr = np.array(center_list)
         np.save(
             "medoid_center.npy",
             center_arr,
@@ -679,9 +670,9 @@ def plot_medoids_multi(
         palette.append(rgb2hex(rgba))
 
     fig, axes = plt.subplots()
-    for id_c, center in enumerate(center_list):
-        sig_x = center[:, 0]
-        sig_y = center[:, 1]
+    for id_c, center in enumerate(center_arr):
+        sig_x = center[0]
+        sig_y = center[1]
         axes.plot(
             sig_x,
             sig_y,
@@ -1008,8 +999,8 @@ def plot_one_trj_multi(
         sig_y,
         c=color,
         cmap=cmap,
-        vmin=np.min(np.unique(labels)),
-        vmax=np.max(np.unique(labels)),
+        vmin=float(np.min(np.unique(labels))),
+        vmax=float(np.max(np.unique(labels))),
         s=1.0,
         zorder=10,
     )
