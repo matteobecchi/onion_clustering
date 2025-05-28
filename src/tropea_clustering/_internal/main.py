@@ -6,7 +6,6 @@ See the documentation for all the details.
 # Author: Becchi Matteo <bechmath@gmail.com>
 
 import warnings
-from typing import Tuple
 
 import numpy as np
 import scipy.signal
@@ -26,14 +25,15 @@ from tropea_clustering._internal.functions import (
 
 
 def perform_gauss_fit(
-    param: list[int], data: list[np.ndarray], int_type: str
-) -> Tuple[bool, int, np.ndarray, np.ndarray]:
+    param: list[int],
+    data: list[NDArray[np.float64]],
+    int_type: str,
+) -> tuple[bool, int, np.ndarray, np.ndarray]:
     """
     Gaussian fit on the data histogram.
 
     Parameters
     ----------
-
     param : List[int]
         A list of the parameters for the fit:
             initial index,
@@ -52,7 +52,6 @@ def perform_gauss_fit(
 
     Returns
     -------
-
     A boolean value for the fit convergence.
 
     goodness : int
@@ -60,13 +59,6 @@ def perform_gauss_fit(
 
     popt : ndarray of shape (3,)
         The optimal gaussians fit parameters.
-
-    Notes
-    -----
-
-    - Trys to perform the fit with the specified parameters
-    - Computes the fit quality by checking if some requirements are satisfied
-    - If the fit fails, returns (False, 5, np.empty(3))
     """
     ### Initialize return values ###
     flag = False
@@ -115,8 +107,8 @@ def perform_gauss_fit(
 
 
 def gauss_fit_max(
-    matrix: np.ndarray,
-    tmp_labels: np.ndarray,
+    matrix: NDArray[np.float64],
+    tmp_labels: NDArray[np.int64],
     bins: int | str,
     number_of_sigmas: float,
 ) -> StateUni | None:
@@ -125,7 +117,28 @@ def gauss_fit_max(
 
     Parameters
     ----------
+    matrix : ndarray of shape (n_particles, n_frames)
+        The time-series data to cluster.
 
+    tmp_labels : ndarray of shape (n_particles, n_frames)
+        Temporary labels for each frame. Unclassified points are given
+        the label "0".
+
+    bins : int, default="auto"
+        The number of bins used for the construction of the histograms.
+        Can be an integer value, or "auto".
+        If "auto", the default of numpy.histogram_bin_edges is used
+        (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
+
+    number_of_sigmas : float, default=3.0
+        Sets the thresholds for classifing a signal sequence inside a state:
+        the sequence is contained in the state if it is entirely contained
+        inside number_of_sigmas * state.sigmas times from state.mean.
+
+    Returns
+    -------
+    state : StateUni | None
+        It is None if the fit failed.
     """
     mask = tmp_labels == 0
     flat_m = matrix[mask].flatten()
@@ -193,41 +206,41 @@ def gauss_fit_max(
 
 
 def find_stable_trj(
-    matrix: np.ndarray,
-    tmp_labels: np.ndarray,
+    matrix: NDArray[np.float64],
+    tmp_labels: NDArray[np.int64],
     state: StateUni,
     delta_t: int,
     lim: int,
-) -> Tuple[np.ndarray, float]:
+) -> tuple[NDArray[np.int64], float]:
     """
-    Identification of windows contained in a certain state.
+    Identification of sequences contained in a certain state.
 
     Parameters
     ----------
+    matrix : ndarray of shape (n_particles, n_frames)
+        The time-series data to cluster.
 
-    cl_ob : ClusteringObject1D
-        The clustering object.
+    tmp_labels : ndarray of shape (n_particles, n_frames)
+        Temporary labels for each frame. Unclassified points are given
+        the label "0".
 
     state : StateUni
-        The state we want to put windows in.
+        A Gaussian state.
 
-    tmp_labels : ndarray of shape (n_particles, n_windows)
-        Contains the cluster labels of all the signal windows.
+    delta_t : int
+        The minimum lifetime required for the clusters.
 
     lim : int
         The algorithm iteration.
 
     Returns
     -------
+    tmp_labels : ndarray of shape (n_particles, n_frames)
+        Updated temporary labels for each frame. Unclassified points are given
+        the label "0".
 
-    m2_array : ndarray
-        Array of still unclassified data points.
-
-    window_fraction : float
+    fraction : float
         Fraction of windows classified in this state.
-
-    env_0 : bool
-        Indicates if there are still unclassified data points.
     """
     mask_unclassified = tmp_labels == 0
     mask_inf = matrix >= state.th_inf[0]
@@ -373,7 +386,7 @@ def fit_local_maxima(
 
 
 def iterative_search(
-    matrix: np.ndarray,
+    matrix: NDArray[np.float64],
     delta_t: int,
     bins: int | str,
     number_of_sigmas: float,
@@ -383,7 +396,31 @@ def iterative_search(
 
     Parameters
     ----------
+    matrix : ndarray of shape (n_particles, n_frames)
+        The time-series data to cluster.
 
+    delta_t : int
+        The minimum lifetime required for the clusters.
+
+    bins : int, default="auto"
+        The number of bins used for the construction of the histograms.
+        Can be an integer value, or "auto".
+        If "auto", the default of numpy.histogram_bin_edges is used
+        (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
+
+    number_of_sigmas : float, default=3.0
+        Sets the thresholds for classifing a signal sequence inside a state:
+        the sequence is contained in the state if it is entirely contained
+        inside number_of_sigmas * state.sigmas times from state.mean.
+
+    Results
+    -------
+    states_list : List[StateUni]
+        The list of the identified states.
+
+    labels : ndarray of shape (n_particles, n_frames)
+        Cluster labels for each frame. Unclassified points are given
+        the label "-1".
     """
     tmp_labels = np.zeros(matrix.shape, dtype=int)
     tmp_states_list = []
@@ -432,40 +469,45 @@ def iterative_search(
 
 
 def _main(
-    matrix: np.ndarray,
+    matrix: NDArray[np.float64],
     delta_t: int,
     bins: int | str,
     number_of_sigmas: float,
     max_area_overlap: float,
 ) -> tuple[list[StateUni], NDArray[np.int64]]:
     """
-    Returns the clustering object with the analysis.
+    Performs onion clustering on the data array 'matrix' at a give delta_t.
 
     Parameters
     ----------
-    matrix : ndarray of shape (n_particles * n_windows, tau_window)
-        The values of the signal for each particle at each frame.
+    matrix : ndarray of shape (n_particles, n_frames)
+        The time-series data to cluster.
 
-    bins: Union[str, int] = "auto"
+    delta_t : int
+        The minimum lifetime required for the clusters.
+
+    bins : int, default="auto"
         The number of bins used for the construction of the histograms.
         Can be an integer value, or "auto".
         If "auto", the default of numpy.histogram_bin_edges is used
-        (see https://numpy.org/doc/stable/reference/generated/
-        numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
+        (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
 
-    number_of_sigma : float = 2.0
-        Sets the thresholds for classifing a signal window inside a state:
-        the window is contained in the state if it is entirely contained
-        inside number_of_sigma * state.sigms times from state.mean.
+    number_of_sigmas : float, default=3.0
+        Sets the thresholds for classifing a signal sequence inside a state:
+        the sequence is contained in the state if it is entirely contained
+        inside number_of_sigmas * state.sigmas times from state.mean.
+
+    max_area_overlap : float, default=0.8
+        Thresold to consider two Gaussian states overlapping, and thus merge
+        them together.
 
     Returns
     -------
     states_list : List[StateUni]
-        The list of the identified states. Refer to the documentation of
-        StateUni for accessing the information on the states.
+        The list of the identified states.
 
-    labels : ndarray of shape (n_particles * n_seq,)
-        Cluster labels for each signal sequence. Unclassified points are given
+    labels : ndarray of shape (n_particles, n_frames)
+        Cluster labels for each frame. Unclassified points are given
         the label "-1".
     """
     tmp_state_list, tmp_labels = iterative_search(
