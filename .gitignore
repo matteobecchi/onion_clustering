@@ -1,5 +1,6 @@
 .coverage
 examples/onion_example_files
+examples/ex1_data1.npy
 test/__pycache__
 dist/*
 src/tropea_clustering/__pycache__
