@@ -522,28 +522,29 @@ def plot_output_multi(
         ax0 = [0, 0, 1]
         ax1 = [0, 1, 0]
 
+        id_max, id_min = 0, 0
+        for idx, mol in enumerate(input_data):
+            if np.max(mol) == np.max(input_data):
+                id_max = idx
+            if np.min(mol) == np.min(input_data):
+                id_min = idx
+
         for k in range(3):
             d_0 = dir0[k]
             d_1 = dir1[k]
             a_0 = ax0[k]
             a_1 = ax1[k]
-            # Plot the individual trajectories
-            id_max, id_min = 0, 0
-            for idx, mol in enumerate(input_data):
-                if np.max(mol) == np.max(input_data):
-                    id_max = idx
-                if np.min(mol) == np.min(input_data):
-                    id_min = idx
 
+            # Plot the individual trajectories
             line_w = 0.05
             max_t = labels.shape[1]
-            m_resized = input_data[:, :max_t:, :]
-            step = 5 if m_resized.size > 1000000 else 1
+            step = 5 if input_data.size > 1000000 else 1
 
-            for i, mol in enumerate(m_resized[::step]):
+            for i, mol in enumerate(input_data[::step]):
+                print(mol.shape)
                 ax[a_0][a_1].plot(
-                    mol.T[d_0],
-                    mol.T[d_1],
+                    mol[:, d_0],  # type: ignore  # mol is 2D, mypy can't see it
+                    mol[:, d_1],  # type: ignore  # mol is 2D, mypy can't see it
                     c="black",
                     lw=line_w,
                     rasterized=True,
@@ -551,8 +552,8 @@ def plot_output_multi(
                 )
                 color_list = labels[i * step] + 1
                 ax[a_0][a_1].scatter(
-                    mol.T[d_0],
-                    mol.T[d_1],
+                    mol.T[d_0],  # type: ignore  # mol is 2D, mypy can't see it
+                    mol.T[d_1],  # type: ignore  # mol is 2D, mypy can't see it
                     c=color_list,
                     cmap=COLORMAP,
                     vmin=0,
@@ -563,16 +564,16 @@ def plot_output_multi(
 
                 color_list = labels[id_min] + 1
                 ax[a_0][a_1].plot(
-                    m_resized[id_min].T[d_0],
-                    m_resized[id_min].T[d_1],
+                    input_data[id_min].T[d_0],
+                    input_data[id_min].T[d_1],
                     c="black",
                     lw=line_w,
                     rasterized=True,
                     zorder=0,
                 )
                 ax[a_0][a_1].scatter(
-                    m_resized[id_min].T[d_0],
-                    m_resized[id_min].T[d_1],
+                    input_data[id_min].T[d_0],
+                    input_data[id_min].T[d_1],
                     c=color_list,
                     cmap=COLORMAP,
                     vmin=0,
@@ -582,16 +583,16 @@ def plot_output_multi(
                 )
                 color_list = labels[id_max] + 1
                 ax[a_0][a_1].plot(
-                    m_resized[id_max].T[d_0],
-                    m_resized[id_max].T[d_1],
+                    input_data[id_max].T[d_0],
+                    input_data[id_max].T[d_1],
                     c="black",
                     lw=line_w,
                     rasterized=True,
                     zorder=0,
                 )
                 ax[a_0][a_1].scatter(
-                    m_resized[id_max].T[d_0],
-                    m_resized[id_max].T[d_1],
+                    input_data[id_max].T[d_0],
+                    input_data[id_max].T[d_1],
                     c=color_list,
                     cmap=COLORMAP,
                     vmin=0,
@@ -639,8 +640,8 @@ def plot_output_multi(
 
         for i, mol in enumerate(m_resized[::step]):
             ax.plot(
-                mol.T[0],
-                mol.T[1],
+                mol.T[0],  # type: ignore  # mol is 2D, mypy can't see it
+                mol.T[1],  # type: ignore  # mol is 2D, mypy can't see it
                 c="black",
                 lw=line_w,
                 rasterized=True,
@@ -648,8 +649,8 @@ def plot_output_multi(
             )
             color_list = labels[i * step] + 1
             ax.scatter(
-                mol.T[0],
-                mol.T[1],
+                mol.T[0],  # type: ignore  # mol is 2D, mypy can't see it
+                mol.T[1],  # type: ignore  # mol is 2D, mypy can't see it
                 c=color_list,
                 cmap=COLORMAP,
                 vmin=0,

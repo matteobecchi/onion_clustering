@@ -87,11 +87,9 @@ def test_output_files(original_wd: Path, temp_dir: Path):
         expected_output = np.load(expected_output_path)
         assert np.allclose(expected_output, labels)
 
-        # Test if also the 3D case works
+        # # Test if also the 3D case works
         # state_list, labels = onion_multi(input_data_3d, delta_t)
-
         # expected_output_path = original_dir / "output_multi/labels_3D.npy"
-
         # expected_output = np.load(expected_output_path)
         # assert np.allclose(expected_output, labels)
 
