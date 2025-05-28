@@ -213,8 +213,6 @@
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.html">tropea_clustering.plot</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of tropea_clustering.plot</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.color_trj_from_xyz.html">tropea_clustering.plot.color_trj_from_xyz</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.plot_medoids_multi.html">tropea_clustering.plot.plot_medoids_multi</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.plot_medoids_uni.html">tropea_clustering.plot.plot_medoids_uni</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.plot_one_trj_multi.html">tropea_clustering.plot.plot_one_trj_multi</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.plot_one_trj_uni.html">tropea_clustering.plot.plot_one_trj_uni</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.plot_output_multi.html">tropea_clustering.plot.plot_output_multi</a></li>
@@ -234,8 +232,6 @@
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.html">tropea_clustering.plot</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of tropea_clustering.plot</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.color_trj_from_xyz.html">tropea_clustering.plot.color_trj_from_xyz</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.plot_medoids_multi.html">tropea_clustering.plot.plot_medoids_multi</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.plot_medoids_uni.html">tropea_clustering.plot.plot_medoids_uni</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.plot_one_trj_multi.html">tropea_clustering.plot.plot_one_trj_multi</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.plot_one_trj_uni.html">tropea_clustering.plot.plot_one_trj_uni</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.plot_output_multi.html">tropea_clustering.plot.plot_output_multi</a></li>
@@ -307,7 +303,6 @@
     <span class="n">delta_t</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">bins</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
     <span class="n">number_of_sigmas</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
-    <span class="n">max_area_overlap</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">StateMulti</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Performs onion clustering on the data array &#39;X&#39;.</span>
@@ -334,10 +329,6 @@
 <span class="sd">        Sets the thresholds for classifing a signal sequence inside a state:</span>
 <span class="sd">        the sequence is contained in the state if it is entirely contained</span>
 <span class="sd">        inside number_of_sigmas * state.sigmas times from state.mean.</span>
-
-<span class="sd">    max_area_overlap : float, default=0.8</span>
-<span class="sd">        Thresold to consider two Gaussian states overlapping, and thus merge</span>
-<span class="sd">        them together.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -381,7 +372,6 @@
         <span class="n">delta_t</span><span class="o">=</span><span class="n">delta_t</span><span class="p">,</span>
         <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span>
         <span class="n">number_of_sigmas</span><span class="o">=</span><span class="n">number_of_sigmas</span><span class="p">,</span>
-        <span class="n">max_area_overlap</span><span class="o">=</span><span class="n">max_area_overlap</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">est</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
@@ -414,10 +404,6 @@
 <span class="sd">        Sets the thresholds for classifing a signal sequence inside a state:</span>
 <span class="sd">        the sequence is contained in the state if it is entirely contained</span>
 <span class="sd">        inside number_of_sigma * state.sigms times from state.mean.</span>
-
-<span class="sd">    max_area_overlap : float, default=0.8</span>
-<span class="sd">        Thresold to consider two Gaussian states overlapping, and thus merge</span>
-<span class="sd">        them together.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -466,12 +452,10 @@
         <span class="n">delta_t</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">bins</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
         <span class="n">number_of_sigmas</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
-        <span class="n">max_area_overlap</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span> <span class="o">=</span> <span class="n">delta_t</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bins</span> <span class="o">=</span> <span class="n">bins</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">number_of_sigmas</span> <span class="o">=</span> <span class="n">number_of_sigmas</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">max_area_overlap</span> <span class="o">=</span> <span class="n">max_area_overlap</span>
 
 <div class="viewcode-block" id="OnionMulti.fit">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.OnionMulti.html#tropea_clustering.OnionMulti.fit">[docs]</a>
@@ -511,7 +495,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">number_of_sigmas</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">max_area_overlap</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span></div>
@@ -541,7 +524,6 @@
             <span class="s2">&quot;delta_t&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="p">,</span>
             <span class="s2">&quot;bins&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">,</span>
             <span class="s2">&quot;number_of_sigmas&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_sigmas</span><span class="p">,</span>
-            <span class="s2">&quot;max_area_overlap&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_area_overlap</span><span class="p">,</span>
         <span class="p">}</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">set_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
