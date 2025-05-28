@@ -9,7 +9,6 @@ import numpy as np
 
 from tropea_clustering import onion_multi
 from tropea_clustering.plot import (
-    plot_medoids_multi,
     plot_one_trj_multi,
     plot_output_multi,
     plot_pop_fractions,

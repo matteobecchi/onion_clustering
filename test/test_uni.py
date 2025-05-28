@@ -51,7 +51,7 @@ def test_output_files(original_wd: Path, temp_dir: Path):
     with tempfile.TemporaryDirectory() as _:
         # Test the class methods
         on_cl = OnionUni(delta_t)
-        tmp_params = {"bins": "auto", "number_of_sigmas": 2.0}
+        tmp_params = {"bins": "auto", "number_of_sigmas": 3.0}
         on_cl.set_params(**tmp_params)
         _ = on_cl.get_params()
         on_cl.fit(input_data)
