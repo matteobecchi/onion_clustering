@@ -69,7 +69,7 @@ def test_output_files(original_wd: Path, temp_dir: Path):
         tmp_params = {"bins": 50, "number_of_sigmas": 2.0}
         on_cl.set_params(**tmp_params)
         _ = on_cl.get_params()
-        on_cl.fit(input_data_2d)
+        _ = on_cl.fit_predict(input_data_2d)
 
         # Test wrong input arrays
         with pytest.raises(ValueError):
