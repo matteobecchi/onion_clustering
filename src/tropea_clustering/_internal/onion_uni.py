@@ -125,11 +125,11 @@ class OnionUni:
 
     Attributes
     ----------
-    states_list : List[StateUni]
+    states_list_ : List[StateUni]
         The list of the identified states. Refer to the documentation of
         StateUni for accessing the information on the states.
 
-    labels : ndarray of shape (n_particles, n_frames)
+    labels_ : ndarray of shape (n_particles, n_frames)
         Cluster labels for each frame. Unclassified points are given
         the label "-1".
 

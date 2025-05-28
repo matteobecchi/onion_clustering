@@ -20,18 +20,17 @@ def onion_multi(
     """
     Performs onion clustering on the data array 'X'.
 
-    Returns an array of integer labels, one for each signal sequence.
-    Unclassified sequences are labelled "-1".
+    Returns an array of integer labels, one for each frame.
+    Unclassified frames are labelled "-1".
 
     Parameters
     ----------
-    X : ndarray of shape (n_particles * n_seq, delta_t * n_features)
-        The data to cluster. Each signal sequence is considered as a
-        single data point.
+    X : ndarray of shape (n_particles, n_frames, n_features)
+        The time-series data to cluster.
 
-    ndims : int, default = 2
-        The number of features (dimensions) of the dataset. It can be
-        either 2 or 3.
+    delta_t : int
+        The minimum lifetime required for the clusters. Also referred to as
+        the "time resolution" of the clustering analysis.
 
     bins : int, default="auto"
         The number of bins used for the construction of the histograms.
@@ -39,10 +38,14 @@ def onion_multi(
         If "auto", the default of numpy.histogram_bin_edges is used
         (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
 
-    number_of_sigmas : float, default=2.0
+    number_of_sigmas : float, default=3.0
         Sets the thresholds for classifing a signal sequence inside a state:
         the sequence is contained in the state if it is entirely contained
         inside number_of_sigmas * state.sigmas times from state.mean.
+
+    max_area_overlap : float, default=0.8
+        Thresold to consider two Gaussian states overlapping, and thus merge
+        them together.
 
     Returns
     -------
@@ -50,8 +53,8 @@ def onion_multi(
         The list of the identified states.Refer to the documentation of
         StateMulti for accessing the information on the states.
 
-    labels : ndarray of shape (n_particles * n_seq,)
-        Cluster labels for each signal sequence. Unclassified points are given
+    labels : ndarray of shape (n_particles, n_frames)
+        Cluster labels for each frame. Unclassified points are given
         the label "-1".
 
     Example
@@ -71,18 +74,15 @@ def onion_multi(
         n_particles = 5
         n_steps = 1000
 
-        input_data = np.random.rand(n_features, n_particles, n_steps)
-
-        # Create input array with the correct shape
-        reshaped_input_data = helpers.reshape_from_dnt(input_data, delta_t)
+        input_data = np.random.rand(n_particles, n_steps, n_features)
 
         # Run Onion Clustering
-        state_list, labels = onion_multi(reshaped_input_data)
+        state_list, labels = onion_multi(input_data, delta_t)
 
     .. testcode:: onionmulti-test
             :hide:
 
-            assert np.isclose(state_list[0].mean[0], 0.6675701490204133)
+            assert np.isclose(state_list[0].mean[0], 0.4791087814511593)
     """
 
     est = OnionMulti(
@@ -100,14 +100,14 @@ class OnionMulti:
     """
     Performs onion clustering on a data array.
 
-    Returns an array of integer labels, one for each signal sequence.
-    Unclassified sequences are labelled "-1".
+    Returns an array of integer labels, one for each frame.
+    Unclassified frames are labelled "-1".
 
     Parameters
     ----------
-    ndims : int, default = 2
-        The number of features (dimensions) of the dataset. It can be
-        either 2 or 3.
+    delta_t : int
+        The minimum lifetime required for the clusters. Also referred to as
+        the "time resolution" of the clustering analysis.
 
     bins : int, default="auto"
         The number of bins used for the construction of the histograms.
@@ -115,18 +115,23 @@ class OnionMulti:
         If "auto", the default of numpy.histogram_bin_edges is used
         (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
 
-    number_of_sigmas : float, default=2.0
+    number_of_sigmas : float, default=3.0
         Sets the thresholds for classifing a signal sequence inside a state:
         the sequence is contained in the state if it is entirely contained
         inside number_of_sigma * state.sigms times from state.mean.
 
+    max_area_overlap : float, default=0.8
+        Thresold to consider two Gaussian states overlapping, and thus merge
+        them together.
+
     Attributes
     ----------
     state_list_ : List[StateMulti]
-        List of the identified states.
+        The list of the identified states. Refer to the documentation of
+        StateMulti for accessing the information on the states.
 
-    labels_: ndarray of shape (n_particles * n_seq,)
-        Cluster labels for each point. Unclassified points are given
+    labels_: ndarray of shape (n_particles, n_frames)
+        Cluster labels for each frame. Unclassified points are given
         the label "-1".
 
     Example
@@ -146,22 +151,19 @@ class OnionMulti:
         n_particles = 5
         n_steps = 1000
 
-        input_data = np.random.rand(n_features, n_particles, n_steps)
-
-        # Create input array with the correct shape
-        reshaped_input_data = helpers.reshape_from_dnt(input_data, delta_t)
+        input_data = np.random.rand(n_particles, n_steps, n_features)
 
         # Run Onion Clustering
-        clusterer = OnionMulti()
+        clusterer = OnionMulti(delta_t)
         clust_params = {"bins": 100, "number_of_sigmas": 2.0}
         clusterer.set_params(**clust_params)
-        clusterer.fit(reshaped_input_data)
+        clusterer.fit(input_data)
 
     .. testcode:: OnionMulti-test
             :hide:
 
             assert np.isclose(
-                clusterer.state_list_[0].mean[0], 0.6680603111724006)
+                clusterer.state_list_[0].mean[0], 0.6257886444256409)
     """
 
     def __init__(
@@ -181,17 +183,14 @@ class OnionMulti:
 
         Parameters
         ----------
-        X : ndarray of shape (n_particles * n_seq, delta_t * n_features)
-            The data to cluster. Each signal sequence is considered as a
-            single data point.
+        X : ndarray of shape (n_particles, n_frames, n_features)
+            The time-series data to cluster.
 
         Returns
         -------
         self : object
             A fitted instance of self.
         """
-        # X = validate_data(self, X=X, y=y, accept_sparse=False)
-
         if X.ndim != 3:
             raise ValueError("Expected 3-dimensional input data.")
 
@@ -225,14 +224,13 @@ class OnionMulti:
 
         Parameters
         ----------
-        X : ndarray of shape (n_particles * n_seq, delta_t * n_features)
-            The data to cluster. Each signal sequence is considered as a
-            single data point.
+        X : ndarray of shape (n_particles, n_frames, n_features)
+            The time-series data to cluster.
 
         Returns
         -------
-        labels_: ndarray of shape (n_particles * n_seq,)
-            Cluster labels for each point. Unclassified points are given
+        labels_: ndarray of shape (n_particles, n_frames)
+            Cluster labels for each frame. Unclassified points are given
             the label "-1".
         """
         return self.fit(X).labels_
