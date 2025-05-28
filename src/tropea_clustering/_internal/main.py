@@ -543,6 +543,6 @@ def _main(
         )
     else:
         state_list = tmp_state_list
-        labels = -np.ones(matrix.shape)
+        labels = -np.ones(matrix.shape, dtype=int)
 
     return state_list, labels

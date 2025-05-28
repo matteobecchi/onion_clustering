@@ -1,27 +1,26 @@
-"""
-Should contains all the functions in common between the 2 codes.
-"""
+"""Should contains supporting functions for the 2 codes."""
 
 # Author: Becchi Matteo <bechmath@gmail.com>
-
-from typing import List, Tuple
 
 import numpy as np
 import scipy.optimize
 import scipy.signal
+from numpy.typing import NDArray
 from scipy.integrate import quad
 from scipy.optimize import OptimizeWarning
 
 from tropea_clustering._internal.first_classes import StateMulti, StateUni
 
 
-def moving_average_2d(data: np.ndarray, side: int) -> np.ndarray:
+def moving_average_2d(
+    data: NDArray[np.float64],
+    side: int,
+) -> NDArray[np.float64]:
     """
     2D moving average on an np.ndarray.
 
     Parameters
     ----------
-
     data : np.ndarray of shape (a, b)
         The 2D input array to be smoothed.
 
@@ -31,15 +30,8 @@ def moving_average_2d(data: np.ndarray, side: int) -> np.ndarray:
 
     Returns
     -------
-
     np.ndarray
         The smoothed array.
-
-    Notes
-    -----
-
-    Checks if the side is an odd number. Averages over the square centered
-    in each element.
     """
     if side % 2 == 0:
         raise ValueError("L must be an odd number.")
@@ -62,13 +54,15 @@ def moving_average_2d(data: np.ndarray, side: int) -> np.ndarray:
 
 
 def gaussian(
-    x_points: np.ndarray, x_mean: float, sigma: float, area: float
-) -> np.ndarray:
+    x_points: NDArray[np.float64],
+    x_mean: float,
+    sigma: float,
+    area: float,
+) -> NDArray[np.float64]:
     """Compute the Gaussian function values at given points 'x_points'.
 
     Parameters
     ----------
-
     x_points : np.ndarray
         Array of input values.
 
@@ -83,7 +77,6 @@ def gaussian(
 
     Returns
     -------
-
     np.ndarray
         Gaussian function values computed at the input points.
     """
@@ -95,14 +88,15 @@ def gaussian(
 
 
 def find_minima_around_max(
-    data: np.ndarray, max_ind: Tuple[int, ...], gap: int
-) -> List[int]:
+    data: NDArray[np.float64],
+    max_ind: tuple[int, ...],
+    gap: int,
+) -> list[int]:
     """
     Minima surrounding the maximum value in the given data array.
 
     Parameters
     ----------
-
     data : np.ndarray
         Input data array.
 
@@ -114,24 +108,18 @@ def find_minima_around_max(
 
     Returns
     -------
-
     minima : List[int]
         List of indices representing the minima surrounding the maximum
         in each dimension.
-
-    Notes
-    -----
-
-    The precise details of this function have to be described.
     """
-    minima: List[int] = []
+    minima: list[int] = []
 
     for dim in range(data.ndim):
         min_id0 = max(max_ind[dim] - gap, 0)
         min_id1 = min(max_ind[dim] + gap, data.shape[dim] - 1)
 
-        tmp_max1: List[int] = list(max_ind)
-        tmp_max2: List[int] = list(max_ind)
+        tmp_max1: list[int] = list(max_ind)
+        tmp_max2: list[int] = list(max_ind)
 
         tmp_max1[dim] = min_id0
         tmp_max2[dim] = min_id0 - 1
@@ -159,14 +147,15 @@ def find_minima_around_max(
 
 
 def find_half_height_around_max(
-    data: np.ndarray, max_ind: Tuple[int, ...], gap: int
-) -> List[int]:
+    data: NDArray[np.float64],
+    max_ind: tuple[int, ...],
+    gap: int,
+) -> list[int]:
     """
     Half-heigth points surrounding the maximum value in the given data array.
 
     Parameters
     ----------
-
     data : np.ndarray
         Input data array.
 
@@ -178,24 +167,18 @@ def find_half_height_around_max(
 
     Returns
     -------
-
-    minima : List[int]
+    minima : list[int]
         List of indices representing the minima surrounding the maximum
         in each dimension.
-
-    Notes
-    -----
-
-    The precise details of this function have to be described.
     """
     max_val = data.max()
-    minima: List[int] = []
+    minima: list[int] = []
 
     for dim in range(data.ndim):
         half_id0 = max(max_ind[dim] - gap, 0)
         half_id1 = min(max_ind[dim] + gap, data.shape[dim] - 1)
 
-        tmp_max: List[int] = list(max_ind)
+        tmp_max: list[int] = list(max_ind)
 
         tmp_max[dim] = half_id0
         while half_id0 > 0 and data[tuple(tmp_max)] > max_val / 2:
@@ -221,23 +204,22 @@ def custom_fit(
     dim: int,
     max_ind: int,
     minima: list[int],
-    edges: np.ndarray,
-    counts: np.ndarray,
-    m_limits: np.ndarray,
-) -> Tuple[int, float, np.ndarray]:
+    edges: NDArray[np.float64],
+    counts: NDArray[np.float64],
+    m_limits: NDArray[np.float64],
+) -> tuple[int, float, np.ndarray]:
     """
     Fit a Gaussian curve to selected multivarite data.
 
     Parameters
     ----------
-
     dim : int
         The data dimensionality.
 
     max_ind : int
         Index of the maximum value in the histogram.
 
-    minima : List[int]
+    minima : list[int]
         List of indices representing the minimum points.
 
     edges : ndarray
@@ -246,12 +228,11 @@ def custom_fit(
     counts : ndarray
         Array containing histogram counts.
 
-    m_limits : List[List[int]]
+    m_limits : list[list[int]]
         List of min and max of the data along each dimension.
 
     Returns
     -------
-
     flag : int
         Flag indicating the success (1) or failure (0) of the fitting process.
 
@@ -307,14 +288,14 @@ def custom_fit(
 
 
 def relabel_states(
-    all_the_labels: np.ndarray, states_list: list[StateUni]
-) -> Tuple[np.ndarray, list[StateUni]]:
+    all_the_labels: NDArray[np.int64],
+    states_list: list[StateUni],
+) -> tuple[NDArray[np.int64], list[StateUni]]:
     """
     Relabel states and update the state list.
 
     Parameters
     ----------
-
     all_the_labels : ndarray of shape (n_particles, n_windows)
         Array containing labels assigned to each window in the trajectory.
 
@@ -323,20 +304,11 @@ def relabel_states(
 
     Returns
     -------
-
     all_the_labels : ndarray of shape (n_particles, n_windows)
         Array containing labels assigned to each window in the trajectory.
 
     relevant_states : List[StateUni]
         Updated list of StateUni objects representing different states.
-
-    Notes
-    -----
-
-    - Removes states with zero relevance
-    - Sorts states according to their mean value
-    - Creates a dictionary to map old state labels to new ones
-    - Relabels the data in all_the_labels according to the new states_list
     """
     relevant_states = [state for state in states_list if state.perc != 0.0]
 
@@ -358,19 +330,17 @@ def relabel_states(
     return all_the_labels, relevant_states
 
 
-def find_intersection(st_0: StateUni, st_1: StateUni) -> Tuple[float, int]:
+def find_intersection(st_0: StateUni, st_1: StateUni) -> tuple[float, int]:
     """
     Finds the intersection between two Gaussians.
 
     Parameters
     ----------
-
     st_0, st_1 : StateUni
         The two states we are computing the intersection between.
 
     Returns
     -------
-
     th_val : float
         The value of the intersection.
 
@@ -408,14 +378,18 @@ def find_intersection(st_0: StateUni, st_1: StateUni) -> Tuple[float, int]:
 
 
 def shared_area_between_gaussians(
-    area1, mean1, sigma1, area2, mean2, sigma2
-) -> Tuple[float, float]:
+    area1: float,
+    mean1: float,
+    sigma1: float,
+    area2: float,
+    mean2: float,
+    sigma2: float,
+) -> tuple[float, float]:
     """
     Computes the shared area between two Gaussians.
 
     Parameters
     ----------
-
     area1, mean1, sigma1 : float
         The parameters of Gaussian 1.
 
@@ -424,7 +398,6 @@ def shared_area_between_gaussians(
 
     Returns
     -------
-
     shared_fraction_1 : float
         The fraction of the area of the first Gaussian in common with the
         second Gaussian.
@@ -474,15 +447,15 @@ def shared_area_between_gaussians(
 
 
 def final_state_settings(
-    list_of_states: List[StateUni],
-    m_range: np.ndarray,
-) -> List[StateUni]:
+    list_of_states: list[StateUni],
+    m_range: NDArray[np.float64],
+) -> list[StateUni]:
     """
-    Final adjustemts and output in the list of identified states.
+    Calculate the final threshold values based on the intercept between
+    neighboring states.
 
     Parameters
     ----------
-
     list_of_states : list[StateUni]
         The list of final states.
 
@@ -491,12 +464,9 @@ def final_state_settings(
 
     Returns
     -------
-
     list_of_states : list[StateUni]
         Now with the correct thresholds asssigned to each state.
     """
-    # Calculate the final threshold values
-    # and their types based on the intercept between neighboring states.
     if len(list_of_states) == 0:
         return list_of_states
 
@@ -519,16 +489,15 @@ def final_state_settings(
 
 
 def set_final_states(
-    list_of_states: List[StateUni],
+    list_of_states: list[StateUni],
     all_the_labels: np.ndarray,
     area_max_overlap: float,
-) -> Tuple[List[StateUni], np.ndarray]:
+) -> tuple[list[StateUni], NDArray[np.int64]]:
     """
     Assigns final states and relabels labels based on specific criteria.
 
     Parameters
     ----------
-
     list_of_states : List[StateUni]
         List of StateUni objects representing potential states.
 
@@ -540,22 +509,12 @@ def set_final_states(
 
     Returns
     -------
-
     updated_states : List[StateUni]
         The final list of states.
 
     all_the _labels : ndarray of shape (n_particles, n_windows)
         The final data labels.
-
-    Notes
-    -----
-
-    - Merge together the strongly overlapping states.
-    - Calculate the final threshold values and their types based on
-        the intercept between neighboring states.
-    - Write the final states and final thresholds to text files.
     """
-
     # Find all the possible merges: j could be merged into i --> [j, i]
     proposed_merge = []
     for i, st_0 in enumerate(list_of_states):
@@ -657,15 +616,15 @@ def set_final_states(
 
 
 def relabel_states_2d(
-    all_the_labels: np.ndarray, states_list: list[StateMulti]
-) -> Tuple[np.ndarray, List[StateMulti]]:
+    all_the_labels: np.ndarray,
+    states_list: list[StateMulti],
+) -> tuple[NDArray[np.int64], list[StateMulti]]:
     """
     Reorders labels and merges strongly overlapping states in a
     multidimensional space.
 
     Parameters
     ----------
-
     all_the_labels : ndarray of shape (n_particles, n_windows)
         Array containing labels for each data point.
 
@@ -674,22 +633,12 @@ def relabel_states_2d(
 
     Returns
     -------
-
     all_the_labels : ndarray of shape (n_particles, n_windows)
         The final data labels.
 
     updated_states: List[StateMulti]
         The final list of states.
-
-    Notes
-    -----
-
-    - Remove states with zero relevance.
-    - Sort states according to their relevance.
-    - Merge together the states which are strongly overlapping.
-    - Write the final states to text files.
     """
-
     sorted_states = [state for state in states_list if state.perc != 0.0]
 
     # Create a dictionary to map old state labels to new ones
