@@ -240,7 +240,7 @@ def find_stable_trj(
         the label "0".
 
     fraction : float
-        Fraction of windows classified in this state.
+        Fraction of data points classified in this state.
     """
     mask_unclassified = tmp_labels == 0
     mask_inf = matrix >= state.th_inf[0]
@@ -266,37 +266,51 @@ def find_stable_trj(
 
 
 def fit_local_maxima(
-    matrix: np.ndarray,
-    tmp_labels: np.ndarray,
+    matrix: NDArray[np.float64],
+    tmp_labels: NDArray[np.int64],
     delta_t: int,
     lim: int,
     bins: int | str,
     number_of_sigmas: float,
-):
+) -> tuple[StateUni | None, float]:
     """
-    This functions takes care of particular cases where the
-    data points on the tails of a Gaussian are not correctly assigned,
-    creating weird sharp peaks in the histogram.
+    This functions takes care of particular cases where the data points on
+    the tails of a Gaussian are not correctly assigned, creating weird
+    sharp peaks in the histogram.
 
     Parameters
     ----------
+    matrix : ndarray of shape (n_particles, n_frames)
+        The time-series data to cluster.
 
-    cl_ob : ClusteringObject1D
+    tmp_labels : ndarray of shape (n_particles, n_frames)
+        Temporary labels for each frame. Unclassified points are given
+        the label "0".
 
-    m_clean : np.ndarray
-        Input data for Gaussian fitting.
-
-    par : Parameters
-        Object containing parameters for fitting.
-
-    tmp_labels : np.ndarray
-        Labels indicating window classifications.
-
-    tau_windw : int
-        The time resolution of the analysis.
+    delta_t : int
+        The minimum lifetime required for the clusters.
 
     lim : int
-        Offset value for classifying stable windows.
+        The algorithm iteration.
+
+    bins : int, default="auto"
+        The number of bins used for the construction of the histograms.
+        Can be an integer value, or "auto".
+        If "auto", the default of numpy.histogram_bin_edges is used
+        (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
+
+    number_of_sigmas : float, default=3.0
+        Sets the thresholds for classifing a signal sequence inside a state:
+        the sequence is contained in the state if it is entirely contained
+        inside number_of_sigmas * state.sigmas times from state.mean.
+
+    Returns
+    -------
+    state : StateUni | None
+        It is None if the fit failed.
+
+    fraction : float
+        Fraction of data points classified in this state.
     """
     mask = tmp_labels == 0
     flat_m = matrix[mask].flatten()
@@ -392,7 +406,7 @@ def iterative_search(
     number_of_sigmas: float,
 ) -> tuple[list[StateUni], NDArray[np.int64]]:
     """
-    Iterative search for stable windows in the trajectory.
+    Iterative search for stable sequences in the trajectory.
 
     Parameters
     ----------

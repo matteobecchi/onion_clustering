@@ -1,11 +1,9 @@
 """
-Code for clustering of multivariate (2- or 3-dimensional) time-series data.
+Code for clustering of multivariate time-series data.
 See the documentation for all the details.
 """
 
 # Author: Becchi Matteo <bechmath@gmail.com>
-
-from typing import Tuple
 
 import numpy as np
 from numpy.typing import NDArray
@@ -23,9 +21,9 @@ from tropea_clustering._internal.functions import (
 
 
 def gauss_fit_max(
-    matrix: np.ndarray,
-    tmp_labels: np.ndarray,
-    m_limits: np.ndarray,
+    matrix: NDArray[np.float64],
+    tmp_labels: NDArray[np.int64],
+    m_limits: NDArray[np.float64],
     bins: int | str,
     number_of_sigmas: float,
 ) -> StateMulti | None:
@@ -34,29 +32,34 @@ def gauss_fit_max(
 
     Parameters
     ----------
+    matrix : ndarray of shape (n_particles, n_frames)
+        The time-series data to cluster.
 
-    m_clean : ndarray
-        The data points.
+    tmp_labels : ndarray of shape (n_particles, n_frames)
+        Temporary labels for each frame. Unclassified points are given
+        the label "0".
 
     m_limits : ndarray
-        The min and max of the data points.
+        The min and max of the data points, for each feature.
 
-    bins : Union[int, str]
-        The histogram binning rule.
+    bins : int, default="auto"
+        The number of bins used for the construction of the histograms.
+        Can be an integer value, or "auto".
+        If "auto", the default of numpy.histogram_bin_edges is used
+        (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
+
+    number_of_sigmas : float, default=3.0
+        Sets the thresholds for classifing a signal sequence inside a state:
+        the sequence is contained in the state if it is entirely contained
+        inside number_of_sigmas * state.sigmas times from state.mean.
 
     Returns
     -------
-
-    state : StateMulti
-        Object containing Gaussian fit parameters (mu, sigma, area),
-        or None if the fit fails.
+    state : StateMulti | None
+        It is None if the fit failed.
     """
     mask = tmp_labels == 0
     flat_m = matrix[mask]
-    # flat_m = [m_clean[dim] for dim in range(m_clean.shape[2])]
-    # flat_m = m_clean[mask].reshape(
-    #     (m_clean.shape[0] * m_clean.shape[1], m_clean.shape[2])
-    # )
     if bins == "auto":
         bins = max(int(np.power(matrix.size, 1 / 3) * 2), 10)
     counts, edges = np.histogramdd(flat_m, bins=bins, density=True)
@@ -138,38 +141,41 @@ def gauss_fit_max(
 
 
 def find_stable_trj(
-    matrix: np.ndarray,
-    tmp_labels: np.ndarray,
+    matrix: NDArray[np.float64],
+    tmp_labels: NDArray[np.int64],
     state: StateMulti,
     delta_t: int,
     lim: int,
-) -> Tuple[np.ndarray, float]:
+) -> tuple[np.ndarray, float]:
     """
-    Identification of windows contained in a certain state.
+    Identification of sequences contained in a certain state.
 
     Parameters
     ----------
+    matrix : ndarray of shape (n_particles, n_frames)
+        The time-series data to cluster.
 
-    cl_ob : ClusteringObject2D
-        The clustering object.
+    tmp_labels : ndarray of shape (n_particles, n_frames)
+        Temporary labels for each frame. Unclassified points are given
+        the label "0".
 
-    state : StateMulti
-        The state.
+    state : StateUni
+        A Gaussian state.
 
-    tmp_labels : ndarray of shape (n_particles, n_windows)
-        Contains the cluster labels of all the signal windows.
+    delta_t : int
+        The minimum lifetime required for the clusters.
 
     lim : int
         The algorithm iteration.
 
     Returns
     -------
+    tmp_labels : ndarray of shape (n_particles, n_frames)
+        Updated temporary labels for each frame. Unclassified points are given
+        the label "0".
 
-    m2_array : ndarray
-        Array of still unclassified data points.
-
-    window_fraction : float
-        Fraction of windows classified in this state.
+    fraction : float
+        Fraction of data points classified in this state.
     """
     m_clean = matrix.copy()
     mask_unclassified = tmp_labels == 0
@@ -198,23 +204,41 @@ def find_stable_trj(
 
 
 def iterative_search(
-    matrix: np.ndarray,
+    matrix: NDArray[np.float64],
     delta_t: int,
     bins: int | str,
     number_of_sigmas: float,
 ) -> tuple[list[StateMulti], NDArray[np.int64]]:
     """
-    Iterative search for stable windows in the trajectory.
+    Iterative search for stable sequences in the trajectory.
 
     Parameters
     ----------
+    matrix : ndarray of shape (n_particles, n_frames, n_features)
+        The time-series data to cluster.
 
-    cl_ob : ClusteringObject2D
-        The clustering object.
+    delta_t : int
+        The minimum lifetime required for the clusters.
 
-    Returns
+    bins : int, default="auto"
+        The number of bins used for the construction of the histograms.
+        Can be an integer value, or "auto".
+        If "auto", the default of numpy.histogram_bin_edges is used
+        (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
+
+    number_of_sigmas : float, default=3.0
+        Sets the thresholds for classifing a signal sequence inside a state:
+        the sequence is contained in the state if it is entirely contained
+        inside number_of_sigmas * state.sigmas times from state.mean.
+
+    Results
     -------
+    states_list : List[StateMulti]
+        The list of the identified states.
 
+    labels : ndarray of shape (n_particles, n_frames)
+        Cluster labels for each frame. Unclassified points are given
+        the label "-1".
     """
     tmp_labels = np.zeros((matrix.shape[0], matrix.shape[1]), dtype=int)
     tmp_states_list = []
@@ -255,47 +279,41 @@ def iterative_search(
 
 
 def _main(
-    matrix: np.ndarray,
+    matrix: NDArray[np.float64],
     delta_t: int,
     bins: int | str,
     number_of_sigmas: float,
-    max_area_overlap: float,
 ) -> tuple[list[StateMulti], NDArray[np.int64]]:
     """
-    Returns the clustering object with the analysis.
+    Performs onion clustering on the data array 'matrix' at a give delta_t.
 
     Parameters
     ----------
-    matrix : ndarray of shape (dims, n_particles, n_frames)
-        The values of the signal for each particle at each frame.
+    matrix : ndarray of shape (n_particles, n_frames, n_features)
+        The time-series data to cluster.
 
-    n_dims : int
-        Number of components. Must be 2 or 3.
+    delta_t : int
+        The minimum lifetime required for the clusters.
 
-    bins: Union[str, int] = "auto"
+    bins : int, default="auto"
         The number of bins used for the construction of the histograms.
         Can be an integer value, or "auto".
         If "auto", the default of numpy.histogram_bin_edges is used
-        (see https://numpy.org/doc/stable/reference/generated/
-        numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
+        (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
 
-    number_of_sigma : float = 2.0
-        Sets the thresholds for classifing a signal window inside a state:
-        the window is contained in the state if it is entirely contained
-        inside number_of_sigma * state.sigms times from state.mean.
+    number_of_sigmas : float, default=3.0
+        Sets the thresholds for classifing a signal sequence inside a state:
+        the sequence is contained in the state if it is entirely contained
+        inside number_of_sigmas * state.sigmas times from state.mean.
 
     Returns
     -------
+    states_list : List[StateMulti]
+        The list of the identified states.
 
-    clustering_object : ClusteringObject2D
-        The final clustering object.
-
-    Notes
-    -----
-
-    - Reads the data and the parameters
-    - Performs the quick analysis for all the values in tau_window_list
-    - Performs a detailed analysis with the selected parameters
+    labels : ndarray of shape (n_particles, n_frames)
+        Cluster labels for each frame. Unclassified points are given
+        the label "-1".
     """
     tmp_state_list, tmp_labels = iterative_search(
         matrix,
