@@ -6,7 +6,6 @@
 
 import os
 from pathlib import Path
-from typing import List
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -26,20 +25,19 @@ COLORMAP = "viridis"
 def plot_output_uni(
     title: Path,
     input_data: NDArray[np.float64],
-    state_list: List[StateUni],
+    state_list: list[StateUni],
 ):
     """Plots clustering output with Gaussians and thresholds.
 
     Parameters
     ----------
-
-    title : str
+    title : pathlib.Path
         The path of the .png file the figure will be saved as.
 
-    input_data : ndarray of shape (n_particles * n_seq, delta_t)
-        The input data array, in the format taken by Onion Clustering.
+    input_data : ndarray of shape (n_particles, n_frames)
+        The input data array.
 
-    state_list : List[StateUni]
+    state_list : list[StateUni]
         The list of the cluster states.
 
     Example
@@ -55,7 +53,6 @@ def plot_output_uni(
     shows the cumulative data distribution, and the Gaussians fitted to the
     data, corresponding to the identified clusters.
     """
-
     n_particles, t_steps = input_data.shape
 
     flat_m = input_data.flatten()
@@ -165,16 +162,16 @@ def plot_one_trj_uni(
     Parameters
     ----------
 
-    title : str
+    title : pathlib.Path
         The path of the .png file the figure will be saved as.
 
     example_id : int
         The ID of the selected particle.
 
-    input_data : ndarray of shape (n_particles * n_seq, delta_t)
+    input_data : ndarray of shape (n_particles, n_frames)
         The input data array.
 
-    labels : ndarray of shape (n_particles * n_seq,)
+    labels : ndarray of shape (n_particles, n_frames)
         The output of Onion Clustering.
 
     Example
@@ -232,11 +229,10 @@ def plot_state_populations(
 
     Parameters
     ----------
-
-    title : str
+    title : pathlib.Path
         The path of the .png file the figure will be saved as.
 
-    labels : ndarray of shape (n_particles * n_seq,)
+    labels : ndarray of shape (n_particles, n_frames)
         The output of Onion Clustering.
 
     Example
@@ -283,16 +279,19 @@ def plot_medoids_uni(
     """
     Compute and plot the average signal sequence inside each state.
 
+    Warning
+    -------
+    This function is WIP.
+
     Parameters
     ----------
-
-    title : str
+    title : pathlib.Path
         The path of the .png file the figure will be saved as.
 
-    input_data : ndarray of shape (n_particles * n_seq, delta_t)
+    input_data : ndarray of shape (n_particles, n_frames)
         The input data array, in the format required by Onion Clustering.
 
-    labels : ndarray of shape (n_particles * n_seq,)
+    labels : ndarray of shape (n_particles, n_frames)
         The output of the clustering algorithm.
 
     output_to_file : bool, default = False.
@@ -403,16 +402,13 @@ def plot_sankey(
     Parameters
     ----------
 
-    title : str
+    title : pathlib.Path
         The path of the .png file the figure will be saved as.
 
-    labels : ndarray of shape (n_particles * n_seq,)
+    labels : ndarray of shape (n_particles, n_frames)
         The output of the clustering algorithm.
 
-    n_particles : int
-        The number of particles in the original dataset.
-
-    tmp_frame_list : List[int]
+    tmp_frame_list : list[int] | NDArray[np.int64]
         The list of frames at which we want to plot the Sankey.
 
     Example
@@ -503,11 +499,10 @@ def plot_time_res_analysis(
 
     Parameters
     ----------
-
-    title : str
+    title : pathlib.Path
         The path of the .png file the figure will be saved as.
 
-    tra : ndarray of shape (n_seq, 3)
+    tra : ndarray of shape (delta_t_values, 3)
         tra[j][0] must contain the j-th value used as delta_t;
         tra[j][1] must contain the corresponding number of states;
         tra[j][2] must contain the corresponding unclassified fraction.
@@ -540,7 +535,7 @@ def plot_time_res_analysis(
 
 def plot_pop_fractions(
     title: Path,
-    list_of_pop: List[List[float]],
+    list_of_pop: list[list[float]],
     tra: NDArray[np.float64],
 ):
     """
@@ -548,14 +543,14 @@ def plot_pop_fractions(
 
     Parameters
     ----------
-    title : str
+    title : pathlib.Path
         The path of the .png file the figure will be saved as.
 
-    list_of_pop : List[List[float]]
+    list_of_pop : list[list[float]]
         For every delta_t, this is the list of the populations of all the
         states (the first one is the unclassified data points).
 
-    tra : ndarray of shape (n_seq, 3)
+    tra : ndarray of shape (delta_t_values, 3)
         tra[j][0] must contain the j-th value used as delta_t;
         tra[j][1] must contain the corresponding number of states;
         tra[j][2] must contain the corresponding unclassified fraction.
@@ -607,19 +602,19 @@ def plot_medoids_multi(
     """
     Compute and plot the average signal sequence inside each state.
 
+    Warning
+    -------
+    This function is WIP.
+
     Parameters
     ----------
-
-    title : str
+    title : pathlib.Path
         The path of the .png file the figure will be saved as.
 
-    delta_t : int
-        The length of the signal window used.
-
-    input_data : ndarray of shape (n_dims, n_particles, n_frames)
+    input_data : ndarray of shape (n_particles, n_frames, n_features)
         The input data array.
 
-    labels : ndarray of shape (n_particles * n_seq,)
+    labels : ndarray of shape (n_particles, n_frames)
         The output of the clustering algorithm.
 
     output_to_file : bool, default = False.
@@ -700,7 +695,7 @@ def plot_medoids_multi(
 def plot_output_multi(
     title: Path,
     input_data: NDArray[np.float64],
-    state_list: List[StateMulti],
+    state_list: list[StateMulti],
     labels: NDArray[np.int64],
 ):
     """
@@ -708,25 +703,20 @@ def plot_output_multi(
 
     Parameters
     ----------
-
-    title : str
+    title : pathlib.Path
         The path of the .png file the figure will be saved as.
 
-    input_data : ndarray of shape (n_dims, n_particles, n_frames)
+    input_data : ndarray of shape (n_particles, n_frames, n_features)
         The input data array.
 
-    state_list : List[StateMulti]
+    state_list : list[StateMulti]
         The list of the cluster states.
 
-    labels : ndarray of shape (n_particles * n_seq,)
+    labels : ndarray of shape (n_particles, n_frames)
         The output of the clustering algorithm.
-
-    delta_t : int
-        The length of the signal sequences used.
 
     Example
     -------
-
     .. image:: ../_static/images/multi_Fig1.png
         :alt: Example Image
         :width: 600px
@@ -953,20 +943,16 @@ def plot_one_trj_multi(
 
     Parameters
     ----------
-
-    title : str
+    title : pathlib.Path
         The path of the .png file the figure will be saved as.
 
     example_id : int
         The ID of the selected particle.
 
-    delta_t : int
-        The length of the signal window used.
-
-    input_data : ndarray of shape (n_dims, n_particles, n_frames)
+    input_data : ndarray of shape (n_particles, n_frames, n_features)
         The input data array.
 
-    labels : ndarray of shape (n_particles * n_seq,)
+    labels : ndarray of shape (n_particles, n_frames)
         The output of the clustering algorithm.
 
     Example
@@ -1021,6 +1007,10 @@ def color_trj_from_xyz(
 ):
     """
     Saves a colored .xyz file ('colored_trj.xyz') in the working directory.
+
+    Warning
+    -------
+    This function is WIP.
 
     Parameters
     ----------
