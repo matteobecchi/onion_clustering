@@ -113,11 +113,13 @@ def main():
     else:
         dataset = create_trajectory(n_atoms, n_frames, file_path)
 
+    delta_t_list = np.unique(np.geomspace(2, n_frames, num=20, dtype=int))
+
     # Test OnionUni on a wide range of time resolutions
     data_1d = dataset[:, :, 0]
-    delta_t_list = np.unique(np.geomspace(2, n_frames, 20, dtype=int))
     results = np.zeros((delta_t_list.size, 3))
     list_of_pops = []
+
     for i, delta_t in enumerate(delta_t_list):
         on_cl = OnionUni(delta_t)
         on_cl.fit(data_1d)
@@ -142,9 +144,9 @@ def main():
     plot_state_populations(data_path / "Fig5.png", labels)
 
     # Test OnionMulti on a wide range of time resolutions
-    delta_t_list = np.unique(np.geomspace(2, n_frames, 20, dtype=int))
     results = np.zeros((delta_t_list.size, 3))
     list_of_pops = []
+
     for i, delta_t in enumerate(delta_t_list):
         on_cl = OnionMulti(delta_t)
         on_cl.fit(dataset)
