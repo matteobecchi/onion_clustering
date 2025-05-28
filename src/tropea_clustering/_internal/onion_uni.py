@@ -20,14 +20,13 @@ def onion_uni(
     """
     Performs onion clustering on the data array 'X'.
 
-    Returns an array of integer labels, one for each signal sequence.
-    Unclassified sequences are labelled "-1".
+    Returns an array of integer labels, one for each frame.
+    Unclassified frames are labelled "-1".
 
     Parameters
     ----------
-    X : ndarray of shape (n_particles * n_seq, delta_t)
-        The data to cluster. Each signal sequence is considered as a
-        single data point.
+    X : ndarray of shape (n_particles, n_frames)
+        The time-series data to cluster.
 
     delta_t : int
         The minimum lifetime required for the clusters. Also referred to as
@@ -39,10 +38,14 @@ def onion_uni(
         If "auto", the default of numpy.histogram_bin_edges is used
         (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
 
-    number_of_sigmas : float, default=2.0
+    number_of_sigmas : float, default=3.0
         Sets the thresholds for classifing a signal sequence inside a state:
         the sequence is contained in the state if it is entirely contained
         inside number_of_sigmas * state.sigmas times from state.mean.
+
+    max_area_overlap : float, default=0.8
+        Thresold to consider two Gaussian states overlapping, and thus merge
+        them together.
 
     Returns
     -------
@@ -50,8 +53,8 @@ def onion_uni(
         The list of the identified states. Refer to the documentation of
         StateUni for accessing the information on the states.
 
-    labels : ndarray of shape (n_particles * n_seq,)
-        Cluster labels for each signal sequence. Unclassified points are given
+    labels : ndarray of shape (n_particles, n_frames)
+        Cluster labels for each frame. Unclassified points are given
         the label "-1".
 
     Example
@@ -60,7 +63,7 @@ def onion_uni(
     .. testcode:: onionuni-test
 
         import numpy as np
-        from tropea_clustering import onion_uni, helpers
+        from tropea_clustering import onion_uni
 
         # Select time resolution
         delta_t = 5
@@ -78,7 +81,7 @@ def onion_uni(
     .. testcode:: onionuni-test
             :hide:
 
-            assert np.isclose(state_list[0].mean, 0.5789299753284055)
+            assert np.isclose(state_list[0].mean, 0.5789299719781493)
     """
 
     est = OnionUni(
@@ -94,9 +97,9 @@ def onion_uni(
 
 class OnionUni:
     """
-    Performs onion clustering on a data array.
+    Performs onion clustering on the data array.
 
-    Returns an array of integer labels.
+    Returns an array of integer labels, one for each frame.
     Unclassified frames are labelled "-1".
 
     Parameters
@@ -111,19 +114,24 @@ class OnionUni:
         If "auto", the default of numpy.histogram_bin_edges is used
         (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
 
-    number_of_sigmas : float, default=2.0
+    number_of_sigmas : float, default=3.0
         Sets the thresholds for classifing a signal sequence inside a state:
         the sequence is contained in the state if it is entirely contained
         inside number_of_sigmas * state.sigmas times from state.mean.
 
+    max_area_overlap : float, default=0.8
+        Thresold to consider two Gaussian states overlapping, and thus merge
+        them together.
+
     Attributes
     ----------
-    state_list_ : List[StateUni]
-        List of the identified states. Refer to the documentation of
+    states_list : List[StateUni]
+        The list of the identified states. Refer to the documentation of
         StateUni for accessing the information on the states.
 
-    labels_: ndarray of shape (n_particles, f_frames)
-        Cluster labels. Unclassified points are given the label "-1".
+    labels : ndarray of shape (n_particles, n_frames)
+        Cluster labels for each frame. Unclassified points are given
+        the label "-1".
 
     Example
     -------
@@ -131,18 +139,19 @@ class OnionUni:
     .. testcode:: OnionUni-test
 
         import numpy as np
-        from tropea_clustering import OnionUni, helpers
+        from tropea_clustering import OnionUni
 
         # Create random input data
         np.random.seed(1234)
         n_particles = 5
         n_steps = 1000
 
+        delta_t = 5
         input_data = np.random.rand(n_particles, n_steps)
 
         # Run Onion Clustering
-        clusterer = OnionUni()
-        clust_params = {"delta_t": 5, "bins": 100, "number_of_sigmas": 2.0}
+        clusterer = OnionUni(delta_t)
+        clust_params = {"bins": 100, "number_of_sigmas": 3.0}
         clusterer.set_params(**clust_params)
         clusterer.fit(input_data)
 
@@ -171,15 +180,13 @@ class OnionUni:
         Parameters
         ----------
         X : ndarray of shape (n_particles, n_frames)
-            The data to cluster. Each signal sequence is considered as a
-            single data point.
+            The time-series data to cluster.
 
         Returns
         -------
         self : object
             A fitted instance of self.
         """
-        # X = validate_data(self, X=X, y=y, accept_sparse=False)
 
         if X.ndim != 2:
             raise ValueError("Expected 2-dimensional input data.")
@@ -214,14 +221,13 @@ class OnionUni:
 
         Parameters
         ----------
-        X : ndarray of shape (n_particles * n_seq, delta_t)
-            The data to cluster. Each signal sequence is considered as a
-            single data point.
+        X : ndarray of shape (n_particles, n_frames)
+            The time-series data to cluster.
 
         Returns
         -------
-        labels_: ndarray of shape (n_particles * n_seq,)
-            Cluster labels for signal sequence. Unclassified points are given
+        labels : ndarray of shape (n_particles, n_frames)
+            Cluster labels for each frame. Unclassified points are given
             the label "-1".
         """
         return self.fit(X).labels_

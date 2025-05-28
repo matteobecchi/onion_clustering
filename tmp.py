@@ -1,33 +1,18 @@
 import numpy as np
 
-from tropea_clustering import onion_multi
+from tropea_clustering import onion_uni
 
-NDIM = 3
+# Select time resolution
+delta_t = 5
 
+# Create random input data
+np.random.seed(1234)
+n_particles = 5
+n_steps = 1000
 
-def main():
-    ## Create the input data ###
-    rng = np.random.default_rng(12345)
-    input_data = np.array(
-        [
-            np.concatenate(
-                (
-                    rng.normal(0.0, 0.1, (500, NDIM)),
-                    rng.normal(1.0, 0.1, (500, NDIM)),
-                )
-            )
-            for _ in range(100)
-        ]
-    )
+input_data = np.random.rand(n_particles, n_steps)
 
-    delta_t = 10
-    state_list, labels = onion_multi(input_data, delta_t, number_of_sigmas=3.0)
+# Run Onion Clustering
+state_list, labels = onion_uni(input_data, delta_t)
 
-    for state in state_list:
-        print(state.mean, state.sigma, state.perc)
-
-    _ = state_list[0].get_attributes()
-
-
-if __name__ == "__main__":
-    main()
+print(state_list[0].mean)
