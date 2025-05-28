@@ -65,15 +65,15 @@ def test_output_files(original_wd: Path, temp_dir: Path):
 
     with tempfile.TemporaryDirectory() as _:
         # Test the class methods
-        tmp = OnionMulti(delta_t)
+        on_cl = OnionMulti(delta_t)
         tmp_params = {"bins": 50, "number_of_sigmas": 2.0}
-        tmp.set_params(**tmp_params)
-        _ = tmp.get_params()
-        tmp.fit(input_data_2d)
+        on_cl.set_params(**tmp_params)
+        _ = on_cl.get_params()
+        on_cl.fit(input_data_2d)
 
         # Test wrong input arrays
         with pytest.raises(ValueError):
-            tmp.fit(wrong_arr)
+            on_cl.fit(wrong_arr)
 
         state_list, labels = onion_multi(input_data_2d, delta_t)
 
@@ -94,3 +94,22 @@ def test_output_files(original_wd: Path, temp_dir: Path):
 
         # expected_output = np.load(expected_output_path)
         # assert np.allclose(expected_output, labels)
+
+        # Test wrong input
+        input_data = np.ones((10, 10))  # 2D array
+        with pytest.raises(
+            ValueError, match="Expected 3-dimensional input data."
+        ):
+            on_cl.fit(input_data)
+
+        input_data1 = np.empty((0, 5, 5))  # empty array
+        with pytest.raises(ValueError, match="Empty dataset."):
+            on_cl.fit(input_data1)
+
+        input_data1 = np.zeros((100, 1, 2))  # just one frame
+        with pytest.raises(ValueError, match="n_frames = 1."):
+            on_cl.fit(input_data1)
+
+        input_data = np.random.rand(3, 4, 2) + 1j * np.random.rand(3, 4, 2)
+        with pytest.raises(ValueError, match="Complex data not supported."):
+            on_cl.fit(input_data)

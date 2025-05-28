@@ -74,9 +74,19 @@ def test_output_files(original_wd: Path, temp_dir: Path):
 
         # Test wrong input
         input_data = np.ones(10)  # 1D array
-        with pytest.raises(ValueError):
+        with pytest.raises(
+            ValueError, match="Expected 2-dimensional input data."
+        ):
+            on_cl.fit(input_data)
+
+        input_data = np.empty((0, 5))  # empty array
+        with pytest.raises(ValueError, match="Empty dataset."):
             on_cl.fit(input_data)
 
         input_data = np.zeros((100, 1))  # just one frame
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="n_frames = 1."):
+            on_cl.fit(input_data)
+
+        input_data = np.random.rand(3, 4) + 1j * np.random.rand(3, 4)
+        with pytest.raises(ValueError, match="Complex data not supported."):
             on_cl.fit(input_data)

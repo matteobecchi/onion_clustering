@@ -202,7 +202,7 @@ class OnionUni:
             np.issubdtype(X.dtype, np.floating)
             or np.issubdtype(X.dtype, np.integer)
         ):
-            raise ValueError("Complex data not supported")
+            raise ValueError("Complex data not supported.")
 
         X = X.copy()  # copy to avoid in-place modification
 

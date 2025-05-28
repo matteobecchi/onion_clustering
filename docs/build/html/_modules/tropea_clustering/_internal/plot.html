@@ -295,6 +295,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
@@ -315,9 +316,8 @@
 <div class="viewcode-block" id="plot_output_uni">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_output_uni.html#tropea_clustering.plot.plot_output_uni">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_output_uni</span><span class="p">(</span>
-    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
     <span class="n">input_data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
-    <span class="n">n_particles</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">state_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">StateUni</span><span class="p">],</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Plots clustering output with Gaussians and thresholds.</span>
@@ -330,9 +330,6 @@
 
 <span class="sd">    input_data : ndarray of shape (n_particles * n_seq, delta_t)</span>
 <span class="sd">        The input data array, in the format taken by Onion Clustering.</span>
-
-<span class="sd">    n_particles : int</span>
-<span class="sd">        The number of particles in the original dataset.</span>
 
 <span class="sd">    state_list : List[StateUni]</span>
 <span class="sd">        The list of the cluster states.</span>
@@ -350,9 +347,8 @@
 <span class="sd">    shows the cumulative data distribution, and the Gaussians fitted to the</span>
 <span class="sd">    data, corresponding to the identified clusters.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">n_seq</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="n">n_particles</span>
-    <span class="n">n_frames</span> <span class="o">=</span> <span class="n">n_seq</span> <span class="o">*</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">input_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> <span class="n">n_frames</span><span class="p">))</span>
+
+    <span class="n">n_particles</span><span class="p">,</span> <span class="n">t_steps</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span>
 
     <span class="n">flat_m</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
     <span class="n">counts</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">flat_m</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -378,7 +374,6 @@
         <span class="n">rgba</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
         <span class="n">palette</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rgb2hex</span><span class="p">(</span><span class="n">rgba</span><span class="p">))</span>
 
-    <span class="n">t_steps</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">t_steps</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">t_steps</span><span class="p">)</span>
 
     <span class="n">step</span> <span class="o">=</span> <span class="mi">1</span>
@@ -453,10 +448,9 @@
 <div class="viewcode-block" id="plot_one_trj_uni">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_one_trj_uni.html#tropea_clustering.plot.plot_one_trj_uni">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_one_trj_uni</span><span class="p">(</span>
-    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
     <span class="n">example_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">input_data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
-    <span class="n">n_particles</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">],</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Plots the colored trajectory of one example particle.</span>
@@ -475,9 +469,6 @@
 <span class="sd">    input_data : ndarray of shape (n_particles * n_seq, delta_t)</span>
 <span class="sd">        The input data array.</span>
 
-<span class="sd">    n_particles : int</span>
-<span class="sd">        The number of particles in the original dataset.</span>
-
 <span class="sd">    labels : ndarray of shape (n_particles * n_seq,)</span>
 <span class="sd">        The output of Onion Clustering.</span>
 
@@ -492,14 +483,7 @@
 <span class="sd">    The datapoints are colored according to the cluster they have been</span>
 <span class="sd">    assigned.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">delta_t</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">n_seq</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="n">n_particles</span>
-    <span class="n">n_frames</span> <span class="o">=</span> <span class="n">n_seq</span> <span class="o">*</span> <span class="n">delta_t</span>
-
-    <span class="n">input_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> <span class="n">n_frames</span><span class="p">))</span>
-    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> <span class="n">n_seq</span><span class="p">))</span>
-    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
+    <span class="n">n_particles</span><span class="p">,</span> <span class="n">n_frames</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_frames</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_frames</span><span class="p">)</span>
 
     <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
@@ -535,9 +519,7 @@
 <div class="viewcode-block" id="plot_state_populations">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_state_populations.html#tropea_clustering.plot.plot_state_populations">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_state_populations</span><span class="p">(</span>
-    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">n_particles</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">delta_t</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
     <span class="n">labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">],</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -552,12 +534,6 @@
 <span class="sd">    title : str</span>
 <span class="sd">        The path of the .png file the figure will be saved as.</span>
 
-<span class="sd">    n_particles : int</span>
-<span class="sd">        The number of particles in the original dataset.</span>
-
-<span class="sd">    delta_t : int</span>
-<span class="sd">        The legth of the signal sequences (the analysis time resolution).</span>
-
 <span class="sd">    labels : ndarray of shape (n_particles * n_seq,)</span>
 <span class="sd">        The output of Onion Clustering.</span>
 
@@ -569,13 +545,10 @@
 <span class="sd">        :alt: Example Image</span>
 <span class="sd">        :width: 600px</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
-
+    <span class="n">n_particles</span><span class="p">,</span> <span class="n">n_frames</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">unique_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
     <span class="k">if</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">unique_labels</span><span class="p">:</span>
         <span class="n">unique_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">unique_labels</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-
-    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="n">list_of_populations</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">unique_labels</span><span class="p">:</span>
@@ -589,7 +562,7 @@
         <span class="n">palette</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rgb2hex</span><span class="p">(</span><span class="n">rgba</span><span class="p">))</span>
 
     <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-    <span class="n">time</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">pop</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">list_of_populations</span><span class="p">):</span>
         <span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">pop</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;ENV</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">palette</span><span class="p">[</span><span class="n">label</span><span class="p">])</span>
     <span class="n">axes</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Time [frame]&quot;</span><span class="p">)</span>
@@ -603,7 +576,7 @@
 <div class="viewcode-block" id="plot_medoids_uni">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_medoids_uni.html#tropea_clustering.plot.plot_medoids_uni">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_medoids_uni</span><span class="p">(</span>
-    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
     <span class="n">input_data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
     <span class="n">labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">],</span>
     <span class="n">output_to_file</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -721,10 +694,9 @@
 <div class="viewcode-block" id="plot_sankey">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_sankey.html#tropea_clustering.plot.plot_sankey">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_sankey</span><span class="p">(</span>
-    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
     <span class="n">labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">],</span>
-    <span class="n">n_particles</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">tmp_frame_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">tmp_frame_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">],</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plots the Sankey diagram at the desired frames.</span>
@@ -760,10 +732,8 @@
 <span class="sd">    the number of data points moving from one cluster to the other between the</span>
 <span class="sd">    selected frames. State &quot;-1&quot; refers to the unclassified data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">n_seq</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="n">n_particles</span>
-    <span class="n">all_the_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> <span class="n">n_seq</span><span class="p">))</span>
     <span class="n">frame_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tmp_frame_list</span><span class="p">)</span>
-    <span class="n">unique_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">all_the_labels</span><span class="p">)</span>
+    <span class="n">unique_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">unique_labels</span><span class="p">:</span>
         <span class="n">unique_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">unique_labels</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -786,7 +756,7 @@
 
         <span class="c1"># Iterate through the current time window and increment</span>
         <span class="c1"># the transition counts in trans_mat</span>
-        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">all_the_labels</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
             <span class="n">trans_mat</span><span class="p">[</span><span class="n">label</span><span class="p">[</span><span class="n">t_0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="n">label</span><span class="p">[</span><span class="n">t_0</span> <span class="o">+</span> <span class="n">t_jump</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="c1"># Store the source, target, and value for the Sankey diagram</span>
@@ -832,7 +802,7 @@
 <div class="viewcode-block" id="plot_time_res_analysis">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_time_res_analysis.html#tropea_clustering.plot.plot_time_res_analysis">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_time_res_analysis</span><span class="p">(</span>
-    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
     <span class="n">tra</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -879,7 +849,7 @@
 <div class="viewcode-block" id="plot_pop_fractions">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_pop_fractions.html#tropea_clustering.plot.plot_pop_fractions">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_pop_fractions</span><span class="p">(</span>
-    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
     <span class="n">list_of_pop</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
     <span class="n">tra</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
 <span class="p">):</span>
@@ -942,8 +912,7 @@
 <div class="viewcode-block" id="plot_medoids_multi">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_medoids_multi.html#tropea_clustering.plot.plot_medoids_multi">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_medoids_multi</span><span class="p">(</span>
-    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">delta_t</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
     <span class="n">input_data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
     <span class="n">labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">],</span>
     <span class="n">output_to_file</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -981,7 +950,7 @@
 <span class="sd">    shown (large solid points). The unclassififed seqeunces are shown</span>
 <span class="sd">    individually in purple (thin lines).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;plot_medoids_multi() does not work with 3D data.&quot;</span><span class="p">)</span>
         <span class="k">return</span>
 
@@ -989,31 +958,18 @@
     <span class="k">if</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">list_of_labels</span><span class="p">:</span>
         <span class="n">list_of_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">list_of_labels</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="n">center_list</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">env0</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">center_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">list_of_labels</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
 
-    <span class="n">reshaped_data</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
-    <span class="n">reshaped_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
-        <span class="n">labels</span><span class="p">,</span> <span class="p">(</span><span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-    <span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">ref_label</span> <span class="ow">in</span> <span class="n">list_of_labels</span><span class="p">:</span>
-        <span class="n">tmp</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">mol</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">reshaped_labels</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">window</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mol</span><span class="p">[::</span><span class="n">delta_t</span><span class="p">]):</span>
-                <span class="k">if</span> <span class="n">label</span> <span class="o">==</span> <span class="n">ref_label</span><span class="p">:</span>
-                    <span class="n">time_0</span> <span class="o">=</span> <span class="n">window</span> <span class="o">*</span> <span class="n">delta_t</span>
-                    <span class="n">time_1</span> <span class="o">=</span> <span class="p">(</span><span class="n">window</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">delta_t</span>
-                    <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reshaped_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">time_0</span><span class="p">:</span><span class="n">time_1</span><span class="p">])</span>
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">ref_label</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="n">center_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">env0</span> <span class="o">=</span> <span class="n">tmp</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">ref_label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">list_of_labels</span><span class="p">):</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">labels</span> <span class="o">==</span> <span class="n">ref_label</span>
+        <span class="k">if</span> <span class="n">ref_label</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">env0</span> <span class="o">=</span> <span class="n">input_data</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">center_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">input_data</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="k">if</span> <span class="n">output_to_file</span><span class="p">:</span>
-        <span class="n">center_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">center_list</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
             <span class="s2">&quot;medoid_center.npy&quot;</span><span class="p">,</span>
             <span class="n">center_arr</span><span class="p">,</span>
@@ -1027,9 +983,9 @@
         <span class="n">palette</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rgb2hex</span><span class="p">(</span><span class="n">rgba</span><span class="p">))</span>
 
     <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">id_c</span><span class="p">,</span> <span class="n">center</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">center_list</span><span class="p">):</span>
-        <span class="n">sig_x</span> <span class="o">=</span> <span class="n">center</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
-        <span class="n">sig_y</span> <span class="o">=</span> <span class="n">center</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">id_c</span><span class="p">,</span> <span class="n">center</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">center_arr</span><span class="p">):</span>
+        <span class="n">sig_x</span> <span class="o">=</span> <span class="n">center</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">sig_y</span> <span class="o">=</span> <span class="n">center</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
             <span class="n">sig_x</span><span class="p">,</span>
             <span class="n">sig_y</span><span class="p">,</span>
@@ -1058,11 +1014,10 @@
 <div class="viewcode-block" id="plot_output_multi">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_output_multi.html#tropea_clustering.plot.plot_output_multi">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_output_multi</span><span class="p">(</span>
-    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
     <span class="n">input_data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
     <span class="n">state_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">StateMulti</span><span class="p">],</span>
     <span class="n">labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">],</span>
-    <span class="n">delta_t</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot a cumulative figure showing trajectories and identified states.</span>
@@ -1103,12 +1058,7 @@
     <span class="n">colors_from_cmap</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">n_states</span><span class="p">))</span>
     <span class="n">colors_from_cmap</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
 
-    <span class="n">m_clean</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">n_windows</span> <span class="o">=</span> <span class="n">m_clean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="n">delta_t</span>
-    <span class="n">tmp_labels</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">m_clean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n_windows</span><span class="p">))</span>
-    <span class="n">all_the_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">tmp_labels</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">m_clean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
         <span class="n">dir0</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
         <span class="n">dir1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
@@ -1122,15 +1072,15 @@
             <span class="n">a_1</span> <span class="o">=</span> <span class="n">ax1</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
             <span class="c1"># Plot the individual trajectories</span>
             <span class="n">id_max</span><span class="p">,</span> <span class="n">id_min</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
-            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">mol</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">m_clean</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">m_clean</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">mol</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_data</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">input_data</span><span class="p">):</span>
                     <span class="n">id_max</span> <span class="o">=</span> <span class="n">idx</span>
-                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">m_clean</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">input_data</span><span class="p">):</span>
                     <span class="n">id_min</span> <span class="o">=</span> <span class="n">idx</span>
 
             <span class="n">line_w</span> <span class="o">=</span> <span class="mf">0.05</span>
-            <span class="n">max_t</span> <span class="o">=</span> <span class="n">all_the_labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">m_resized</span> <span class="o">=</span> <span class="n">m_clean</span><span class="p">[:,</span> <span class="p">:</span><span class="n">max_t</span><span class="p">:,</span> <span class="p">:]</span>
+            <span class="n">max_t</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">m_resized</span> <span class="o">=</span> <span class="n">input_data</span><span class="p">[:,</span> <span class="p">:</span><span class="n">max_t</span><span class="p">:,</span> <span class="p">:]</span>
             <span class="n">step</span> <span class="o">=</span> <span class="mi">5</span> <span class="k">if</span> <span class="n">m_resized</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1000000</span> <span class="k">else</span> <span class="mi">1</span>
 
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">mol</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">m_resized</span><span class="p">[::</span><span class="n">step</span><span class="p">]):</span>
@@ -1142,7 +1092,7 @@
                     <span class="n">rasterized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                     <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                 <span class="p">)</span>
-                <span class="n">color_list</span> <span class="o">=</span> <span class="n">all_the_labels</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">step</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">color_list</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">step</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
                 <span class="n">ax</span><span class="p">[</span><span class="n">a_0</span><span class="p">][</span><span class="n">a_1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
                     <span class="n">mol</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">d_0</span><span class="p">],</span>
                     <span class="n">mol</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">d_1</span><span class="p">],</span>
@@ -1154,7 +1104,7 @@
                     <span class="n">rasterized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="p">)</span>
 
-                <span class="n">color_list</span> <span class="o">=</span> <span class="n">all_the_labels</span><span class="p">[</span><span class="n">id_min</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">color_list</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">id_min</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
                 <span class="n">ax</span><span class="p">[</span><span class="n">a_0</span><span class="p">][</span><span class="n">a_1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
                     <span class="n">m_resized</span><span class="p">[</span><span class="n">id_min</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">d_0</span><span class="p">],</span>
                     <span class="n">m_resized</span><span class="p">[</span><span class="n">id_min</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">d_1</span><span class="p">],</span>
@@ -1173,7 +1123,7 @@
                     <span class="n">s</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
                     <span class="n">rasterized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="p">)</span>
-                <span class="n">color_list</span> <span class="o">=</span> <span class="n">all_the_labels</span><span class="p">[</span><span class="n">id_max</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">color_list</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">id_max</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
                 <span class="n">ax</span><span class="p">[</span><span class="n">a_0</span><span class="p">][</span><span class="n">a_1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
                     <span class="n">m_resized</span><span class="p">[</span><span class="n">id_max</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">d_0</span><span class="p">],</span>
                     <span class="n">m_resized</span><span class="p">[</span><span class="n">id_max</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">d_1</span><span class="p">],</span>
@@ -1214,20 +1164,20 @@
         <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
 
-    <span class="k">elif</span> <span class="n">m_clean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 
         <span class="c1"># Plot the individual trajectories</span>
         <span class="n">id_max</span><span class="p">,</span> <span class="n">id_min</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">mol</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">m_clean</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">m_clean</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">mol</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_data</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">input_data</span><span class="p">):</span>
                 <span class="n">id_max</span> <span class="o">=</span> <span class="n">idx</span>
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">m_clean</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">input_data</span><span class="p">):</span>
                 <span class="n">id_min</span> <span class="o">=</span> <span class="n">idx</span>
 
         <span class="n">line_w</span> <span class="o">=</span> <span class="mf">0.05</span>
-        <span class="n">max_t</span> <span class="o">=</span> <span class="n">all_the_labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">m_resized</span> <span class="o">=</span> <span class="n">m_clean</span><span class="p">[:,</span> <span class="p">:</span><span class="n">max_t</span><span class="p">:,</span> <span class="p">:]</span>
+        <span class="n">max_t</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">m_resized</span> <span class="o">=</span> <span class="n">input_data</span><span class="p">[:,</span> <span class="p">:</span><span class="n">max_t</span><span class="p">:,</span> <span class="p">:]</span>
         <span class="n">step</span> <span class="o">=</span> <span class="mi">5</span> <span class="k">if</span> <span class="n">m_resized</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1000000</span> <span class="k">else</span> <span class="mi">1</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">mol</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">m_resized</span><span class="p">[::</span><span class="n">step</span><span class="p">]):</span>
@@ -1239,7 +1189,7 @@
                 <span class="n">rasterized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">color_list</span> <span class="o">=</span> <span class="n">all_the_labels</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">step</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">color_list</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">step</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
                 <span class="n">mol</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
                 <span class="n">mol</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
@@ -1251,7 +1201,7 @@
                 <span class="n">rasterized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="n">color_list</span> <span class="o">=</span> <span class="n">all_the_labels</span><span class="p">[</span><span class="n">id_min</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">color_list</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">id_min</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
             <span class="n">m_resized</span><span class="p">[</span><span class="n">id_min</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
             <span class="n">m_resized</span><span class="p">[</span><span class="n">id_min</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
@@ -1270,7 +1220,7 @@
             <span class="n">s</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
             <span class="n">rasterized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">color_list</span> <span class="o">=</span> <span class="n">all_the_labels</span><span class="p">[</span><span class="n">id_max</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">color_list</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">id_max</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
             <span class="n">m_resized</span><span class="p">[</span><span class="n">id_max</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
             <span class="n">m_resized</span><span class="p">[</span><span class="n">id_max</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
@@ -1313,9 +1263,8 @@
 <div class="viewcode-block" id="plot_one_trj_multi">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.plot.plot_one_trj_multi.html#tropea_clustering.plot.plot_one_trj_multi">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_one_trj_multi</span><span class="p">(</span>
-    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
     <span class="n">example_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">delta_t</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">input_data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
     <span class="n">labels</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">],</span>
 <span class="p">):</span>
@@ -1350,27 +1299,18 @@
 <span class="sd">    The datapoints are colored according to the cluster they have been</span>
 <span class="sd">    assigned to.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">m_clean</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">n_windows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">m_clean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">delta_t</span><span class="p">)</span>
-    <span class="n">tmp_labels</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">m_clean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n_windows</span><span class="p">))</span>
-    <span class="n">all_the_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">tmp_labels</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
     <span class="c1"># Get the signal of the example particle</span>
-    <span class="n">sig_x</span> <span class="o">=</span> <span class="n">m_clean</span><span class="p">[</span><span class="n">example_id</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span> <span class="n">all_the_labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
-    <span class="n">sig_y</span> <span class="o">=</span> <span class="n">m_clean</span><span class="p">[</span><span class="n">example_id</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">][:</span> <span class="n">all_the_labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">sig_x</span> <span class="o">=</span> <span class="n">input_data</span><span class="p">[</span><span class="n">example_id</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">sig_y</span> <span class="o">=</span> <span class="n">input_data</span><span class="p">[</span><span class="n">example_id</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 
     <span class="c1"># Create a colormap to map colors to the labels</span>
     <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span>
         <span class="n">COLORMAP</span><span class="p">,</span>
-        <span class="nb">int</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">all_the_labels</span><span class="p">))</span>
-            <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">all_the_labels</span><span class="p">))</span>
-            <span class="o">+</span> <span class="mi">1</span>
-        <span class="p">),</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
     <span class="p">)</span>
-    <span class="n">color</span> <span class="o">=</span> <span class="n">all_the_labels</span><span class="p">[</span><span class="n">example_id</span><span class="p">]</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">example_id</span><span class="p">]</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sig_x</span><span class="p">,</span> <span class="n">sig_y</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
 
     <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
@@ -1378,8 +1318,8 @@
         <span class="n">sig_y</span><span class="p">,</span>
         <span class="n">c</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
         <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
-        <span class="n">vmin</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">all_the_labels</span><span class="p">)),</span>
-        <span class="n">vmax</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">all_the_labels</span><span class="p">)),</span>
+        <span class="n">vmin</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labels</span><span class="p">))),</span>
+        <span class="n">vmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labels</span><span class="p">))),</span>
         <span class="n">s</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
         <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
     <span class="p">)</span>

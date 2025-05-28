@@ -194,18 +194,18 @@ class OnionMulti:
         if X.ndim != 3:
             raise ValueError("Expected 3-dimensional input data.")
 
-        if X.shape[0] <= 1:
-            raise ValueError("n_samples = 1")
+        if X.shape[0] == 0:
+            raise ValueError("Empty dataset.")
 
         if X.shape[1] <= 1:
-            raise ValueError("n_features = 1")
+            raise ValueError("n_frames = 1.")
 
         # Check for complex input
         if not (
             np.issubdtype(X.dtype, np.floating)
             or np.issubdtype(X.dtype, np.integer)
         ):
-            raise ValueError("Complex data not supported")
+            raise ValueError("Complex data not supported.")
 
         X = X.copy()  # copy to avoid in-place modification
 
