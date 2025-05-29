@@ -1,6 +1,6 @@
 """Functions for plotting the results."""
 
-from tropea_clustering._internal.plot import (
+from tropea_clustering._internal.onion_old.plot import (
     color_trj_from_xyz,
     plot_medoids_multi,
     plot_medoids_uni,

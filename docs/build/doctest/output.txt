@@ -1,4 +1,4 @@
-Results of doctest builder run on 2025-03-14 15:29:29
+Results of doctest builder run on 2025-05-29 13:45:13
 =====================================================
 
 Document: _autosummary/tropea_clustering.OnionMulti
@@ -9,10 +9,26 @@ Document: _autosummary/tropea_clustering.OnionMulti
 2 passed.
 Test passed.
 
+Document: _autosummary/tropea_clustering.OnionMultiSmooth
+---------------------------------------------------------
+1 item passed all tests:
+   2 tests in OnionMultiSmooth-test
+2 tests in 1 item.
+2 passed.
+Test passed.
+
 Document: _autosummary/tropea_clustering.OnionUni
 -------------------------------------------------
 1 item passed all tests:
    2 tests in OnionUni-test
+2 tests in 1 item.
+2 passed.
+Test passed.
+
+Document: _autosummary/tropea_clustering.OnionUniSmooth
+-------------------------------------------------------
+1 item passed all tests:
+   2 tests in OnionUniSmooth-test
 2 tests in 1 item.
 2 passed.
 Test passed.
@@ -41,6 +57,14 @@ Document: _autosummary/tropea_clustering.onion_multi
 2 passed.
 Test passed.
 
+Document: _autosummary/tropea_clustering.onion_multi_smooth
+-----------------------------------------------------------
+1 item passed all tests:
+   2 tests in onion_multi_smooth-test
+2 tests in 1 item.
+2 passed.
+Test passed.
+
 Document: _autosummary/tropea_clustering.onion_uni
 --------------------------------------------------
 1 item passed all tests:
@@ -49,9 +73,17 @@ Document: _autosummary/tropea_clustering.onion_uni
 2 passed.
 Test passed.
 
+Document: _autosummary/tropea_clustering.onion_uni_smooth
+---------------------------------------------------------
+1 item passed all tests:
+   2 tests in onion_uni_smooth-test
+2 tests in 1 item.
+2 passed.
+Test passed.
+
 Doctest summary
 ===============
-   12 tests
+   20 tests
     0 failures in tests
     0 failures in setup code
     0 failures in cleanup code

@@ -213,8 +213,6 @@
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.html">tropea_clustering.plot</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of tropea_clustering.plot</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.color_trj_from_xyz.html">tropea_clustering.plot.color_trj_from_xyz</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.plot_medoids_multi.html">tropea_clustering.plot.plot_medoids_multi</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.plot_medoids_uni.html">tropea_clustering.plot.plot_medoids_uni</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.plot_one_trj_multi.html">tropea_clustering.plot.plot_one_trj_multi</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.plot_one_trj_uni.html">tropea_clustering.plot.plot_one_trj_uni</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.plot_output_multi.html">tropea_clustering.plot.plot_output_multi</a></li>
@@ -234,8 +232,6 @@
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.html">tropea_clustering.plot</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of tropea_clustering.plot</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.color_trj_from_xyz.html">tropea_clustering.plot.color_trj_from_xyz</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.plot_medoids_multi.html">tropea_clustering.plot.plot_medoids_multi</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.plot_medoids_uni.html">tropea_clustering.plot.plot_medoids_uni</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.plot_one_trj_multi.html">tropea_clustering.plot.plot_one_trj_multi</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.plot_one_trj_uni.html">tropea_clustering.plot.plot_one_trj_uni</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../_autosummary/tropea_clustering.plot.plot_output_multi.html">tropea_clustering.plot.plot_output_multi</a></li>
@@ -293,12 +289,8 @@
 <span class="c1"># Author: Becchi Matteo &lt;bechmath@gmail.com&gt;</span>
 <span class="c1"># Reference: https://www.pnas.org/doi/abs/10.1073/pnas.2403771121</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
-
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NDArray</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">ClusterMixin</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.utils.validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_data</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">tropea_clustering._internal.main_2d</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateMulti</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tropea_clustering._internal.main_2d</span><span class="w"> </span><span class="kn">import</span> <span class="n">_main</span> <span class="k">as</span> <span class="n">_onion_inner</span>
@@ -308,25 +300,24 @@
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.onion_multi.html#tropea_clustering.onion_multi">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">onion_multi</span><span class="p">(</span>
     <span class="n">X</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
-    <span class="n">ndims</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="n">bins</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
-    <span class="n">number_of_sigmas</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+    <span class="n">delta_t</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">bins</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+    <span class="n">number_of_sigmas</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">StateMulti</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Performs onion clustering on the data array &#39;X&#39;.</span>
 
-<span class="sd">    Returns an array of integer labels, one for each signal sequence.</span>
-<span class="sd">    Unclassified sequences are labelled &quot;-1&quot;.</span>
+<span class="sd">    Returns an array of integer labels, one for each frame.</span>
+<span class="sd">    Unclassified frames are labelled &quot;-1&quot;.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    X : ndarray of shape (n_particles * n_seq, delta_t * n_features)</span>
-<span class="sd">        The data to cluster. Each signal sequence is considered as a</span>
-<span class="sd">        single data point.</span>
+<span class="sd">    X : ndarray of shape (n_particles, n_frames, n_features)</span>
+<span class="sd">        The time-series data to cluster.</span>
 
-<span class="sd">    ndims : int, default = 2</span>
-<span class="sd">        The number of features (dimensions) of the dataset. It can be</span>
-<span class="sd">        either 2 or 3.</span>
+<span class="sd">    delta_t : int</span>
+<span class="sd">        The minimum lifetime required for the clusters. Also referred to as</span>
+<span class="sd">        the &quot;time resolution&quot; of the clustering analysis.</span>
 
 <span class="sd">    bins : int, default=&quot;auto&quot;</span>
 <span class="sd">        The number of bins used for the construction of the histograms.</span>
@@ -334,7 +325,7 @@
 <span class="sd">        If &quot;auto&quot;, the default of numpy.histogram_bin_edges is used</span>
 <span class="sd">        (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).</span>
 
-<span class="sd">    number_of_sigmas : float, default=2.0</span>
+<span class="sd">    number_of_sigmas : float, default=3.0</span>
 <span class="sd">        Sets the thresholds for classifing a signal sequence inside a state:</span>
 <span class="sd">        the sequence is contained in the state if it is entirely contained</span>
 <span class="sd">        inside number_of_sigmas * state.sigmas times from state.mean.</span>
@@ -345,8 +336,8 @@
 <span class="sd">        The list of the identified states.Refer to the documentation of</span>
 <span class="sd">        StateMulti for accessing the information on the states.</span>
 
-<span class="sd">    labels : ndarray of shape (n_particles * n_seq,)</span>
-<span class="sd">        Cluster labels for each signal sequence. Unclassified points are given</span>
+<span class="sd">    labels : ndarray of shape (n_particles, n_frames)</span>
+<span class="sd">        Cluster labels for each frame. Unclassified points are given</span>
 <span class="sd">        the label &quot;-1&quot;.</span>
 
 <span class="sd">    Example</span>
@@ -366,21 +357,19 @@
 <span class="sd">        n_particles = 5</span>
 <span class="sd">        n_steps = 1000</span>
 
-<span class="sd">        input_data = np.random.rand(n_features, n_particles, n_steps)</span>
-
-<span class="sd">        # Create input array with the correct shape</span>
-<span class="sd">        reshaped_input_data = helpers.reshape_from_dnt(input_data, delta_t)</span>
+<span class="sd">        input_data = np.random.rand(n_particles, n_steps, n_features)</span>
 
 <span class="sd">        # Run Onion Clustering</span>
-<span class="sd">        state_list, labels = onion_multi(reshaped_input_data)</span>
+<span class="sd">        state_list, labels = onion_multi(input_data, delta_t)</span>
 
 <span class="sd">    .. testcode:: onionmulti-test</span>
 <span class="sd">            :hide:</span>
 
-<span class="sd">            assert np.isclose(state_list[0].mean[0], 0.6675701490204133)</span>
+<span class="sd">            assert np.isclose(state_list[0].mean[0], 0.4791087814511593)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">est</span> <span class="o">=</span> <span class="n">OnionMulti</span><span class="p">(</span>
+        <span class="n">delta_t</span><span class="o">=</span><span class="n">delta_t</span><span class="p">,</span>
         <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span>
         <span class="n">number_of_sigmas</span><span class="o">=</span><span class="n">number_of_sigmas</span><span class="p">,</span>
     <span class="p">)</span>
@@ -392,18 +381,18 @@
 
 <div class="viewcode-block" id="OnionMulti">
 <a class="viewcode-back" href="../../../_autosummary/tropea_clustering.OnionMulti.html#tropea_clustering.OnionMulti">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">OnionMulti</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">ClusterMixin</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OnionMulti</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Performs onion clustering on a data array.</span>
 
-<span class="sd">    Returns an array of integer labels, one for each signal sequence.</span>
-<span class="sd">    Unclassified sequences are labelled &quot;-1&quot;.</span>
+<span class="sd">    Returns an array of integer labels, one for each frame.</span>
+<span class="sd">    Unclassified frames are labelled &quot;-1&quot;.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    ndims : int, default = 2</span>
-<span class="sd">        The number of features (dimensions) of the dataset. It can be</span>
-<span class="sd">        either 2 or 3.</span>
+<span class="sd">    delta_t : int</span>
+<span class="sd">        The minimum lifetime required for the clusters. Also referred to as</span>
+<span class="sd">        the &quot;time resolution&quot; of the clustering analysis.</span>
 
 <span class="sd">    bins : int, default=&quot;auto&quot;</span>
 <span class="sd">        The number of bins used for the construction of the histograms.</span>
@@ -411,7 +400,7 @@
 <span class="sd">        If &quot;auto&quot;, the default of numpy.histogram_bin_edges is used</span>
 <span class="sd">        (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).</span>
 
-<span class="sd">    number_of_sigmas : float, default=2.0</span>
+<span class="sd">    number_of_sigmas : float, default=3.0</span>
 <span class="sd">        Sets the thresholds for classifing a signal sequence inside a state:</span>
 <span class="sd">        the sequence is contained in the state if it is entirely contained</span>
 <span class="sd">        inside number_of_sigma * state.sigms times from state.mean.</span>
@@ -419,10 +408,11 @@
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    state_list_ : List[StateMulti]</span>
-<span class="sd">        List of the identified states.</span>
+<span class="sd">        The list of the identified states. Refer to the documentation of</span>
+<span class="sd">        StateMulti for accessing the information on the states.</span>
 
-<span class="sd">    labels_: ndarray of shape (n_particles * n_seq,)</span>
-<span class="sd">        Cluster labels for each point. Unclassified points are given</span>
+<span class="sd">    labels_: ndarray of shape (n_particles, n_frames)</span>
+<span class="sd">        Cluster labels for each frame. Unclassified points are given</span>
 <span class="sd">        the label &quot;-1&quot;.</span>
 
 <span class="sd">    Example</span>
@@ -442,31 +432,28 @@
 <span class="sd">        n_particles = 5</span>
 <span class="sd">        n_steps = 1000</span>
 
-<span class="sd">        input_data = np.random.rand(n_features, n_particles, n_steps)</span>
-
-<span class="sd">        # Create input array with the correct shape</span>
-<span class="sd">        reshaped_input_data = helpers.reshape_from_dnt(input_data, delta_t)</span>
+<span class="sd">        input_data = np.random.rand(n_particles, n_steps, n_features)</span>
 
 <span class="sd">        # Run Onion Clustering</span>
-<span class="sd">        clusterer = OnionMulti()</span>
+<span class="sd">        clusterer = OnionMulti(delta_t)</span>
 <span class="sd">        clust_params = {&quot;bins&quot;: 100, &quot;number_of_sigmas&quot;: 2.0}</span>
 <span class="sd">        clusterer.set_params(**clust_params)</span>
-<span class="sd">        clusterer.fit(reshaped_input_data)</span>
+<span class="sd">        clusterer.fit(input_data)</span>
 
 <span class="sd">    .. testcode:: OnionMulti-test</span>
 <span class="sd">            :hide:</span>
 
 <span class="sd">            assert np.isclose(</span>
-<span class="sd">                clusterer.state_list_[0].mean[0], 0.6680603111724006)</span>
+<span class="sd">                clusterer.state_list_[0].mean[0], 0.6257886444256409)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">ndims</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
-        <span class="n">bins</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
-        <span class="n">number_of_sigmas</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">delta_t</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">bins</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+        <span class="n">number_of_sigmas</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ndims</span> <span class="o">=</span> <span class="n">ndims</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span> <span class="o">=</span> <span class="n">delta_t</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bins</span> <span class="o">=</span> <span class="n">bins</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">number_of_sigmas</span> <span class="o">=</span> <span class="n">number_of_sigmas</span>
 
@@ -477,44 +464,38 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        X : ndarray of shape (n_particles * n_seq, delta_t * n_features)</span>
-<span class="sd">            The data to cluster. Each signal sequence is considered as a</span>
-<span class="sd">            single data point.</span>
+<span class="sd">        X : ndarray of shape (n_particles, n_frames, n_features)</span>
+<span class="sd">            The time-series data to cluster.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        self : object</span>
 <span class="sd">            A fitted instance of self.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="n">validate_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">accept_sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expected 3-dimensional input data.&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expected 2-dimensional input data.&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;n_samples = 1&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Empty dataset.&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;n_features = 1&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;n_frames = 1.&quot;</span><span class="p">)</span>
 
         <span class="c1"># Check for complex input</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">)</span>
             <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">)</span>
         <span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Complex data not supported&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Complex data not supported.&quot;</span><span class="p">)</span>
 
         <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># copy to avoid in-place modification</span>
 
-        <span class="n">cl_ob</span> <span class="o">=</span> <span class="n">_onion_inner</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state_list_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels_</span> <span class="o">=</span> <span class="n">_onion_inner</span><span class="p">(</span>
             <span class="n">X</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ndims</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">number_of_sigmas</span><span class="p">,</span>
         <span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">state_list_</span> <span class="o">=</span> <span class="n">cl_ob</span><span class="o">.</span><span class="n">state_list</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">labels_</span> <span class="o">=</span> <span class="n">cl_ob</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">labels</span>
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
@@ -526,36 +507,29 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        X : ndarray of shape (n_particles * n_seq, delta_t * n_features)</span>
-<span class="sd">            The data to cluster. Each signal sequence is considered as a</span>
-<span class="sd">            single data point.</span>
+<span class="sd">        X : ndarray of shape (n_particles, n_frames, n_features)</span>
+<span class="sd">            The time-series data to cluster.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        labels_: ndarray of shape (n_particles * n_seq,)</span>
-<span class="sd">            Cluster labels for each point. Unclassified points are given</span>
+<span class="sd">        labels_: ndarray of shape (n_particles, n_frames)</span>
+<span class="sd">            Cluster labels for each frame. Unclassified points are given</span>
 <span class="sd">            the label &quot;-1&quot;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">labels_</span></div>
 
 
-<div class="viewcode-block" id="OnionMulti.get_params">
-<a class="viewcode-back" href="../../../_autosummary/tropea_clustering.OnionMulti.html#tropea_clustering.OnionMulti.get_params">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;ndims&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndims</span><span class="p">,</span>
+            <span class="s2">&quot;delta_t&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="p">,</span>
             <span class="s2">&quot;bins&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">,</span>
             <span class="s2">&quot;number_of_sigmas&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_sigmas</span><span class="p">,</span>
-        <span class="p">}</span></div>
+        <span class="p">}</span>
 
-
-<div class="viewcode-block" id="OnionMulti.set_params">
-<a class="viewcode-back" href="../../../_autosummary/tropea_clustering.OnionMulti.html#tropea_clustering.OnionMulti.set_params">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
-</div>
 
 </pre></div>
         </article>
