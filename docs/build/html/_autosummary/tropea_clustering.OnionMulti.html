@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="tropea_clustering.OnionUni" href="tropea_clustering.OnionUni.html" /><link rel="prev" title="tropea_clustering.onion_uni" href="tropea_clustering.onion_uni.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="tropea_clustering.OnionMultiSmooth" href="tropea_clustering.OnionMultiSmooth.html" /><link rel="prev" title="tropea_clustering.onion_uni_smooth" href="tropea_clustering.onion_uni_smooth.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
         <title>tropea_clustering.OnionMulti - onion-clustering documentation</title>
@@ -204,9 +204,13 @@
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../modules.html">tropea-clustering</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of tropea-clustering</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2 current has-children"><a class="reference internal" href="tropea_clustering.html">tropea_clustering</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of tropea_clustering</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="tropea_clustering.onion_multi.html">tropea_clustering.onion_multi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.onion_multi_smooth.html">tropea_clustering.onion_multi_smooth</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tropea_clustering.onion_uni.html">tropea_clustering.onion_uni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.onion_uni_smooth.html">tropea_clustering.onion_uni_smooth</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">tropea_clustering.OnionMulti</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.OnionMultiSmooth.html">tropea_clustering.OnionMultiSmooth</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tropea_clustering.OnionUni.html">tropea_clustering.OnionUni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.OnionUniSmooth.html">tropea_clustering.OnionUniSmooth</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="tropea_clustering.helpers.html">tropea_clustering.helpers</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of tropea_clustering.helpers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="tropea_clustering.helpers.reshape_from_dnt.html">tropea_clustering.helpers.reshape_from_dnt</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropea_clustering.helpers.reshape_from_nt.html">tropea_clustering.helpers.reshape_from_nt</a></li>
@@ -214,6 +218,8 @@
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="tropea_clustering.plot.html">tropea_clustering.plot</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of tropea_clustering.plot</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="tropea_clustering.plot.color_trj_from_xyz.html">tropea_clustering.plot.color_trj_from_xyz</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropea_clustering.plot.plot_medoids_multi.html">tropea_clustering.plot.plot_medoids_multi</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropea_clustering.plot.plot_medoids_uni.html">tropea_clustering.plot.plot_medoids_uni</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropea_clustering.plot.plot_one_trj_multi.html">tropea_clustering.plot.plot_one_trj_multi</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropea_clustering.plot.plot_one_trj_uni.html">tropea_clustering.plot.plot_one_trj_uni</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropea_clustering.plot.plot_output_multi.html">tropea_clustering.plot.plot_output_multi</a></li>
@@ -224,30 +230,37 @@
 <li class="toctree-l4"><a class="reference internal" href="tropea_clustering.plot.plot_time_res_analysis.html">tropea_clustering.plot.plot_time_res_analysis</a></li>
 </ul>
 </li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="tropea_clustering.plot_smooth.html">tropea_clustering.plot_smooth</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of tropea_clustering.plot_smooth</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="tropea_clustering.plot_smooth.color_trj_from_xyz.html">tropea_clustering.plot_smooth.color_trj_from_xyz</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_one_trj_multi.html">tropea_clustering.plot_smooth.plot_one_trj_multi</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_one_trj_uni.html">tropea_clustering.plot_smooth.plot_one_trj_uni</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_output_multi.html">tropea_clustering.plot_smooth.plot_output_multi</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_output_uni.html">tropea_clustering.plot_smooth.plot_output_uni</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_pop_fractions.html">tropea_clustering.plot_smooth.plot_pop_fractions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_sankey.html">tropea_clustering.plot_smooth.plot_sankey</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_state_populations.html">tropea_clustering.plot_smooth.plot_state_populations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_time_res_analysis.html">tropea_clustering.plot_smooth.plot_time_res_analysis</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="tropea_clustering.helpers.html">tropea_clustering.helpers</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of tropea_clustering.helpers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.helpers.reshape_from_dnt.html">tropea_clustering.helpers.reshape_from_dnt</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.helpers.reshape_from_nt.html">tropea_clustering.helpers.reshape_from_nt</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="tropea_clustering.plot.html">tropea_clustering.plot</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of tropea_clustering.plot</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot.color_trj_from_xyz.html">tropea_clustering.plot.color_trj_from_xyz</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot.plot_one_trj_multi.html">tropea_clustering.plot.plot_one_trj_multi</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot.plot_one_trj_uni.html">tropea_clustering.plot.plot_one_trj_uni</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot.plot_output_multi.html">tropea_clustering.plot.plot_output_multi</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot.plot_output_uni.html">tropea_clustering.plot.plot_output_uni</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot.plot_pop_fractions.html">tropea_clustering.plot.plot_pop_fractions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot.plot_sankey.html">tropea_clustering.plot.plot_sankey</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot.plot_state_populations.html">tropea_clustering.plot.plot_state_populations</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot.plot_time_res_analysis.html">tropea_clustering.plot.plot_time_res_analysis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="tropea_clustering.plot_smooth.html">tropea_clustering.plot_smooth</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of tropea_clustering.plot_smooth</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot_smooth.color_trj_from_xyz.html">tropea_clustering.plot_smooth.color_trj_from_xyz</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_one_trj_multi.html">tropea_clustering.plot_smooth.plot_one_trj_multi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_one_trj_uni.html">tropea_clustering.plot_smooth.plot_one_trj_uni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_output_multi.html">tropea_clustering.plot_smooth.plot_output_multi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_output_uni.html">tropea_clustering.plot_smooth.plot_output_uni</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_pop_fractions.html">tropea_clustering.plot_smooth.plot_pop_fractions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_sankey.html">tropea_clustering.plot_smooth.plot_sankey</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_state_populations.html">tropea_clustering.plot_smooth.plot_state_populations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_time_res_analysis.html">tropea_clustering.plot_smooth.plot_time_res_analysis</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../classes.html">Gaussian states</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Gaussian states</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="tropea_clustering._internal.first_classes.StateUni.html">tropea_clustering._internal.first_classes.StateUni</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tropea_clustering._internal.first_classes.StateMulti.html">tropea_clustering._internal.first_classes.StateMulti</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropea_clustering._internal.onion_smooth.first_classes.StateUni.html">tropea_clustering._internal.onion_smooth.first_classes.StateUni</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropea_clustering._internal.onion_smooth.first_classes.StateMulti.html">tropea_clustering._internal.onion_smooth.first_classes.StateMulti</a></li>
 </ul>
 </li>
 </ul>
@@ -294,20 +307,20 @@
 <h1>tropea_clustering.OnionMulti<a class="headerlink" href="#tropea-clustering-onionmulti" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="tropea_clustering.OnionMulti">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tropea_clustering.</span></span><span class="sig-name descname"><span class="pre">OnionMulti</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_sigmas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/onion_multi.html#OnionMulti"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering.OnionMulti" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tropea_clustering.</span></span><span class="sig-name descname"><span class="pre">OnionMulti</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ndims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_sigmas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/onion_old/onion_multi.html#OnionMulti"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering.OnionMulti" title="Link to this definition">¶</a></dt>
 <dd><p>Performs onion clustering on a data array.</p>
-<p>Returns an array of integer labels, one for each frame.
-Unclassified frames are labelled “-1”.</p>
+<p>Returns an array of integer labels, one for each signal sequence.
+Unclassified sequences are labelled “-1”.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>delta_t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The minimum lifetime required for the clusters. Also referred to as
-the “time resolution” of the clustering analysis.</p></li>
+<li><p><strong>ndims</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>default = 2</em>) – The number of features (dimensions) of the dataset. It can be
+either 2 or 3.</p></li>
 <li><p><strong>bins</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>default=&quot;auto&quot;</em>) – The number of bins used for the construction of the histograms.
 Can be an integer value, or “auto”.
 If “auto”, the default of numpy.histogram_bin_edges is used
 (see <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges">https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges</a>).</p></li>
-<li><p><strong>number_of_sigmas</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>default=3.0</em>) – Sets the thresholds for classifing a signal sequence inside a state:
+<li><p><strong>number_of_sigmas</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>default=2.0</em>) – Sets the thresholds for classifing a signal sequence inside a state:
 the sequence is contained in the state if it is entirely contained
 inside number_of_sigma * state.sigms times from state.mean.</p></li>
 </ul>
@@ -316,11 +329,10 @@ inside number_of_sigma * state.sigms times from state.mean.</p></li>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tropea_clustering.OnionMulti.state_list_">
 <span class="sig-name descname"><span class="pre">state_list_</span></span><a class="headerlink" href="#tropea_clustering.OnionMulti.state_list_" title="Link to this definition">¶</a></dt>
-<dd><p>The list of the identified states. Refer to the documentation of
-StateMulti for accessing the information on the states.</p>
+<dd><p>List of the identified states.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>List[<a class="reference internal" href="tropea_clustering._internal.first_classes.StateMulti.html#tropea_clustering._internal.first_classes.StateMulti" title="tropea_clustering._internal.first_classes.StateMulti">StateMulti</a>]</p>
+<dd class="field-odd"><p>List[<a class="reference internal" href="tropea_clustering._internal.onion_smooth.first_classes.StateMulti.html#tropea_clustering._internal.onion_smooth.first_classes.StateMulti" title="tropea_clustering._internal.onion_smooth.first_classes.StateMulti">StateMulti</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -328,11 +340,11 @@ StateMulti for accessing the information on the states.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tropea_clustering.OnionMulti.labels_">
 <span class="sig-name descname"><span class="pre">labels_</span></span><a class="headerlink" href="#tropea_clustering.OnionMulti.labels_" title="Link to this definition">¶</a></dt>
-<dd><p>Cluster labels for each frame. Unclassified points are given
+<dd><p>Cluster labels for each point. Unclassified points are given
 the label “-1”.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>ndarray of shape (n_particles, n_frames)</p>
+<dd class="field-odd"><p>ndarray of shape (n_particles * n_seq,)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -350,13 +362,16 @@ the label “-1”.</p>
 <span class="n">n_particles</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="n">n_steps</span> <span class="o">=</span> <span class="mi">1000</span>
 
-<span class="n">input_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> <span class="n">n_steps</span><span class="p">,</span> <span class="n">n_features</span><span class="p">)</span>
+<span class="n">input_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n_features</span><span class="p">,</span> <span class="n">n_particles</span><span class="p">,</span> <span class="n">n_steps</span><span class="p">)</span>
+
+<span class="c1"># Create input array with the correct shape</span>
+<span class="n">reshaped_input_data</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">reshape_from_dnt</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
 
 <span class="c1"># Run Onion Clustering</span>
-<span class="n">clusterer</span> <span class="o">=</span> <span class="n">OnionMulti</span><span class="p">(</span><span class="n">delta_t</span><span class="p">)</span>
+<span class="n">clusterer</span> <span class="o">=</span> <span class="n">OnionMulti</span><span class="p">()</span>
 <span class="n">clust_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;bins&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;number_of_sigmas&quot;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">}</span>
 <span class="n">clusterer</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="o">**</span><span class="n">clust_params</span><span class="p">)</span>
-<span class="n">clusterer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+<span class="n">clusterer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">reshaped_input_data</span><span class="p">)</span>
 </pre></div>
 </div>
 <p class="rubric">Methods</p>
@@ -369,22 +384,23 @@ the label “-1”.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#tropea_clustering.OnionMulti.fit_predict" title="tropea_clustering.OnionMulti.fit_predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_predict</span></code></a></p></td>
 <td><p>Computes clusters on the data array 'X' and returns labels.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropea_clustering.OnionMulti.get_params" title="tropea_clustering.OnionMulti.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a></p></td>
+<td><p>Get parameters for this estimator.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropea_clustering.OnionMulti.set_params" title="tropea_clustering.OnionMulti.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a></p></td>
+<td><p>Set the parameters of this estimator.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="tropea_clustering.OnionMulti.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/onion_multi.html#OnionMulti.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering.OnionMulti.fit" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/onion_old/onion_multi.html#OnionMulti.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering.OnionMulti.fit" title="Link to this definition">¶</a></dt>
 <dd><p>Performs onion clustering on the data array ‘X’.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>X</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>n_particles</em><em>, </em><em>n_frames</em><em>, </em><em>n_features</em><em>)</em>) – The time-series data to cluster.</p>
+<dd class="field-odd"><p><strong>X</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>n_particles * n_seq</em><em>, </em><em>delta_t * n_features</em><em>)</em>) – The data to cluster. Each signal sequence is considered as a
+single data point.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>self</strong> – A fitted instance of self.</p>
@@ -397,18 +413,58 @@ the label “-1”.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tropea_clustering.OnionMulti.fit_predict">
-<span class="sig-name descname"><span class="pre">fit_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/onion_multi.html#OnionMulti.fit_predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering.OnionMulti.fit_predict" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">fit_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/onion_old/onion_multi.html#OnionMulti.fit_predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering.OnionMulti.fit_predict" title="Link to this definition">¶</a></dt>
 <dd><p>Computes clusters on the data array ‘X’ and returns labels.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>X</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>n_particles</em><em>, </em><em>n_frames</em><em>, </em><em>n_features</em><em>)</em>) – The time-series data to cluster.</p>
+<dd class="field-odd"><p><strong>X</strong> (<em>ndarray</em><em> of </em><em>shape</em><em> (</em><em>n_particles * n_seq</em><em>, </em><em>delta_t * n_features</em><em>)</em>) – The data to cluster. Each signal sequence is considered as a
+single data point.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>labels_</strong> – Cluster labels for each frame. Unclassified points are given
+<dd class="field-even"><p><strong>labels_</strong> – Cluster labels for each point. Unclassified points are given
 the label “-1”.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>ndarray of shape (n_particles, n_frames)</p>
+<dd class="field-odd"><p>ndarray of shape (n_particles * n_seq,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tropea_clustering.OnionMulti.get_params">
+<span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/onion_old/onion_multi.html#OnionMulti.get_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering.OnionMulti.get_params" title="Link to this definition">¶</a></dt>
+<dd><p>Get parameters for this estimator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>deep</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>default=True</em>) – If True, will return the parameters for this estimator and
+contained subobjects that are estimators.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>params</strong> – Parameter names mapped to their values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tropea_clustering.OnionMulti.set_params">
+<span class="sig-name descname"><span class="pre">set_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/onion_old/onion_multi.html#OnionMulti.set_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering.OnionMulti.set_params" title="Link to this definition">¶</a></dt>
+<dd><p>Set the parameters of this estimator.</p>
+<p>The method works on simple estimators as well as on nested objects
+(such as <code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline</span></code>). The latter have
+parameters of the form <code class="docutils literal notranslate"><span class="pre">&lt;component&gt;__&lt;parameter&gt;</span></code> so that it’s
+possible to update each component of a nested object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Estimator parameters.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>self</strong> – Estimator instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>estimator instance</p>
 </dd>
 </dl>
 </dd></dl>
@@ -422,23 +478,23 @@ the label “-1”.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="tropea_clustering.OnionUni.html">
+          <a class="next-page" href="tropea_clustering.OnionMultiSmooth.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">tropea_clustering.OnionUni</div>
+                <div class="title">tropea_clustering.OnionMultiSmooth</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="tropea_clustering.onion_uni.html">
+          <a class="prev-page" href="tropea_clustering.onion_uni_smooth.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">tropea_clustering.onion_uni</div>
+                <div class="title">tropea_clustering.onion_uni_smooth</div>
                 
               </div>
             </a>
@@ -478,6 +534,8 @@ the label “-1”.</p>
 <li><a class="reference internal" href="#tropea_clustering.OnionMulti.labels_"><code class="docutils literal notranslate"><span class="pre">OnionMulti.labels_</span></code></a></li>
 <li><a class="reference internal" href="#tropea_clustering.OnionMulti.fit"><code class="docutils literal notranslate"><span class="pre">OnionMulti.fit()</span></code></a></li>
 <li><a class="reference internal" href="#tropea_clustering.OnionMulti.fit_predict"><code class="docutils literal notranslate"><span class="pre">OnionMulti.fit_predict()</span></code></a></li>
+<li><a class="reference internal" href="#tropea_clustering.OnionMulti.get_params"><code class="docutils literal notranslate"><span class="pre">OnionMulti.get_params()</span></code></a></li>
+<li><a class="reference internal" href="#tropea_clustering.OnionMulti.set_params"><code class="docutils literal notranslate"><span class="pre">OnionMulti.set_params()</span></code></a></li>
 </ul>
 </li>
 </ul>

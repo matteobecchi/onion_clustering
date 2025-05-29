@@ -97,7 +97,7 @@ def onion_uni_smooth(
 
 class OnionUniSmooth:
     """
-    Performs onion clustering on the data array.
+    Performs onion clustering on a data array.
 
     Returns an array of integer labels, one for each frame.
     Unclassified frames are labelled "-1".
