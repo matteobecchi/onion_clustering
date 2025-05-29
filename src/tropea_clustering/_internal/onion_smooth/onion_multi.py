@@ -24,6 +24,10 @@ def onion_multi_smooth(
     Returns an array of integer labels, one for each frame.
     Unclassified frames are labelled "-1".
 
+    .. note::
+        This function is currently in beta testing. The output could change
+        in the future. Use with caution.
+
     Parameters
     ----------
     X : ndarray of shape (n_particles, n_frames, n_features)
@@ -98,6 +102,10 @@ class OnionMultiSmooth:
 
     Returns an array of integer labels, one for each frame.
     Unclassified frames are labelled "-1".
+
+    .. note::
+        This class is currently in beta testing. Its operations could change
+        in the future. Use with caution.
 
     Parameters
     ----------
