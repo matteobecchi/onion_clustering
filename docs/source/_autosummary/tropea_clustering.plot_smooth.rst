@@ -1,4 +1,4 @@
-﻿tropea\_clustering.plot\_smooth
+tropea\_clustering.plot\_smooth
 ===============================
 
 .. automodule:: tropea_clustering.plot_smooth

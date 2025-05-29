@@ -1,4 +1,4 @@
-﻿tropea\_clustering.onion\_uni\_smooth
+tropea\_clustering.onion\_uni\_smooth
 =====================================
 
 .. currentmodule:: tropea_clustering

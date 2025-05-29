@@ -1,4 +1,4 @@
-﻿tropea\_clustering.OnionUniSmooth
+tropea\_clustering.OnionUniSmooth
 =================================
 
 .. currentmodule:: tropea_clustering
