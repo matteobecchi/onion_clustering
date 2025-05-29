@@ -24,7 +24,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-from tropea_clustering import OnionMulti, OnionUni
+from tropea_clustering import OnionMultiSmooth, OnionUniSmooth
 from tropea_clustering.plot import (
     plot_one_trj_multi,
     plot_one_trj_uni,
@@ -121,7 +121,7 @@ def main():
     list_of_pops = []
 
     for i, delta_t in enumerate(delta_t_list):
-        on_cl = OnionUni(delta_t)
+        on_cl = OnionUniSmooth(delta_t)
         on_cl.fit(data_1d)
         state_list, labels = on_cl.state_list_, on_cl.labels_
 
@@ -135,7 +135,7 @@ def main():
     plot_pop_fractions(data_path / "Fig2.png", list_of_pops, results)
 
     # Perform clustering at delta_t = 100 frames
-    on_cl = OnionUni(delta_t=100)
+    on_cl = OnionUniSmooth(delta_t=100)
     on_cl.fit(data_1d)
     state_list, labels = on_cl.state_list_, on_cl.labels_
 
@@ -148,7 +148,7 @@ def main():
     list_of_pops = []
 
     for i, delta_t in enumerate(delta_t_list):
-        on_cl = OnionMulti(delta_t)
+        on_cl = OnionMultiSmooth(delta_t)
         on_cl.fit(dataset)
         state_list, labels = on_cl.state_list_, on_cl.labels_
 
@@ -162,7 +162,7 @@ def main():
     plot_pop_fractions(data_path / "Fig7.png", list_of_pops, results)
 
     # Perform clustering at delta_t = 100 frames
-    on_cl = OnionMulti(delta_t=10)
+    on_cl = OnionMultiSmooth(delta_t=10)
     on_cl.fit(dataset)
     state_list, labels = on_cl.state_list_, on_cl.labels_
 

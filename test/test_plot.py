@@ -10,7 +10,7 @@ from typing import Generator
 import numpy as np
 import pytest
 
-from tropea_clustering import onion_multi, onion_uni, plot
+from tropea_clustering import onion_multi_smooth, onion_uni_smooth, plot_smooth
 
 
 @pytest.fixture
@@ -63,14 +63,16 @@ def test_output_files(original_wd: Path, temp_dir: Path):
     with tempfile.TemporaryDirectory() as _:
         out_path = Path("tmp_fig.png")
 
-        state_list_u, labels = onion_uni(input_data, delta_t)
+        state_list_u, labels = onion_uni_smooth(input_data, delta_t)
 
-        plot.plot_output_uni(out_path, input_data, state_list_u)
-        plot.plot_one_trj_uni(out_path, 0, input_data, labels)
-        plot.plot_state_populations(out_path, labels)
-        plot.plot_sankey(out_path, labels, [1, 3, 5, 7])
+        plot_smooth.plot_output_uni(out_path, input_data, state_list_u)
+        plot_smooth.plot_one_trj_uni(out_path, 0, input_data, labels)
+        plot_smooth.plot_state_populations(out_path, labels)
+        plot_smooth.plot_sankey(out_path, labels, [1, 3, 5, 7])
 
-        state_list_m, labels = onion_multi(input_data_2d, delta_t)
+        state_list_m, labels = onion_multi_smooth(input_data_2d, delta_t)
 
-        plot.plot_output_multi(out_path, input_data_2d, state_list_m, labels)
-        plot.plot_one_trj_multi(out_path, 0, input_data_2d, labels)
+        plot_smooth.plot_output_multi(
+            out_path, input_data_2d, state_list_m, labels
+        )
+        plot_smooth.plot_one_trj_multi(out_path, 0, input_data_2d, labels)

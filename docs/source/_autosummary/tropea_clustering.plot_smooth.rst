@@ -1,0 +1,39 @@
+﻿tropea\_clustering.plot\_smooth
+===============================
+
+.. automodule:: tropea_clustering.plot_smooth
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      color_trj_from_xyz
+      plot_one_trj_multi
+      plot_one_trj_uni
+      plot_output_multi
+      plot_output_uni
+      plot_pop_fractions
+      plot_sankey
+      plot_state_populations
+      plot_time_res_analysis
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
