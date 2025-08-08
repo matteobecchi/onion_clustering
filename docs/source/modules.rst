@@ -7,4 +7,3 @@ Modules
   :recursive:
 
   tropea_clustering
-  tropea_clustering.plot_smooth
