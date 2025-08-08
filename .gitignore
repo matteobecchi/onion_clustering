@@ -5,5 +5,7 @@ test/__pycache__
 dist/*
 src/tropea_clustering/__pycache__
 src/tropea_clustering/_internal/__pycache__
+src/tropea_clustering/_internal/onion_old/__pycache__
+src/tropea_clustering/_internal/onion_smooth/__pycache__
 src/tropea_clustering.egg-info
 test/__pycache__
