@@ -278,8 +278,10 @@ def plot_sankey(
     """
     Plots the Sankey diagram at the desired frames.
 
-    This function requires the python package Kaleido, and uses plotly
-    instead of matplotlib.pyplot.
+    .. warning::
+        This function requires the python package Kaleido, and uses plotly
+        instead of matplotlib.pyplot. For this reason is deprecated and not
+        supported since tropea-clustering 2.0.0.
 
     Parameters
     ----------

@@ -68,7 +68,6 @@ def test_output_files(original_wd: Path, temp_dir: Path):
         plot_smooth.plot_output_uni(out_path, input_data, state_list_u)
         plot_smooth.plot_one_trj_uni(out_path, 0, input_data, labels)
         plot_smooth.plot_state_populations(out_path, labels)
-        plot_smooth.plot_sankey(out_path, labels, [1, 3, 5, 7])
 
         state_list_m, labels = onion_multi_smooth(input_data_2d, delta_t)
 
