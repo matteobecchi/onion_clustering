@@ -16,8 +16,8 @@ def main():
         [
             np.concatenate(
                 (
-                    rng.normal(0.0, 0.1, (500, 2)),
-                    rng.normal(1.0, 0.1, (500, 2)),
+                    rng.normal(0.0, 0.1, (500, 3)),
+                    rng.normal(1.0, 0.1, (500, 3)),
                 )
             )
             for _ in range(100)
@@ -27,8 +27,7 @@ def main():
     delta_t = 5
 
     # Test functional interface
-    state_list, labels = onion_multi_smooth(input_data_2d, delta_t,
-        number_of_sigmas=3.0)
+    state_list, labels = onion_multi_smooth(input_data_2d, delta_t)
 
     # plot_smooth.plot_output_multi(
     #     Path("tmp1.png"), input_data_2d, state_list, labels

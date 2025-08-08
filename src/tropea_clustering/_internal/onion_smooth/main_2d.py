@@ -182,11 +182,11 @@ def find_stable_trj(
     m_clean = matrix.copy()
     l_cholesky = cholesky(state.covariance, lower=True)
     l_inv = np.linalg.inv(l_cholesky)
-    rescaled = ((m_clean - state.mean) @ l_inv.T) / np.sqrt(2.0)
+    rescaled = ((m_clean - state.mean) @ l_inv.T) / np.sqrt(matrix.shape[2])
     squared_distances = np.sum(rescaled**2, axis=2)
 
-    tmp_data = rescaled[:, :500].reshape((-1, 2))
-    print("Covariance1:\n", np.cov(tmp_data, rowvar=False))
+    tmp_data = rescaled[:, :500].reshape((-1, matrix.shape[2]))
+    print("Covariance:\n", np.cov(tmp_data, rowvar=False))
 
     mask_dist = squared_distances <= number_of_sigmas**2
 
@@ -207,7 +207,6 @@ def find_stable_trj(
 
     tmp_labels[mask_stable] = lim + 1
     fraction = np.sum(mask_stable) / mask_stable.size
-    print("Fraction", fraction)
 
     return tmp_labels, fraction
 
