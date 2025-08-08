@@ -255,9 +255,6 @@ def custom_fit(
     sigma0 = (edges[minima[2 * dim + 1]] - edges[minima[2 * dim]]) / 2
     area0 = max(counts_selection) * np.sqrt(np.pi) * sigma0
 
-    flag = 0
-    popt = np.empty((3,))
-    coeff_det_r2 = 0.0
     try:
         popt, _, infodict, _, _ = scipy.optimize.curve_fit(
             gaussian,
