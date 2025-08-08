@@ -7,12 +7,14 @@ See the documentation for all the details.
 
 import numpy as np
 from numpy.typing import NDArray
+from sklearn.mixture import GaussianMixture
+import matplotlib.pyplot as plt
+from scipy.linalg import cholesky
 
 from tropea_clustering._internal.onion_smooth.first_classes import (
     StateMulti,
 )
 from tropea_clustering._internal.onion_smooth.functions import (
-    custom_fit,
     find_half_height_around_max,
     find_minima_around_max,
     moving_average_2d,
@@ -80,61 +82,58 @@ def gauss_fit_max(
 
     max_ind = find_max_index(counts)
 
-    minima = find_minima_around_max(counts, max_ind, gap)
+    rectangle = find_minima_around_max(counts, max_ind, gap)
+    bounds = []
+    for dim in range(len(edges)):
+        min_idx = rectangle[2 * dim]
+        max_idx = rectangle[2 * dim + 1]
 
-    popt_min: list[float] = []
-    cumulative_r2_min = 0.0
-    for dim in range(matrix.shape[2]):
-        try:
-            flag_min, r_2, popt = custom_fit(
-                dim, max_ind[dim], minima, edges[dim], counts, m_limits
-            )
-            popt[2] *= flat_m.T[0].size
-            popt_min.extend(popt)
-            cumulative_r2_min += r_2
-        except RuntimeError:
-            popt_min = []
-            flag_min = False
+        # Use bin edges to get data-space coordinates
+        lower = edges[dim][min_idx]
+        upper = edges[dim][max_idx + 1]
+        bounds.append((lower, upper))
+    mask = np.ones(flat_m.shape[0], dtype=bool)
+    for dim in range(flat_m.shape[1]):
+        lower, upper = bounds[dim]
+        mask &= (flat_m[:, dim] >= lower) & (flat_m[:, dim] < upper)
 
-    minima = find_half_height_around_max(counts, max_ind, gap)
+    gmm = GaussianMixture(n_components=1, random_state=0).fit(flat_m[mask])
+    popt_min = [gmm.means_[0], gmm.covariances_[0], gmm.score(flat_m[mask])]
+    flag_min = gmm.converged_
 
-    popt_half: list[float] = []
-    cumulative_r2_half = 0.0
-    for dim in range(matrix.shape[2]):
-        try:
-            flag_half, r_2, popt = custom_fit(
-                dim, max_ind[dim], minima, edges[dim], counts, m_limits
-            )
-            popt[2] *= flat_m.T[0].size
-            popt_half.extend(popt)
-            cumulative_r2_half += r_2
-        except RuntimeError:
-            popt_half = []
-            flag_half = False
+    rectangle = find_half_height_around_max(counts, max_ind, gap)
 
-    r_2 = cumulative_r2_min
+    bounds = []
+    for dim in range(len(edges)):
+        min_idx = rectangle[2 * dim]
+        max_idx = rectangle[2 * dim + 1]
+
+        # Use bin edges to get data-space coordinates
+        lower = edges[dim][min_idx]
+        upper = edges[dim][max_idx + 1]
+        bounds.append((lower, upper))
+    mask = np.ones(flat_m.shape[0], dtype=bool)
+    for dim in range(flat_m.shape[1]):
+        lower, upper = bounds[dim]
+        mask &= (flat_m[:, dim] >= lower) & (flat_m[:, dim] < upper)
+
+    gmm = GaussianMixture(n_components=1, random_state=0).fit(flat_m[mask])
+    popt_half = [gmm.means_[0], gmm.covariances_[0], gmm.score(flat_m[mask])]
+    flag_half = gmm.converged_
+
     if flag_min == 1 and flag_half == 0:
-        popt = np.array(popt_min)
+        popt = popt_min
     elif flag_min == 0 and flag_half == 1:
-        popt = np.array(popt_half)
-        r_2 = cumulative_r2_half
+        popt = popt_half
     elif flag_min * flag_half == 1:
-        if cumulative_r2_min >= cumulative_r2_half:
-            popt = np.array(popt_min)
+        if popt_min[2] >= popt_half[2]:
+            popt = popt_min
         else:
-            popt = np.array(popt_half)
-            r_2 = cumulative_r2_half
+            popt = popt_half
     else:
         return None
-    if len(popt) != matrix.shape[2] * 3:
-        return None
 
-    mean, sigma, area = [], [], []
-    for dim in range(matrix.shape[2]):
-        mean.append(popt[3 * dim])
-        sigma.append(popt[3 * dim + 1])
-        area.append(popt[3 * dim + 2])
-    state = StateMulti(np.array(mean), np.array(sigma), np.array(area), r_2)
+    state = StateMulti(popt[0], popt[1], popt[2])
     state._build_boundaries(number_of_sigmas)
 
     return state
@@ -146,6 +145,7 @@ def find_stable_trj(
     state: StateMulti,
     delta_t: int,
     lim: int,
+    number_of_sigmas: float,
 ) -> tuple[np.ndarray, float]:
     """
     Identification of sequences contained in a certain state.
@@ -177,13 +177,21 @@ def find_stable_trj(
     fraction : float
         Fraction of data points classified in this state.
     """
-    m_clean = matrix.copy()
     mask_unclassified = tmp_labels == 0
-    shifted = m_clean - state.mean
-    rescaled = shifted / state.axis
+
+    m_clean = matrix.copy()
+    l_cholesky = cholesky(state.covariance, lower=True)
+    l_inv = np.linalg.inv(l_cholesky)
+    rescaled = ((m_clean - state.mean) @ l_inv.T) / np.sqrt(2.0)
     squared_distances = np.sum(rescaled**2, axis=2)
-    mask_dist = squared_distances <= 1.0
+
+    tmp_data = rescaled[:, :500].reshape((-1, 2))
+    print("Covariance1:\n", np.cov(tmp_data, rowvar=False))
+
+    mask_dist = squared_distances <= number_of_sigmas**2
+
     mask = mask_unclassified & mask_dist
+    print(np.sum(mask) / mask.size)
 
     mask_stable = np.zeros_like(tmp_labels, dtype=bool)
     for i, _ in enumerate(matrix):
@@ -198,7 +206,8 @@ def find_stable_trj(
                 mask_stable[i, start:end] = True
 
     tmp_labels[mask_stable] = lim + 1
-    fraction = np.sum(mask_stable) / matrix.size
+    fraction = np.sum(mask_stable) / mask_stable.size
+    print("Fraction", fraction)
 
     return tmp_labels, fraction
 
@@ -265,6 +274,7 @@ def iterative_search(
             state,
             delta_t,
             states_counter,
+            number_of_sigmas,
         )
         if counter == 0.0:
             break
@@ -272,8 +282,13 @@ def iterative_search(
         state.perc = counter
         tmp_states_list.append(state)
         states_counter += 1
+        print(state.mean, state.perc)
+        print(np.sqrt(state.covariance[0][0]), np.sqrt(state.covariance[1][1]))
 
-    labels, state_list = relabel_states_2d(tmp_labels, tmp_states_list)
+    if False:
+        labels, state_list = relabel_states_2d(tmp_labels, tmp_states_list)
+    else:
+        labels, state_list = tmp_labels, tmp_states_list
 
     return state_list, labels - 1
 

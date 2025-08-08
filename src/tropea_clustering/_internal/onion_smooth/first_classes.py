@@ -116,14 +116,11 @@ class StateMulti:
     mean : np.ndarray of shape (dim,)
         Mean of the Gaussians.
 
-    sigma : np.ndarray of shape (dim,)
-        Rescaled standard deviation of the Gaussians.
+    covariance : np.ndarray of shape (dim, dim)
+        Covariance matrix of the Gaussians.
 
-    area : np.ndarray of shape (dim,)
-        Area below the Gaussians.
-
-    r_2 : float
-        Coefficient of determination of the Gaussian fit.
+    log_likelihood : float
+        log_likelihood of the data under the fitted Gaussian.
 
     Attributes
     ----------
@@ -138,14 +135,13 @@ class StateMulti:
     """
 
     mean: np.ndarray
-    sigma: np.ndarray
-    area: np.ndarray
-    r_2: float
+    covariance: np.ndarray
+    log_likelihood: float
     perc: float = 0.0
     axis: np.ndarray = field(init=False)
 
     def __post_init__(self):
-        self.axis = 2.0 * self.sigma
+        self.axis = 2.0 * self.covariance
 
     def _build_boundaries(self, number_of_sigmas: float):
         """
@@ -157,7 +153,7 @@ class StateMulti:
         number of sigmas : float
             How many sigmas the thresholds are far from the mean.
         """
-        self.axis = number_of_sigmas * self.sigma  # Axes of the state
+        self.axis = number_of_sigmas * self.covariance  # Axes of the state
 
     def get_attributes(self):
         """
