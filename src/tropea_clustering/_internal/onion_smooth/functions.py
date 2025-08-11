@@ -3,11 +3,8 @@
 # Author: Becchi Matteo <bechmath@gmail.com>
 
 import numpy as np
-import scipy.optimize
-import scipy.signal
 from numpy.typing import NDArray
 from scipy.integrate import quad
-from scipy.optimize import OptimizeWarning
 
 from tropea_clustering._internal.onion_smooth.first_classes import (
     StateMulti,

@@ -703,10 +703,12 @@ def plot_output_multi(
         # Plot the Gaussian distributions of states
         for state in state_list:
             att = state.get_attributes()
+            width, height, angle = state.get_boundaries()
             ellipse = Ellipse(
-                tuple(att["mean"]),
-                att["axis"][0],
-                att["axis"][1],
+                xy=att["mean"],
+                width=width,
+                height=height,
+                angle=angle,
                 color="black",
                 fill=False,
             )

@@ -7,9 +7,8 @@ See the documentation for all the details.
 
 import numpy as np
 from numpy.typing import NDArray
-from sklearn.mixture import GaussianMixture
-import matplotlib.pyplot as plt
 from scipy.linalg import cholesky
+from sklearn.mixture import GaussianMixture
 
 from tropea_clustering._internal.onion_smooth.first_classes import (
     StateMulti,
@@ -133,8 +132,7 @@ def gauss_fit_max(
     else:
         return None
 
-    state = StateMulti(popt[0], popt[1], popt[2])
-    state._build_boundaries(number_of_sigmas)
+    state = StateMulti(popt[0], popt[1], popt[2], number_of_sigmas)
 
     return state
 
@@ -185,13 +183,12 @@ def find_stable_trj(
     rescaled = ((m_clean - state.mean) @ l_inv.T) / np.sqrt(matrix.shape[2])
     squared_distances = np.sum(rescaled**2, axis=2)
 
-    tmp_data = rescaled[:, :500].reshape((-1, matrix.shape[2]))
-    print("Covariance:\n", np.cov(tmp_data, rowvar=False))
+    # tmp_data = rescaled[:, :500].reshape((-1, matrix.shape[2]))
+    # print("Covariance:\n", np.cov(tmp_data, rowvar=False))
 
     mask_dist = squared_distances <= number_of_sigmas**2
 
     mask = mask_unclassified & mask_dist
-    print(np.sum(mask) / mask.size)
 
     mask_stable = np.zeros_like(tmp_labels, dtype=bool)
     for i, _ in enumerate(matrix):
@@ -281,8 +278,8 @@ def iterative_search(
         state.perc = counter
         tmp_states_list.append(state)
         states_counter += 1
-        print(state.mean, state.perc)
-        print(np.sqrt(state.covariance[0][0]), np.sqrt(state.covariance[1][1]))
+        # print(state.mean, state.perc)
+        # print(np.sqrt(state.covariance[0][0]), np.sqrt(state.covariance[1][1]))
 
     if False:
         labels, state_list = relabel_states_2d(tmp_labels, tmp_states_list)
