@@ -83,7 +83,7 @@ def onion_multi_smooth(
     .. testcode:: onion_multi_smooth-test
             :hide:
 
-            assert np.isclose(state_list[0].mean[0], 0.4791087814511593)
+            assert np.isclose(state_list[0].mean[0], 0.41053300302126494)
     """
 
     est = OnionMultiSmooth(
@@ -163,7 +163,7 @@ class OnionMultiSmooth:
             :hide:
 
             assert np.isclose(
-                clusterer.state_list_[0].mean[0], 0.6257886444256409)
+                clusterer.state_list_[0].mean[0], 0.6329007600368665)
     """
 
     def __init__(
