@@ -23,9 +23,10 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
+from tqdm import tqdm
 
 from tropea_clustering import OnionMultiSmooth, OnionUniSmooth
-from tropea_clustering.plot import (
+from tropea_clustering.plot_smooth import (
     plot_one_trj_multi,
     plot_one_trj_uni,
     plot_output_multi,
@@ -36,14 +37,32 @@ from tropea_clustering.plot import (
 )
 
 
+def gaussian_2d(x, y, mean, cov):
+    """Evaluate a 2D Gaussian (unnormalized) at point (x, y)."""
+    pos = np.array([x, y])
+    diff = pos - mean
+    inv_cov = np.linalg.inv(cov)
+    exponent = -0.5 * diff @ inv_cov @ diff
+    return np.exp(exponent)
+
+
 def energy_landscape(x: float, y: float) -> float:
     """A 2-dimensional potential energy landscape with 4 minima."""
-    sigma = 0.12  # Width of the Gaussian wells
-    gauss1 = np.exp(-(x**2 + y**2) / (2 * sigma**2))
-    gauss2 = np.exp(-((x - 1) ** 2 + y**2) / (2 * sigma**2))
-    gauss3 = np.exp(-(x**2 + (y - 1) ** 2) / (2 * sigma**2))
-    gauss4 = np.exp(-((x - 1) ** 2 + (y - 1) ** 2) / (2 * sigma**2))
-    return -np.log(gauss1 + gauss2 + gauss3 + gauss4 + 1e-6)
+    means = [
+        np.array([0.0, 0.0]),
+        np.array([1.0, 0.0]),
+        np.array([0.0, 1.0]),
+        np.array([1.0, 1.0]),
+    ]
+    covs = [
+        np.array([[0.03, 0.01], [0.01, 0.02]]),
+        np.array([[0.03, -0.005], [-0.005, 0.02]]),
+        np.array([[0.02, 0.01], [0.01, 0.03]]),
+        np.array([[0.03, -0.01], [-0.01, 0.03]]),
+    ]
+    gauss_sum = sum(gaussian_2d(x, y, m, c) for m, c in zip(means, covs))
+
+    return -np.log(gauss_sum + 1e-6)
 
 
 def numerical_gradient(
@@ -78,7 +97,7 @@ def create_trajectory(
     particles[3 * n_group :, 1] += 1
 
     trajectory = np.zeros((time_steps, n_atoms, 2))
-    for t in range(time_steps):
+    for t in tqdm(range(time_steps)):
         for i in range(n_atoms):
             x, y = particles[i]
             fx, fy = numerical_gradient(x, y)
@@ -118,59 +137,82 @@ def main():
     # Test OnionUni on a wide range of time resolutions
     data_1d = dataset[:, :, 0]
     results = np.zeros((delta_t_list.size, 3))
-    list_of_pops = []
+    list_of_pop = []
 
     for i, delta_t in enumerate(delta_t_list):
-        on_cl = OnionUniSmooth(delta_t)
-        on_cl.fit(data_1d)
-        state_list, labels = on_cl.state_list_, on_cl.labels_
-
+        on_cl = OnionUniSmooth(delta_t).fit(data_1d)
+        labels = on_cl.labels_
         results[i][0] = delta_t
-        results[i][1] = len(state_list)
+        results[i][1] = len(on_cl.state_list_)
         results[i][2] = np.sum(labels == -1) / labels.size
         pops = [np.sum(labels == j) / labels.size for j in np.unique(labels)]
-        list_of_pops.append(pops)
+        list_of_pop.append(pops)
 
-    plot_time_res_analysis(data_path / "Fig1.png", results)
-    plot_pop_fractions(data_path / "Fig2.png", list_of_pops, results)
+    plot_time_res_analysis(title=data_path / "Fig1.png", tra=results)
+    plot_pop_fractions(
+        title=data_path / "Fig2.png",
+        list_of_pop=list_of_pop,
+        tra=results,
+    )
 
     # Perform clustering at delta_t = 100 frames
-    on_cl = OnionUniSmooth(delta_t=100)
-    on_cl.fit(data_1d)
-    state_list, labels = on_cl.state_list_, on_cl.labels_
+    on_cl = OnionUniSmooth(delta_t=100).fit(data_1d)
 
-    plot_output_uni(data_path / "Fig3.png", data_1d, state_list)
-    plot_one_trj_uni(data_path / "Fig4.png", 10, data_1d, labels)
-    plot_state_populations(data_path / "Fig5.png", labels)
+    plot_output_uni(
+        title=data_path / "Fig3.png",
+        input_data=data_1d,
+        state_list=on_cl.state_list_,
+    )
+    plot_one_trj_uni(
+        title=data_path / "Fig4.png",
+        example_id=10,
+        input_data=data_1d,
+        labels=on_cl.labels_,
+    )
+    plot_state_populations(
+        title=data_path / "Fig5.png",
+        labels=on_cl.labels_,
+    )
 
     # Test OnionMulti on a wide range of time resolutions
     results = np.zeros((delta_t_list.size, 3))
-    list_of_pops = []
+    list_of_pop = []
 
     for i, delta_t in enumerate(delta_t_list):
-        on_cl = OnionMultiSmooth(delta_t)
-        on_cl.fit(dataset)
-        state_list, labels = on_cl.state_list_, on_cl.labels_
-
+        on_cl = OnionMultiSmooth(delta_t).fit(dataset)
+        labels = on_cl.labels_
         results[i][0] = delta_t
-        results[i][1] = len(state_list)
+        results[i][1] = len(on_cl.state_list_)
         results[i][2] = np.sum(labels == -1) / labels.size
         pops = [np.sum(labels == j) / labels.size for j in np.unique(labels)]
-        list_of_pops.append(pops)
+        list_of_pop.append(pops)
 
-    plot_time_res_analysis(data_path / "Fig6.png", results)
-    plot_pop_fractions(data_path / "Fig7.png", list_of_pops, results)
+    plot_time_res_analysis(title=data_path / "Fig6.png", tra=results)
+    plot_pop_fractions(
+        title=data_path / "Fig7.png",
+        list_of_pop=list_of_pop,
+        tra=results,
+    )
 
-    # Perform clustering at delta_t = 100 frames
-    on_cl = OnionMultiSmooth(delta_t=10)
-    on_cl.fit(dataset)
-    state_list, labels = on_cl.state_list_, on_cl.labels_
+    # Perform clustering at delta_t = 30 frames
+    on_cl = OnionMultiSmooth(delta_t=30).fit(dataset)
 
-    plot_output_multi(data_path / "Fig8.png", dataset, state_list, labels)
-    plot_one_trj_multi(data_path / "Fig9.png", 10, dataset, labels)
-    plot_state_populations(data_path / "Fig10.png", labels)
-
-    plt.show()
+    plot_output_multi(
+        title=data_path / "Fig8.png",
+        input_data=dataset,
+        state_list=on_cl.state_list_,
+        labels=on_cl.labels_,
+    )
+    plot_one_trj_multi(
+        title=data_path / "Fig9.png",
+        example_id=10,
+        input_data=dataset,
+        labels=on_cl.labels_,
+    )
+    plot_state_populations(
+        title=data_path / "Fig10.png",
+        labels=on_cl.labels_,
+    )
 
 
 if __name__ == "__main__":
