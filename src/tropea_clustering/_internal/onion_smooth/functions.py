@@ -5,6 +5,7 @@
 import numpy as np
 from numpy.typing import NDArray
 from scipy.integrate import quad
+from scipy.stats import chi2
 
 from tropea_clustering._internal.onion_smooth.first_classes import (
     StateMulti,
@@ -528,6 +529,28 @@ def set_final_states(
     return updated_states, all_the_labels
 
 
+def gaussian_overlap_fraction(
+    mean1, cov1, mean2, cov2, prob=0.95, n_samples=5000
+):
+    """
+    Estimate fraction of Gaussian 1's contour overlapped by Gaussian 2's contour.
+    """
+    dim = len(mean1)
+    chi2_val = chi2.ppf(prob, df=dim)
+
+    # Sample from first Gaussian
+    points = np.random.multivariate_normal(mean1, cov1, size=n_samples)
+
+    # Mahalanobis distance to mean2
+    diff = points - mean2
+    inv_cov2 = np.linalg.inv(cov2)
+    m_dist_sq_2 = np.einsum("ij,jk,ik->i", diff, inv_cov2, diff)
+
+    # Fraction inside contour of Gaussian 2
+    inside_2 = np.sum(m_dist_sq_2 <= chi2_val) / n_samples
+    return inside_2
+
+
 def relabel_states_2d(
     all_the_labels: np.ndarray,
     states_list: list[StateMulti],
@@ -575,14 +598,15 @@ def relabel_states_2d(
     for i, st_0 in enumerate(sorted_states):
         for j, st_1 in enumerate(sorted_states):
             if j > i:
-                diff = np.abs(np.subtract(st_1.mean, st_0.mean))
-                if np.all(
-                    diff
-                    < [
-                        max(st_0.sigma[k], st_1.sigma[k])
-                        for k in range(diff.size)
-                    ]
-                ):
+                overlap_frac = gaussian_overlap_fraction(
+                    st_0.mean,
+                    st_0.covariance,
+                    st_1.mean,
+                    st_1.covariance,
+                    prob=0.95,
+                    n_samples=5000,
+                )
+                if overlap_frac >= 0.5:  # e.g., at least 50% overlap
                     proposed_merge.append([j, i])
 
     # Find the best merges (merge into the closest candidate)

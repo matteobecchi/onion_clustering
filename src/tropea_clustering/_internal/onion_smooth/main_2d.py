@@ -281,7 +281,7 @@ def iterative_search(
         # print(state.mean, state.perc)
         # print(np.sqrt(state.covariance[0][0]), np.sqrt(state.covariance[1][1]))
 
-    if False:
+    if True:
         labels, state_list = relabel_states_2d(tmp_labels, tmp_states_list)
     else:
         labels, state_list = tmp_labels, tmp_states_list

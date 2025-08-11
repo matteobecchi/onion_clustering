@@ -42,6 +42,7 @@ def test_onion_multi_smooth(input_data_2d: np.ndarray):
 
     # Test functional interface
     state_list, labels = onion_multi_smooth(input_data_2d, delta_t)
+
     _ = state_list[0].get_attributes()
 
     # Check clustering output
