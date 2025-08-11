@@ -12,6 +12,8 @@ import pytest
 
 from tropea_clustering import onion_multi_smooth, onion_uni_smooth, plot_smooth
 
+# ---------------- Fixtures ----------------
+
 
 @pytest.fixture
 def original_wd() -> Generator[Path, None, None]:
@@ -34,7 +36,9 @@ def temp_dir(original_wd: Path) -> Generator[Path, None, None]:
         os.chdir(original_wd)  # Restore the original working directory
 
 
-# Define the actual test
+# ---------------- Tests ----------------
+
+
 def test_output_files(original_wd: Path, temp_dir: Path):
     ### Set all the analysis parameters ###
     rng = np.random.default_rng(12345)
