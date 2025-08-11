@@ -166,6 +166,11 @@ def find_stable_trj(
     lim : int
         The algorithm iteration.
 
+    number_of_sigmas: float
+        Sets the thresholds for classifing a signal sequence inside a state:
+        the sequence is contained in the state if it is entirely contained
+        inside number_of_sigmas * state.sigmas times from state.mean.
+
     Returns
     -------
     tmp_labels : ndarray of shape (n_particles, n_frames)
@@ -236,6 +241,10 @@ def iterative_search(
         Sets the thresholds for classifing a signal sequence inside a state:
         the sequence is contained in the state if it is entirely contained
         inside number_of_sigmas * state.sigmas times from state.mean.
+
+    max_area_overlap : float, default=0.8
+        Thresold to consider two Gaussian states overlapping, and thus merge
+        them together.
 
     Results
     -------

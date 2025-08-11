@@ -295,7 +295,7 @@
 <h1>tropea_clustering._internal.onion_smooth.first_classes.StateMulti<a class="headerlink" href="#tropea-clustering-internal-onion-smooth-first-classes-statemulti" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="tropea_clustering._internal.onion_smooth.first_classes.StateMulti">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tropea_clustering._internal.onion_smooth.first_classes.</span></span><span class="sig-name descname"><span class="pre">StateMulti</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/onion_smooth/first_classes.html#StateMulti"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering._internal.onion_smooth.first_classes.StateMulti" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tropea_clustering._internal.onion_smooth.first_classes.</span></span><span class="sig-name descname"><span class="pre">StateMulti</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">covariance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_likelihood</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_sigmas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/onion_smooth/first_classes.html#StateMulti"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering._internal.onion_smooth.first_classes.StateMulti" title="Link to this definition">¶</a></dt>
 <dd><p>Represents a multifimensional state as a factorized Gaussian.</p>
 <p>All the parameters and information on the factorized Gaussian states
 corresponding to the different clusters are stored within this class.
@@ -304,9 +304,9 @@ The attributes can be acessed using the get_attributes() method.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mean</strong> (<em>np.ndarray</em><em> of </em><em>shape</em><em> (</em><em>dim</em><em>,</em><em>)</em>) – Mean of the Gaussians.</p></li>
-<li><p><strong>sigma</strong> (<em>np.ndarray</em><em> of </em><em>shape</em><em> (</em><em>dim</em><em>,</em><em>)</em>) – Rescaled standard deviation of the Gaussians.</p></li>
-<li><p><strong>area</strong> (<em>np.ndarray</em><em> of </em><em>shape</em><em> (</em><em>dim</em><em>,</em><em>)</em>) – Area below the Gaussians.</p></li>
-<li><p><strong>r_2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Coefficient of determination of the Gaussian fit.</p></li>
+<li><p><strong>covariance</strong> (<em>np.ndarray</em><em> of </em><em>shape</em><em> (</em><em>dim</em><em>, </em><em>dim</em><em>)</em>) – Covariance matrix of the Gaussians.</p></li>
+<li><p><strong>log_likelihood</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – log_likelihood of the data under the fitted Gaussian.</p></li>
+<li><p><strong>number_of_sigmas</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
 <li><p><strong>perc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
 </ul>
 </dd>
@@ -342,6 +342,9 @@ multiplied by “number of sigmas”.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tropea_clustering._internal.onion_smooth.first_classes.StateMulti.get_attributes" title="tropea_clustering._internal.onion_smooth.first_classes.StateMulti.get_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_attributes</span></code></a></p></td>
 <td><p>Returns a dictionary containing the attributes of the state.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropea_clustering._internal.onion_smooth.first_classes.StateMulti.get_boundaries" title="tropea_clustering._internal.onion_smooth.first_classes.StateMulti.get_boundaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_boundaries</span></code></a></p></td>
+<td><p>Sets the thresholds to classify the data windows inside the state.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -355,16 +358,13 @@ multiplied by “number of sigmas”.</p>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sigma</span></code></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">covariance</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">area</span></code></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_likelihood</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">r_2</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tropea_clustering._internal.onion_smooth.first_classes.StateMulti.axis" title="tropea_clustering._internal.onion_smooth.first_classes.StateMulti.axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">axis</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">number_of_sigmas</span></code></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -380,6 +380,20 @@ multiplied by “number of sigmas”.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tropea_clustering._internal.onion_smooth.first_classes.StateMulti.get_boundaries">
+<span class="sig-name descname"><span class="pre">get_boundaries</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/onion_smooth/first_classes.html#StateMulti.get_boundaries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering._internal.onion_smooth.first_classes.StateMulti.get_boundaries" title="Link to this definition">¶</a></dt>
+<dd><p>Sets the thresholds to classify the data windows inside the state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sigmas</strong> (<em>number of</em>) – How many sigmas the thresholds are far from the mean.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -440,6 +454,7 @@ multiplied by “number of sigmas”.</p>
 <li><a class="reference internal" href="#tropea_clustering._internal.onion_smooth.first_classes.StateMulti.perc"><code class="docutils literal notranslate"><span class="pre">StateMulti.perc</span></code></a></li>
 <li><a class="reference internal" href="#tropea_clustering._internal.onion_smooth.first_classes.StateMulti.axis"><code class="docutils literal notranslate"><span class="pre">StateMulti.axis</span></code></a></li>
 <li><a class="reference internal" href="#tropea_clustering._internal.onion_smooth.first_classes.StateMulti.get_attributes"><code class="docutils literal notranslate"><span class="pre">StateMulti.get_attributes()</span></code></a></li>
+<li><a class="reference internal" href="#tropea_clustering._internal.onion_smooth.first_classes.StateMulti.get_boundaries"><code class="docutils literal notranslate"><span class="pre">StateMulti.get_boundaries()</span></code></a></li>
 </ul>
 </li>
 </ul>

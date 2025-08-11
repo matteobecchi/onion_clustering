@@ -14,6 +14,7 @@
       :nosignatures:
    
       ~StateMulti.get_attributes
+      ~StateMulti.get_boundaries
    
    
 
@@ -25,9 +26,8 @@
    
       ~StateMulti.perc
       ~StateMulti.mean
-      ~StateMulti.sigma
-      ~StateMulti.area
-      ~StateMulti.r_2
-      ~StateMulti.axis
+      ~StateMulti.covariance
+      ~StateMulti.log_likelihood
+      ~StateMulti.number_of_sigmas
    
    

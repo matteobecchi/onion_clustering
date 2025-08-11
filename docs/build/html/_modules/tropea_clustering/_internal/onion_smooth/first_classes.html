@@ -243,21 +243,9 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.html">tropea_clustering.plot_smooth</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of tropea_clustering.plot_smooth</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.color_trj_from_xyz.html">tropea_clustering.plot_smooth.color_trj_from_xyz</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_one_trj_multi.html">tropea_clustering.plot_smooth.plot_one_trj_multi</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_one_trj_uni.html">tropea_clustering.plot_smooth.plot_one_trj_uni</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_output_multi.html">tropea_clustering.plot_smooth.plot_output_multi</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_output_uni.html">tropea_clustering.plot_smooth.plot_output_uni</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_pop_fractions.html">tropea_clustering.plot_smooth.plot_pop_fractions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_sankey.html">tropea_clustering.plot_smooth.plot_sankey</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_state_populations.html">tropea_clustering.plot_smooth.plot_state_populations</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_time_res_analysis.html">tropea_clustering.plot_smooth.plot_time_res_analysis</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../classes.html">Gaussian states</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Gaussian states</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../classes.html">Gaussian states</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Gaussian states</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../_autosummary/tropea_clustering._internal.onion_smooth.first_classes.StateUni.html">tropea_clustering._internal.onion_smooth.first_classes.StateUni</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../_autosummary/tropea_clustering._internal.onion_smooth.first_classes.StateMulti.html">tropea_clustering._internal.onion_smooth.first_classes.StateMulti</a></li>
 </ul>
@@ -423,14 +411,11 @@
 <span class="sd">    mean : np.ndarray of shape (dim,)</span>
 <span class="sd">        Mean of the Gaussians.</span>
 
-<span class="sd">    sigma : np.ndarray of shape (dim,)</span>
-<span class="sd">        Rescaled standard deviation of the Gaussians.</span>
+<span class="sd">    covariance : np.ndarray of shape (dim, dim)</span>
+<span class="sd">        Covariance matrix of the Gaussians.</span>
 
-<span class="sd">    area : np.ndarray of shape (dim,)</span>
-<span class="sd">        Area below the Gaussians.</span>
-
-<span class="sd">    r_2 : float</span>
-<span class="sd">        Coefficient of determination of the Gaussian fit.</span>
+<span class="sd">    log_likelihood : float</span>
+<span class="sd">        log_likelihood of the data under the fitted Gaussian.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -445,16 +430,14 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">mean</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
-    <span class="n">sigma</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
-    <span class="n">area</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
-    <span class="n">r_2</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">covariance</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">log_likelihood</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">number_of_sigmas</span><span class="p">:</span> <span class="nb">float</span>
     <span class="n">perc</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
-    <span class="n">axis</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_build_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number_of_sigmas</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<div class="viewcode-block" id="StateMulti.get_boundaries">
+<a class="viewcode-back" href="../../../../_autosummary/tropea_clustering._internal.onion_smooth.first_classes.StateMulti.html#tropea_clustering._internal.onion_smooth.first_classes.StateMulti.get_boundaries">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sets the thresholds to classify the data windows inside the state.</span>
 
@@ -464,7 +447,16 @@
 <span class="sd">        number of sigmas : float</span>
 <span class="sd">            How many sigmas the thresholds are far from the mean.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="n">number_of_sigmas</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span>  <span class="c1"># Axes of the state</span>
+        <span class="n">n_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">n_dim</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;get_boundarise() only works with 2D data.&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">chi2_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_sigmas</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n_dim</span>
+        <span class="n">eigvals</span><span class="p">,</span> <span class="n">eigvecs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariance</span><span class="p">)</span>
+        <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">eigvals</span> <span class="o">*</span> <span class="n">chi2_val</span><span class="p">)</span>
+        <span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="o">*</span><span class="n">eigvecs</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">angle</span></div>
+
 
 <div class="viewcode-block" id="StateMulti.get_attributes">
 <a class="viewcode-back" href="../../../../_autosummary/tropea_clustering._internal.onion_smooth.first_classes.StateMulti.html#tropea_clustering._internal.onion_smooth.first_classes.StateMulti.get_attributes">[docs]</a>
