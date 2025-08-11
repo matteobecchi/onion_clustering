@@ -45,14 +45,6 @@ def plot_output_uni(
     state_list : List[StateUni]
         The list of the cluster states.
 
-    Example
-    -------
-    Here's an example of the output:
-
-    .. image:: ../_static/images/uni_Fig1.png
-        :alt: Example Image
-        :width: 600px
-
     The left planel shows the input time-series data, with the backgound
     colored according to the thresholds between the clusters. The left panel
     shows the cumulative data distribution, and the Gaussians fitted to the
@@ -186,14 +178,6 @@ def plot_one_trj_uni(
     labels : ndarray of shape (n_particles * n_seq,)
         The output of Onion Clustering.
 
-    Example
-    -------
-    Here's an example of the output:
-
-    .. image:: ../_static/images/uni_Fig2.png
-        :alt: Example Image
-        :width: 600px
-
     The datapoints are colored according to the cluster they have been
     assigned.
     """
@@ -262,14 +246,6 @@ def plot_state_populations(
 
     labels : ndarray of shape (n_particles * n_seq,)
         The output of Onion Clustering.
-
-    Example
-    -------
-    Here's an example of the output:
-
-    .. image:: ../_static/images/uni_Fig4.png
-        :alt: Example Image
-        :width: 600px
     """
     labels = np.reshape(labels, (n_particles, -1))
 
@@ -324,14 +300,6 @@ def plot_medoids_uni(
 
     output_to_file : bool, default = False.
         If True, saves files with the cluster medoids.
-
-    Example
-    -------
-    Here's an example of the output:
-
-    .. image:: ../_static/images/uni_Fig3.png
-        :alt: Example Image
-        :width: 600px
 
     For each cluster, the average (solid line) and standard deviation (shaded
     area) of the signal sequences contained in it is shown. The unclassififed
@@ -445,14 +413,6 @@ def plot_sankey(
     tmp_frame_list : List[int]
         The list of frames at which we want to plot the Sankey.
 
-    Example
-    -------
-    Here's an example of the output:
-
-    .. image:: ../_static/images/uni_Fig5.png
-        :alt: Example Image
-        :width: 600px
-
     For each of the selected frames, the colored bars width is proportional
     to each cluster population. The gray bands' witdh are proportional to
     the number of data points moving from one cluster to the other between the
@@ -544,14 +504,6 @@ def plot_time_res_analysis(
         tra[j][1] must contain the corresponding number of states;
         tra[j][2] must contain the corresponding unclassified fraction.
 
-    Example
-    -------
-    Here's an example of the output:
-
-    .. image:: ../_static/images/uni_Fig6.png
-        :alt: Example Image
-        :width: 600px
-
     For each of the analyzed time resolutions, the blue curve shows the number
     of identified clusters (not including the unclassified data); the orange
     line shows the fraction of unclassififed data.
@@ -591,14 +543,6 @@ def plot_pop_fractions(
         tra[j][0] must contain the j-th value used as delta_t;
         tra[j][1] must contain the corresponding number of states;
         tra[j][2] must contain the corresponding unclassified fraction.
-
-    Example
-    -------
-    Here's an example of the output:
-
-    .. image:: ../_static/images/uni_Fig7.png
-        :alt: Example Image
-        :width: 600px
 
     For each time resolution analysed, the bars show the fraction of data
     points classified in each cluster. Clusters are ordered according to the
@@ -657,14 +601,6 @@ def plot_medoids_multi(
 
     output_to_file : bool, default = False.
         If True, saves files with the cluster medoids.
-
-    Example
-    -------
-    Here's an example of the output:
-
-    .. image:: ../_static/images/multi_Fig3.png
-        :alt: Example Image
-        :width: 600px
 
     For each cluster, the average of the signal sequences contained in it is
     shown (large solid points). The unclassififed seqeunces are shown
@@ -770,13 +706,6 @@ def plot_output_multi(
 
     delta_t : int
         The length of the signal sequences used.
-
-    Example
-    -------
-
-    .. image:: ../_static/images/multi_Fig1.png
-        :alt: Example Image
-        :width: 600px
 
     All the data are plotted, colored according to the cluster thay have been
     assigned to. The clusters are shown as black ellipses, whose orizontal and
@@ -1021,14 +950,6 @@ def plot_one_trj_multi(
 
     labels : ndarray of shape (n_particles * n_seq,)
         The output of the clustering algorithm.
-
-    Example
-    -------
-    Here's an example of the output:
-
-    .. image:: ../_static/images/multi_Fig2.png
-        :alt: Example Image
-        :width: 600px
 
     The datapoints are colored according to the cluster they have been
     assigned to.
