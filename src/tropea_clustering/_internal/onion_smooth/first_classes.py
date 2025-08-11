@@ -150,11 +150,14 @@ class StateMulti:
         number of sigmas : float
             How many sigmas the thresholds are far from the mean.
         """
-        chi2_val = self.number_of_sigmas**2 * self.covariance.shape[0]
+        n_dim = self.covariance.shape[0]
+        if n_dim > 2:
+            msg = "get_boundarise() only works with 2D data."
+            raise ValueError(msg)
+        chi2_val = self.number_of_sigmas**2 * n_dim
         eigvals, eigvecs = np.linalg.eigh(self.covariance)
         width, height = 2 * np.sqrt(eigvals * chi2_val)
         angle = np.degrees(np.arctan2(*eigvecs[:, 0][::-1]))
-
         return width, height, angle
 
     def get_attributes(self):

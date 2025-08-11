@@ -603,19 +603,6 @@ def plot_output_multi(
                     rasterized=True,
                 )
 
-                # Plot the Gaussian distributions of states
-                if k == 0:
-                    for state in state_list:
-                        att = state.get_attributes()
-                        ellipse = Ellipse(
-                            tuple(att["mean"]),
-                            att["axis"][d_0],
-                            att["axis"][d_1],
-                            color="black",
-                            fill=False,
-                        )
-                        ax[a_0][a_1].add_patch(ellipse)
-
             # Set plot titles and axis labels
             ax[a_0][a_1].set_xlabel(f"Signal {d_0}")
             ax[a_0][a_1].set_ylabel(f"Signal {d_1}")
