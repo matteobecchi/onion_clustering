@@ -530,11 +530,14 @@ def set_final_states(
 
 
 def gaussian_overlap_fraction(
-    mean1, cov1, mean2, cov2, prob=0.95, n_samples=5000
+    mean1: NDArray[np.float64],
+    cov1: NDArray[np.float64],
+    mean2: NDArray[np.float64],
+    cov2: NDArray[np.float64],
+    prob: float,
+    n_samples: int = 5000,
 ):
-    """
-    Estimate fraction of Gaussian 1's contour overlapped by Gaussian 2's contour.
-    """
+    """Estimate fraction of Gaussianss contour overlap."""
     dim = len(mean1)
     chi2_val = chi2.ppf(prob, df=dim)
 
@@ -552,6 +555,7 @@ def gaussian_overlap_fraction(
 
 
 def relabel_states_2d(
+    max_area_overlap: float,
     all_the_labels: np.ndarray,
     states_list: list[StateMulti],
 ) -> tuple[NDArray[np.int64], list[StateMulti]]:
@@ -561,6 +565,10 @@ def relabel_states_2d(
 
     Parameters
     ----------
+    max_area_overlap : float
+        Thresold to consider two Gaussian states overlapping, and thus merge
+        them together.
+
     all_the_labels : ndarray of shape (n_particles, n_windows)
         Array containing labels for each data point.
 
@@ -603,8 +611,7 @@ def relabel_states_2d(
                     st_0.covariance,
                     st_1.mean,
                     st_1.covariance,
-                    prob=0.95,
-                    n_samples=5000,
+                    prob=max_area_overlap,
                 )
                 if overlap_frac >= 0.5:  # e.g., at least 50% overlap
                     proposed_merge.append([j, i])

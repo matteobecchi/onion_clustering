@@ -213,6 +213,7 @@ def iterative_search(
     delta_t: int,
     bins: int | str,
     number_of_sigmas: float,
+    max_area_overlap: float,
 ) -> tuple[list[StateMulti], NDArray[np.int64]]:
     """
     Iterative search for stable sequences in the trajectory.
@@ -278,13 +279,12 @@ def iterative_search(
         state.perc = counter
         tmp_states_list.append(state)
         states_counter += 1
-        # print(state.mean, state.perc)
-        # print(np.sqrt(state.covariance[0][0]), np.sqrt(state.covariance[1][1]))
 
-    if True:
-        labels, state_list = relabel_states_2d(tmp_labels, tmp_states_list)
-    else:
-        labels, state_list = tmp_labels, tmp_states_list
+    labels, state_list = relabel_states_2d(
+        max_area_overlap,
+        tmp_labels,
+        tmp_states_list,
+    )
 
     return state_list, labels - 1
 
@@ -294,6 +294,7 @@ def _main(
     delta_t: int,
     bins: int | str,
     number_of_sigmas: float,
+    max_area_overlap: float,
 ) -> tuple[list[StateMulti], NDArray[np.int64]]:
     """
     Performs onion clustering on the data array 'matrix' at a give delta_t.
@@ -317,6 +318,10 @@ def _main(
         the sequence is contained in the state if it is entirely contained
         inside number_of_sigmas * state.sigmas times from state.mean.
 
+    max_area_overlap : float, default=0.8
+        Thresold to consider two Gaussian states overlapping, and thus merge
+        them together.
+
     Returns
     -------
     states_list : List[StateMulti]
@@ -331,6 +336,7 @@ def _main(
         delta_t,
         bins,
         number_of_sigmas,
+        max_area_overlap,
     )
 
     return tmp_state_list, tmp_labels
