@@ -543,7 +543,6 @@ def plot_output_multi(
             step = 5 if input_data.size > 1000000 else 1
 
             for i, mol in enumerate(input_data[::step]):
-                print(mol.shape)
                 ax[a_0][a_1].plot(
                     mol[:, d_0],  # type: ignore  # mol is 2D, mypy can't see it
                     mol[:, d_1],  # type: ignore  # mol is 2D, mypy can't see it

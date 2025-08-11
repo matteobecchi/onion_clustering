@@ -188,9 +188,6 @@ def find_stable_trj(
     rescaled = ((m_clean - state.mean) @ l_inv.T) / np.sqrt(matrix.shape[2])
     squared_distances = np.sum(rescaled**2, axis=2)
 
-    # tmp_data = rescaled[:, :500].reshape((-1, matrix.shape[2]))
-    # print("Covariance:\n", np.cov(tmp_data, rowvar=False))
-
     mask_dist = squared_distances <= number_of_sigmas**2
 
     mask = mask_unclassified & mask_dist
