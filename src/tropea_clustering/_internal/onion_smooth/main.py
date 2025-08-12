@@ -63,8 +63,6 @@ def perform_gauss_fit(
     ### Initialize return values ###
     flag = False
     coeff_det_r2 = 0
-    popt = np.empty(3)
-    perr = np.empty(3)
 
     id0, id1, max_ind, n_data = param
     bins, counts = data
@@ -95,13 +93,13 @@ def perform_gauss_fit(
             coeff_det_r2 = 1 - ss_res / ss_tot
             flag = True
     except OptimizeWarning:
-        return flag, coeff_det_r2, popt, perr
+        return flag, coeff_det_r2, np.empty(3), np.empty(3)
     except RuntimeError:
-        return flag, coeff_det_r2, popt, perr
+        return flag, coeff_det_r2, np.empty(3), np.empty(3)
     except TypeError:
-        return flag, coeff_det_r2, popt, perr
+        return flag, coeff_det_r2, np.empty(3), np.empty(3)
     except ValueError:
-        return flag, coeff_det_r2, popt, perr
+        return flag, coeff_det_r2, np.empty(3), np.empty(3)
 
     return flag, coeff_det_r2, popt, perr
 

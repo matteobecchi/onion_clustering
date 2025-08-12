@@ -243,21 +243,9 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.html">tropea_clustering.plot_smooth</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of tropea_clustering.plot_smooth</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.color_trj_from_xyz.html">tropea_clustering.plot_smooth.color_trj_from_xyz</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_one_trj_multi.html">tropea_clustering.plot_smooth.plot_one_trj_multi</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_one_trj_uni.html">tropea_clustering.plot_smooth.plot_one_trj_uni</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_output_multi.html">tropea_clustering.plot_smooth.plot_output_multi</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_output_uni.html">tropea_clustering.plot_smooth.plot_output_uni</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_pop_fractions.html">tropea_clustering.plot_smooth.plot_pop_fractions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_sankey.html">tropea_clustering.plot_smooth.plot_sankey</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_state_populations.html">tropea_clustering.plot_smooth.plot_state_populations</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_time_res_analysis.html">tropea_clustering.plot_smooth.plot_time_res_analysis</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../classes.html">Gaussian states</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Gaussian states</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../classes.html">Gaussian states</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Gaussian states</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../_autosummary/tropea_clustering._internal.onion_smooth.first_classes.StateUni.html">tropea_clustering._internal.onion_smooth.first_classes.StateUni</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../_autosummary/tropea_clustering._internal.onion_smooth.first_classes.StateMulti.html">tropea_clustering._internal.onion_smooth.first_classes.StateMulti</a></li>
 </ul>
@@ -345,14 +333,6 @@
 
 <span class="sd">    state_list : List[StateUni]</span>
 <span class="sd">        The list of the cluster states.</span>
-
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
-<span class="sd">    Here&#39;s an example of the output:</span>
-
-<span class="sd">    .. image:: ../_static/images/uni_Fig1.png</span>
-<span class="sd">        :alt: Example Image</span>
-<span class="sd">        :width: 600px</span>
 
 <span class="sd">    The left planel shows the input time-series data, with the backgound</span>
 <span class="sd">    colored according to the thresholds between the clusters. The left panel</span>
@@ -490,14 +470,6 @@
 <span class="sd">    labels : ndarray of shape (n_particles * n_seq,)</span>
 <span class="sd">        The output of Onion Clustering.</span>
 
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
-<span class="sd">    Here&#39;s an example of the output:</span>
-
-<span class="sd">    .. image:: ../_static/images/uni_Fig2.png</span>
-<span class="sd">        :alt: Example Image</span>
-<span class="sd">        :width: 600px</span>
-
 <span class="sd">    The datapoints are colored according to the cluster they have been</span>
 <span class="sd">    assigned.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -569,14 +541,6 @@
 
 <span class="sd">    labels : ndarray of shape (n_particles * n_seq,)</span>
 <span class="sd">        The output of Onion Clustering.</span>
-
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
-<span class="sd">    Here&#39;s an example of the output:</span>
-
-<span class="sd">    .. image:: ../_static/images/uni_Fig4.png</span>
-<span class="sd">        :alt: Example Image</span>
-<span class="sd">        :width: 600px</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
 
@@ -634,14 +598,6 @@
 
 <span class="sd">    output_to_file : bool, default = False.</span>
 <span class="sd">        If True, saves files with the cluster medoids.</span>
-
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
-<span class="sd">    Here&#39;s an example of the output:</span>
-
-<span class="sd">    .. image:: ../_static/images/uni_Fig3.png</span>
-<span class="sd">        :alt: Example Image</span>
-<span class="sd">        :width: 600px</span>
 
 <span class="sd">    For each cluster, the average (solid line) and standard deviation (shaded</span>
 <span class="sd">    area) of the signal sequences contained in it is shown. The unclassififed</span>
@@ -738,8 +694,10 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plots the Sankey diagram at the desired frames.</span>
 
-<span class="sd">    This function requires the python package Kaleido, and uses plotly</span>
-<span class="sd">    instead of matplotlib.pyplot.</span>
+<span class="sd">    .. warning::</span>
+<span class="sd">        This function requires the python package Kaleido, and uses plotly</span>
+<span class="sd">        instead of matplotlib.pyplot. For this reason is deprecated and not</span>
+<span class="sd">        supported since tropea-clustering 2.0.0.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -755,14 +713,6 @@
 
 <span class="sd">    tmp_frame_list : List[int]</span>
 <span class="sd">        The list of frames at which we want to plot the Sankey.</span>
-
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
-<span class="sd">    Here&#39;s an example of the output:</span>
-
-<span class="sd">    .. image:: ../_static/images/uni_Fig5.png</span>
-<span class="sd">        :alt: Example Image</span>
-<span class="sd">        :width: 600px</span>
 
 <span class="sd">    For each of the selected frames, the colored bars width is proportional</span>
 <span class="sd">    to each cluster population. The gray bands&#39; witdh are proportional to</span>
@@ -858,14 +808,6 @@
 <span class="sd">        tra[j][1] must contain the corresponding number of states;</span>
 <span class="sd">        tra[j][2] must contain the corresponding unclassified fraction.</span>
 
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
-<span class="sd">    Here&#39;s an example of the output:</span>
-
-<span class="sd">    .. image:: ../_static/images/uni_Fig6.png</span>
-<span class="sd">        :alt: Example Image</span>
-<span class="sd">        :width: 600px</span>
-
 <span class="sd">    For each of the analyzed time resolutions, the blue curve shows the number</span>
 <span class="sd">    of identified clusters (not including the unclassified data); the orange</span>
 <span class="sd">    line shows the fraction of unclassififed data.</span>
@@ -908,14 +850,6 @@
 <span class="sd">        tra[j][0] must contain the j-th value used as delta_t;</span>
 <span class="sd">        tra[j][1] must contain the corresponding number of states;</span>
 <span class="sd">        tra[j][2] must contain the corresponding unclassified fraction.</span>
-
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
-<span class="sd">    Here&#39;s an example of the output:</span>
-
-<span class="sd">    .. image:: ../_static/images/uni_Fig7.png</span>
-<span class="sd">        :alt: Example Image</span>
-<span class="sd">        :width: 600px</span>
 
 <span class="sd">    For each time resolution analysed, the bars show the fraction of data</span>
 <span class="sd">    points classified in each cluster. Clusters are ordered according to the</span>
@@ -977,14 +911,6 @@
 
 <span class="sd">    output_to_file : bool, default = False.</span>
 <span class="sd">        If True, saves files with the cluster medoids.</span>
-
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
-<span class="sd">    Here&#39;s an example of the output:</span>
-
-<span class="sd">    .. image:: ../_static/images/multi_Fig3.png</span>
-<span class="sd">        :alt: Example Image</span>
-<span class="sd">        :width: 600px</span>
 
 <span class="sd">    For each cluster, the average of the signal sequences contained in it is</span>
 <span class="sd">    shown (large solid points). The unclassififed seqeunces are shown</span>
@@ -1093,13 +1019,6 @@
 
 <span class="sd">    delta_t : int</span>
 <span class="sd">        The length of the signal sequences used.</span>
-
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
-
-<span class="sd">    .. image:: ../_static/images/multi_Fig1.png</span>
-<span class="sd">        :alt: Example Image</span>
-<span class="sd">        :width: 600px</span>
 
 <span class="sd">    All the data are plotted, colored according to the cluster thay have been</span>
 <span class="sd">    assigned to. The clusters are shown as black ellipses, whose orizontal and</span>
@@ -1347,14 +1266,6 @@
 
 <span class="sd">    labels : ndarray of shape (n_particles * n_seq,)</span>
 <span class="sd">        The output of the clustering algorithm.</span>
-
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
-<span class="sd">    Here&#39;s an example of the output:</span>
-
-<span class="sd">    .. image:: ../_static/images/multi_Fig2.png</span>
-<span class="sd">        :alt: Example Image</span>
-<span class="sd">        :width: 600px</span>
 
 <span class="sd">    The datapoints are colored according to the cluster they have been</span>
 <span class="sd">    assigned to.</span>

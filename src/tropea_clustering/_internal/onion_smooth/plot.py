@@ -278,8 +278,10 @@ def plot_sankey(
     """
     Plots the Sankey diagram at the desired frames.
 
-    This function requires the python package Kaleido, and uses plotly
-    instead of matplotlib.pyplot.
+    .. warning::
+        This function requires the python package Kaleido, and uses plotly
+        instead of matplotlib.pyplot. For this reason is deprecated and not
+        supported since tropea-clustering 2.0.0.
 
     Parameters
     ----------
@@ -541,7 +543,6 @@ def plot_output_multi(
             step = 5 if input_data.size > 1000000 else 1
 
             for i, mol in enumerate(input_data[::step]):
-                print(mol.shape)
                 ax[a_0][a_1].plot(
                     mol[:, d_0],  # type: ignore  # mol is 2D, mypy can't see it
                     mol[:, d_1],  # type: ignore  # mol is 2D, mypy can't see it
@@ -600,19 +601,6 @@ def plot_output_multi(
                     s=0.5,
                     rasterized=True,
                 )
-
-                # Plot the Gaussian distributions of states
-                if k == 0:
-                    for state in state_list:
-                        att = state.get_attributes()
-                        ellipse = Ellipse(
-                            tuple(att["mean"]),
-                            att["axis"][d_0],
-                            att["axis"][d_1],
-                            color="black",
-                            fill=False,
-                        )
-                        ax[a_0][a_1].add_patch(ellipse)
 
             # Set plot titles and axis labels
             ax[a_0][a_1].set_xlabel(f"Signal {d_0}")
@@ -701,10 +689,12 @@ def plot_output_multi(
         # Plot the Gaussian distributions of states
         for state in state_list:
             att = state.get_attributes()
+            width, height, angle = state.get_boundaries()
             ellipse = Ellipse(
-                tuple(att["mean"]),
-                att["axis"][0],
-                att["axis"][1],
+                xy=att["mean"],
+                width=width,
+                height=height,
+                angle=angle,
                 color="black",
                 fill=False,
             )

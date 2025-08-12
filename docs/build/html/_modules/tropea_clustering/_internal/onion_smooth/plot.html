@@ -243,21 +243,9 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.html">tropea_clustering.plot_smooth</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of tropea_clustering.plot_smooth</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.color_trj_from_xyz.html">tropea_clustering.plot_smooth.color_trj_from_xyz</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_one_trj_multi.html">tropea_clustering.plot_smooth.plot_one_trj_multi</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_one_trj_uni.html">tropea_clustering.plot_smooth.plot_one_trj_uni</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_output_multi.html">tropea_clustering.plot_smooth.plot_output_multi</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_output_uni.html">tropea_clustering.plot_smooth.plot_output_uni</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_pop_fractions.html">tropea_clustering.plot_smooth.plot_pop_fractions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_sankey.html">tropea_clustering.plot_smooth.plot_sankey</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_state_populations.html">tropea_clustering.plot_smooth.plot_state_populations</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../_autosummary/tropea_clustering.plot_smooth.plot_time_res_analysis.html">tropea_clustering.plot_smooth.plot_time_res_analysis</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../classes.html">Gaussian states</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Gaussian states</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../classes.html">Gaussian states</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Gaussian states</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../_autosummary/tropea_clustering._internal.onion_smooth.first_classes.StateUni.html">tropea_clustering._internal.onion_smooth.first_classes.StateUni</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../_autosummary/tropea_clustering._internal.onion_smooth.first_classes.StateMulti.html">tropea_clustering._internal.onion_smooth.first_classes.StateMulti</a></li>
 </ul>
@@ -588,8 +576,10 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plots the Sankey diagram at the desired frames.</span>
 
-<span class="sd">    This function requires the python package Kaleido, and uses plotly</span>
-<span class="sd">    instead of matplotlib.pyplot.</span>
+<span class="sd">    .. warning::</span>
+<span class="sd">        This function requires the python package Kaleido, and uses plotly</span>
+<span class="sd">        instead of matplotlib.pyplot. For this reason is deprecated and not</span>
+<span class="sd">        supported since tropea-clustering 2.0.0.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -860,7 +850,6 @@
             <span class="n">step</span> <span class="o">=</span> <span class="mi">5</span> <span class="k">if</span> <span class="n">input_data</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1000000</span> <span class="k">else</span> <span class="mi">1</span>
 
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">mol</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_data</span><span class="p">[::</span><span class="n">step</span><span class="p">]):</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">mol</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
                 <span class="n">ax</span><span class="p">[</span><span class="n">a_0</span><span class="p">][</span><span class="n">a_1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
                     <span class="n">mol</span><span class="p">[:,</span> <span class="n">d_0</span><span class="p">],</span>  <span class="c1"># type: ignore  # mol is 2D, mypy can&#39;t see it</span>
                     <span class="n">mol</span><span class="p">[:,</span> <span class="n">d_1</span><span class="p">],</span>  <span class="c1"># type: ignore  # mol is 2D, mypy can&#39;t see it</span>
@@ -919,19 +908,6 @@
                     <span class="n">s</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
                     <span class="n">rasterized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="p">)</span>
-
-                <span class="c1"># Plot the Gaussian distributions of states</span>
-                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">state_list</span><span class="p">:</span>
-                        <span class="n">att</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">get_attributes</span><span class="p">()</span>
-                        <span class="n">ellipse</span> <span class="o">=</span> <span class="n">Ellipse</span><span class="p">(</span>
-                            <span class="nb">tuple</span><span class="p">(</span><span class="n">att</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]),</span>
-                            <span class="n">att</span><span class="p">[</span><span class="s2">&quot;axis&quot;</span><span class="p">][</span><span class="n">d_0</span><span class="p">],</span>
-                            <span class="n">att</span><span class="p">[</span><span class="s2">&quot;axis&quot;</span><span class="p">][</span><span class="n">d_1</span><span class="p">],</span>
-                            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
-                            <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                        <span class="p">)</span>
-                        <span class="n">ax</span><span class="p">[</span><span class="n">a_0</span><span class="p">][</span><span class="n">a_1</span><span class="p">]</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">ellipse</span><span class="p">)</span>
 
             <span class="c1"># Set plot titles and axis labels</span>
             <span class="n">ax</span><span class="p">[</span><span class="n">a_0</span><span class="p">][</span><span class="n">a_1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Signal </span><span class="si">{</span><span class="n">d_0</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -1020,10 +996,12 @@
         <span class="c1"># Plot the Gaussian distributions of states</span>
         <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">state_list</span><span class="p">:</span>
             <span class="n">att</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">get_attributes</span><span class="p">()</span>
+            <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">angle</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">get_boundaries</span><span class="p">()</span>
             <span class="n">ellipse</span> <span class="o">=</span> <span class="n">Ellipse</span><span class="p">(</span>
-                <span class="nb">tuple</span><span class="p">(</span><span class="n">att</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]),</span>
-                <span class="n">att</span><span class="p">[</span><span class="s2">&quot;axis&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-                <span class="n">att</span><span class="p">[</span><span class="s2">&quot;axis&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">xy</span><span class="o">=</span><span class="n">att</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">],</span>
+                <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+                <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span>
+                <span class="n">angle</span><span class="o">=</span><span class="n">angle</span><span class="p">,</span>
                 <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
                 <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="p">)</span>

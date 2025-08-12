@@ -244,21 +244,9 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="tropea_clustering.plot_smooth.html">tropea_clustering.plot_smooth</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of tropea_clustering.plot_smooth</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot_smooth.color_trj_from_xyz.html">tropea_clustering.plot_smooth.color_trj_from_xyz</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_one_trj_multi.html">tropea_clustering.plot_smooth.plot_one_trj_multi</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_one_trj_uni.html">tropea_clustering.plot_smooth.plot_one_trj_uni</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_output_multi.html">tropea_clustering.plot_smooth.plot_output_multi</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_output_uni.html">tropea_clustering.plot_smooth.plot_output_uni</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_pop_fractions.html">tropea_clustering.plot_smooth.plot_pop_fractions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_sankey.html">tropea_clustering.plot_smooth.plot_sankey</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_state_populations.html">tropea_clustering.plot_smooth.plot_state_populations</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tropea_clustering.plot_smooth.plot_time_res_analysis.html">tropea_clustering.plot_smooth.plot_time_res_analysis</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../classes.html">Gaussian states</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Gaussian states</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../classes.html">Gaussian states</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Gaussian states</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="tropea_clustering._internal.onion_smooth.first_classes.StateUni.html">tropea_clustering._internal.onion_smooth.first_classes.StateUni</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropea_clustering._internal.onion_smooth.first_classes.StateMulti.html">tropea_clustering._internal.onion_smooth.first_classes.StateMulti</a></li>
 </ul>
@@ -307,7 +295,7 @@
 <h1>tropea_clustering.OnionMultiSmooth<a class="headerlink" href="#tropea-clustering-onionmultismooth" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="tropea_clustering.OnionMultiSmooth">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tropea_clustering.</span></span><span class="sig-name descname"><span class="pre">OnionMultiSmooth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_sigmas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/onion_smooth/onion_multi.html#OnionMultiSmooth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering.OnionMultiSmooth" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tropea_clustering.</span></span><span class="sig-name descname"><span class="pre">OnionMultiSmooth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_sigmas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_area_overlap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tropea_clustering/_internal/onion_smooth/onion_multi.html#OnionMultiSmooth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropea_clustering.OnionMultiSmooth" title="Link to this definition">¶</a></dt>
 <dd><p>Performs onion clustering on a data array.</p>
 <p>Returns an array of integer labels, one for each frame.
 Unclassified frames are labelled “-1”.</p>
@@ -328,6 +316,8 @@ If “auto”, the default of numpy.histogram_bin_edges is used
 <li><p><strong>number_of_sigmas</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>default=3.0</em>) – Sets the thresholds for classifing a signal sequence inside a state:
 the sequence is contained in the state if it is entirely contained
 inside number_of_sigma * state.sigms times from state.mean.</p></li>
+<li><p><strong>max_area_overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>default=0.8</em>) – Thresold to consider two Gaussian states overlapping, and thus merge
+them together.</p></li>
 </ul>
 </dd>
 </dl>

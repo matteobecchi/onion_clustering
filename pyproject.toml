@@ -4,19 +4,17 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tropea-clustering"
-version = "2.0.0"
+version = "2.1.0"
 description = "Code for unsupervised clustering of time-correlated data."
 # license = "MIT"
-maintainers = [
-  { name = "Matteo Becchi", email = "bechmath@gmail.com" },
-]
+maintainers = [{ name = "Matteo Becchi", email = "bechmath@gmail.com" }]
 dependencies = [
-  "numpy",
-  "scipy",
-  "scikit-learn",
-  "matplotlib",
-  "plotly",
-  "kaleido",
+    "numpy",
+    "scipy",
+    "scikit-learn",
+    "matplotlib",
+    "plotly",
+    "kaleido",
 ]
 requires-python = ">=3.9"
 readme = "README.md"
@@ -27,16 +25,16 @@ documentation = "https://onion_clustering.readthedocs.io/en/latest/"
 
 [project.optional-dependencies]
 dev = [
-  "mypy",
-  "pytest",
-  "pytest-cov",
-  "sphinx",
-  "sphinx-copybutton",
-  "build",
-  "twine",
-  "furo",
-  "numba",
-  "ruff",
+    "mypy",
+    "pytest",
+    "pytest-cov",
+    "sphinx",
+    "sphinx-copybutton",
+    "build",
+    "twine",
+    "furo",
+    "numba",
+    "ruff",
 ]
 
 [tool.setuptools_scm]
@@ -65,5 +63,6 @@ module = [
     'plotly.*',
     'matplotlib.*',
     'sklearn.utils.*',
+    'sklearn.mixture.*',
 ]
 ignore_missing_imports = true

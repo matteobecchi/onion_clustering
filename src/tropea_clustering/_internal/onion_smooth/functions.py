@@ -3,11 +3,9 @@
 # Author: Becchi Matteo <bechmath@gmail.com>
 
 import numpy as np
-import scipy.optimize
-import scipy.signal
 from numpy.typing import NDArray
 from scipy.integrate import quad
-from scipy.optimize import OptimizeWarning
+from scipy.stats import chi2
 
 from tropea_clustering._internal.onion_smooth.first_classes import (
     StateMulti,
@@ -201,93 +199,6 @@ def find_half_height_around_max(
         minima.extend([half_id0, half_id1])
 
     return minima
-
-
-def custom_fit(
-    dim: int,
-    max_ind: int,
-    minima: list[int],
-    edges: NDArray[np.float64],
-    counts: NDArray[np.float64],
-    m_limits: NDArray[np.float64],
-) -> tuple[int, float, np.ndarray]:
-    """
-    Fit a Gaussian curve to selected multivarite data.
-
-    Parameters
-    ----------
-    dim : int
-        The data dimensionality.
-
-    max_ind : int
-        Index of the maximum value in the histogram.
-
-    minima : list[int]
-        List of indices representing the minimum points.
-
-    edges : ndarray
-        Array containing the bin edges of the histogram.
-
-    counts : ndarray
-        Array containing histogram counts.
-
-    m_limits : list[list[int]]
-        List of min and max of the data along each dimension.
-
-    Returns
-    -------
-    flag : int
-        Flag indicating the success (1) or failure (0) of the fitting process.
-
-    coeff_det_r2 : float
-        Determination coefficient of the fit (r^2). Between 0 and 1.
-
-    popt : list[float]
-        Optimal values for the parameters (mu, sigma, area) of the
-        fitted Gaussian.
-    """
-    edges_selection = edges[minima[2 * dim] : minima[2 * dim + 1]]
-    all_axes = tuple(i for i in range(counts.ndim) if i != dim)
-    counts_selection = np.sum(counts, axis=all_axes)
-    counts_selection = counts_selection[minima[2 * dim] : minima[2 * dim + 1]]
-
-    mu0 = edges[max_ind]
-    sigma0 = (edges[minima[2 * dim + 1]] - edges[minima[2 * dim]]) / 2
-    area0 = max(counts_selection) * np.sqrt(np.pi) * sigma0
-
-    flag = 0
-    popt = np.empty((3,))
-    coeff_det_r2 = 0.0
-    try:
-        popt, _, infodict, _, _ = scipy.optimize.curve_fit(
-            gaussian,
-            edges_selection,
-            counts_selection,
-            p0=[mu0, sigma0, area0],
-            bounds=(
-                [m_limits[dim][0], 0.0, 0.0],
-                [m_limits[dim][1], np.inf, np.inf],
-            ),
-            full_output=True,
-        )
-
-        ss_res = np.sum(infodict["fvec"] ** 2)
-        ss_tot = np.sum((counts_selection - np.mean(counts_selection)) ** 2)
-        if ss_tot > 0.0:
-            coeff_det_r2 = 1.0 - ss_res / ss_tot
-        else:
-            coeff_det_r2 = 0.0
-        flag = 1
-    except OptimizeWarning:
-        raise OptimizeWarning
-    except RuntimeError:
-        raise RuntimeError
-    except TypeError:
-        raise TypeError
-    except ValueError:
-        raise ValueError
-
-    return flag, coeff_det_r2, popt
 
 
 def relabel_states(
@@ -618,7 +529,33 @@ def set_final_states(
     return updated_states, all_the_labels
 
 
+def gaussian_overlap_fraction(
+    mean1: NDArray[np.float64],
+    cov1: NDArray[np.float64],
+    mean2: NDArray[np.float64],
+    cov2: NDArray[np.float64],
+    prob: float,
+    n_samples: int = 5000,
+):
+    """Estimate fraction of Gaussianss contour overlap."""
+    dim = len(mean1)
+    chi2_val = chi2.ppf(prob, df=dim)
+
+    # Sample from first Gaussian
+    points = np.random.multivariate_normal(mean1, cov1, size=n_samples)
+
+    # Mahalanobis distance to mean2
+    diff = points - mean2
+    inv_cov2 = np.linalg.inv(cov2)
+    m_dist_sq_2 = np.einsum("ij,jk,ik->i", diff, inv_cov2, diff)
+
+    # Fraction inside contour of Gaussian 2
+    inside_2 = np.sum(m_dist_sq_2 <= chi2_val) / n_samples
+    return inside_2
+
+
 def relabel_states_2d(
+    max_area_overlap: float,
     all_the_labels: np.ndarray,
     states_list: list[StateMulti],
 ) -> tuple[NDArray[np.int64], list[StateMulti]]:
@@ -628,6 +565,10 @@ def relabel_states_2d(
 
     Parameters
     ----------
+    max_area_overlap : float
+        Thresold to consider two Gaussian states overlapping, and thus merge
+        them together.
+
     all_the_labels : ndarray of shape (n_particles, n_windows)
         Array containing labels for each data point.
 
@@ -665,14 +606,14 @@ def relabel_states_2d(
     for i, st_0 in enumerate(sorted_states):
         for j, st_1 in enumerate(sorted_states):
             if j > i:
-                diff = np.abs(np.subtract(st_1.mean, st_0.mean))
-                if np.all(
-                    diff
-                    < [
-                        max(st_0.sigma[k], st_1.sigma[k])
-                        for k in range(diff.size)
-                    ]
-                ):
+                overlap_frac = gaussian_overlap_fraction(
+                    st_0.mean,
+                    st_0.covariance,
+                    st_1.mean,
+                    st_1.covariance,
+                    prob=max_area_overlap,
+                )
+                if overlap_frac >= 0.5:  # e.g., at least 50% overlap
                     proposed_merge.append([j, i])
 
     # Find the best merges (merge into the closest candidate)

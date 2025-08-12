@@ -116,14 +116,11 @@ class StateMulti:
     mean : np.ndarray of shape (dim,)
         Mean of the Gaussians.
 
-    sigma : np.ndarray of shape (dim,)
-        Rescaled standard deviation of the Gaussians.
+    covariance : np.ndarray of shape (dim, dim)
+        Covariance matrix of the Gaussians.
 
-    area : np.ndarray of shape (dim,)
-        Area below the Gaussians.
-
-    r_2 : float
-        Coefficient of determination of the Gaussian fit.
+    log_likelihood : float
+        log_likelihood of the data under the fitted Gaussian.
 
     Attributes
     ----------
@@ -138,16 +135,12 @@ class StateMulti:
     """
 
     mean: np.ndarray
-    sigma: np.ndarray
-    area: np.ndarray
-    r_2: float
+    covariance: np.ndarray
+    log_likelihood: float
+    number_of_sigmas: float
     perc: float = 0.0
-    axis: np.ndarray = field(init=False)
 
-    def __post_init__(self):
-        self.axis = 2.0 * self.sigma
-
-    def _build_boundaries(self, number_of_sigmas: float):
+    def get_boundaries(self) -> tuple[float, float, float]:
         """
         Sets the thresholds to classify the data windows inside the state.
 
@@ -157,7 +150,15 @@ class StateMulti:
         number of sigmas : float
             How many sigmas the thresholds are far from the mean.
         """
-        self.axis = number_of_sigmas * self.sigma  # Axes of the state
+        n_dim = self.covariance.shape[0]
+        if n_dim > 2:
+            msg = "get_boundarise() only works with 2D data."
+            raise ValueError(msg)
+        chi2_val = self.number_of_sigmas**2 * n_dim
+        eigvals, eigvecs = np.linalg.eigh(self.covariance)
+        width, height = 2 * np.sqrt(eigvals * chi2_val)
+        angle = np.degrees(np.arctan2(*eigvecs[:, 0][::-1]))
+        return width, height, angle
 
     def get_attributes(self):
         """

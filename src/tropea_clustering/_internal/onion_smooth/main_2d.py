@@ -7,12 +7,13 @@ See the documentation for all the details.
 
 import numpy as np
 from numpy.typing import NDArray
+from scipy.linalg import cholesky
+from sklearn.mixture import GaussianMixture
 
 from tropea_clustering._internal.onion_smooth.first_classes import (
     StateMulti,
 )
 from tropea_clustering._internal.onion_smooth.functions import (
-    custom_fit,
     find_half_height_around_max,
     find_minima_around_max,
     moving_average_2d,
@@ -80,62 +81,58 @@ def gauss_fit_max(
 
     max_ind = find_max_index(counts)
 
-    minima = find_minima_around_max(counts, max_ind, gap)
+    rectangle = find_minima_around_max(counts, max_ind, gap)
+    bounds = []
+    for dim in range(len(edges)):
+        min_idx = rectangle[2 * dim]
+        max_idx = rectangle[2 * dim + 1]
 
-    popt_min: list[float] = []
-    cumulative_r2_min = 0.0
-    for dim in range(matrix.shape[2]):
-        try:
-            flag_min, r_2, popt = custom_fit(
-                dim, max_ind[dim], minima, edges[dim], counts, m_limits
-            )
-            popt[2] *= flat_m.T[0].size
-            popt_min.extend(popt)
-            cumulative_r2_min += r_2
-        except RuntimeError:
-            popt_min = []
-            flag_min = False
+        # Use bin edges to get data-space coordinates
+        lower = edges[dim][min_idx]
+        upper = edges[dim][max_idx + 1]
+        bounds.append((lower, upper))
+    mask = np.ones(flat_m.shape[0], dtype=bool)
+    for dim in range(flat_m.shape[1]):
+        lower, upper = bounds[dim]
+        mask &= (flat_m[:, dim] >= lower) & (flat_m[:, dim] < upper)
 
-    minima = find_half_height_around_max(counts, max_ind, gap)
+    gmm = GaussianMixture(n_components=1, random_state=0).fit(flat_m[mask])
+    popt_min = [gmm.means_[0], gmm.covariances_[0], gmm.score(flat_m[mask])]
+    flag_min = gmm.converged_
 
-    popt_half: list[float] = []
-    cumulative_r2_half = 0.0
-    for dim in range(matrix.shape[2]):
-        try:
-            flag_half, r_2, popt = custom_fit(
-                dim, max_ind[dim], minima, edges[dim], counts, m_limits
-            )
-            popt[2] *= flat_m.T[0].size
-            popt_half.extend(popt)
-            cumulative_r2_half += r_2
-        except RuntimeError:
-            popt_half = []
-            flag_half = False
+    rectangle = find_half_height_around_max(counts, max_ind, gap)
 
-    r_2 = cumulative_r2_min
+    bounds = []
+    for dim in range(len(edges)):
+        min_idx = rectangle[2 * dim]
+        max_idx = rectangle[2 * dim + 1]
+
+        # Use bin edges to get data-space coordinates
+        lower = edges[dim][min_idx]
+        upper = edges[dim][max_idx + 1]
+        bounds.append((lower, upper))
+    mask = np.ones(flat_m.shape[0], dtype=bool)
+    for dim in range(flat_m.shape[1]):
+        lower, upper = bounds[dim]
+        mask &= (flat_m[:, dim] >= lower) & (flat_m[:, dim] < upper)
+
+    gmm = GaussianMixture(n_components=1, random_state=0).fit(flat_m[mask])
+    popt_half = [gmm.means_[0], gmm.covariances_[0], gmm.score(flat_m[mask])]
+    flag_half = gmm.converged_
+
     if flag_min == 1 and flag_half == 0:
-        popt = np.array(popt_min)
+        popt = popt_min
     elif flag_min == 0 and flag_half == 1:
-        popt = np.array(popt_half)
-        r_2 = cumulative_r2_half
+        popt = popt_half
     elif flag_min * flag_half == 1:
-        if cumulative_r2_min >= cumulative_r2_half:
-            popt = np.array(popt_min)
+        if popt_min[2] >= popt_half[2]:
+            popt = popt_min
         else:
-            popt = np.array(popt_half)
-            r_2 = cumulative_r2_half
+            popt = popt_half
     else:
         return None
-    if len(popt) != matrix.shape[2] * 3:
-        return None
 
-    mean, sigma, area = [], [], []
-    for dim in range(matrix.shape[2]):
-        mean.append(popt[3 * dim])
-        sigma.append(popt[3 * dim + 1])
-        area.append(popt[3 * dim + 2])
-    state = StateMulti(np.array(mean), np.array(sigma), np.array(area), r_2)
-    state._build_boundaries(number_of_sigmas)
+    state = StateMulti(popt[0], popt[1], popt[2], number_of_sigmas)
 
     return state
 
@@ -146,6 +143,7 @@ def find_stable_trj(
     state: StateMulti,
     delta_t: int,
     lim: int,
+    number_of_sigmas: float,
 ) -> tuple[np.ndarray, float]:
     """
     Identification of sequences contained in a certain state.
@@ -168,6 +166,11 @@ def find_stable_trj(
     lim : int
         The algorithm iteration.
 
+    number_of_sigmas: float
+        Sets the thresholds for classifing a signal sequence inside a state:
+        the sequence is contained in the state if it is entirely contained
+        inside number_of_sigmas * state.sigmas times from state.mean.
+
     Returns
     -------
     tmp_labels : ndarray of shape (n_particles, n_frames)
@@ -177,12 +180,16 @@ def find_stable_trj(
     fraction : float
         Fraction of data points classified in this state.
     """
-    m_clean = matrix.copy()
     mask_unclassified = tmp_labels == 0
-    shifted = m_clean - state.mean
-    rescaled = shifted / state.axis
+
+    m_clean = matrix.copy()
+    l_cholesky = cholesky(state.covariance, lower=True)
+    l_inv = np.linalg.inv(l_cholesky)
+    rescaled = ((m_clean - state.mean) @ l_inv.T) / np.sqrt(matrix.shape[2])
     squared_distances = np.sum(rescaled**2, axis=2)
-    mask_dist = squared_distances <= 1.0
+
+    mask_dist = squared_distances <= number_of_sigmas**2
+
     mask = mask_unclassified & mask_dist
 
     mask_stable = np.zeros_like(tmp_labels, dtype=bool)
@@ -198,7 +205,7 @@ def find_stable_trj(
                 mask_stable[i, start:end] = True
 
     tmp_labels[mask_stable] = lim + 1
-    fraction = np.sum(mask_stable) / matrix.size
+    fraction = np.sum(mask_stable) / mask_stable.size
 
     return tmp_labels, fraction
 
@@ -208,6 +215,7 @@ def iterative_search(
     delta_t: int,
     bins: int | str,
     number_of_sigmas: float,
+    max_area_overlap: float,
 ) -> tuple[list[StateMulti], NDArray[np.int64]]:
     """
     Iterative search for stable sequences in the trajectory.
@@ -230,6 +238,10 @@ def iterative_search(
         Sets the thresholds for classifing a signal sequence inside a state:
         the sequence is contained in the state if it is entirely contained
         inside number_of_sigmas * state.sigmas times from state.mean.
+
+    max_area_overlap : float, default=0.8
+        Thresold to consider two Gaussian states overlapping, and thus merge
+        them together.
 
     Results
     -------
@@ -265,6 +277,7 @@ def iterative_search(
             state,
             delta_t,
             states_counter,
+            number_of_sigmas,
         )
         if counter == 0.0:
             break
@@ -273,7 +286,11 @@ def iterative_search(
         tmp_states_list.append(state)
         states_counter += 1
 
-    labels, state_list = relabel_states_2d(tmp_labels, tmp_states_list)
+    labels, state_list = relabel_states_2d(
+        max_area_overlap,
+        tmp_labels,
+        tmp_states_list,
+    )
 
     return state_list, labels - 1
 
@@ -283,6 +300,7 @@ def _main(
     delta_t: int,
     bins: int | str,
     number_of_sigmas: float,
+    max_area_overlap: float,
 ) -> tuple[list[StateMulti], NDArray[np.int64]]:
     """
     Performs onion clustering on the data array 'matrix' at a give delta_t.
@@ -306,6 +324,10 @@ def _main(
         the sequence is contained in the state if it is entirely contained
         inside number_of_sigmas * state.sigmas times from state.mean.
 
+    max_area_overlap : float, default=0.8
+        Thresold to consider two Gaussian states overlapping, and thus merge
+        them together.
+
     Returns
     -------
     states_list : List[StateMulti]
@@ -320,6 +342,7 @@ def _main(
         delta_t,
         bins,
         number_of_sigmas,
+        max_area_overlap,
     )
 
     return tmp_state_list, tmp_labels

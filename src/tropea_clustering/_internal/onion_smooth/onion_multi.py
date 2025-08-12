@@ -17,6 +17,7 @@ def onion_multi_smooth(
     delta_t: int,
     bins: str | int = "auto",
     number_of_sigmas: float = 3.0,
+    max_area_overlap: float = 0.8,
 ) -> tuple[list[StateMulti], NDArray[np.int64]]:
     """
     Performs onion clustering on the data array 'X'.
@@ -47,6 +48,10 @@ def onion_multi_smooth(
         Sets the thresholds for classifing a signal sequence inside a state:
         the sequence is contained in the state if it is entirely contained
         inside number_of_sigmas * state.sigmas times from state.mean.
+
+    max_area_overlap : float, default=0.8
+        Thresold to consider two Gaussian states overlapping, and thus merge
+        them together.
 
     Returns
     -------
@@ -83,13 +88,14 @@ def onion_multi_smooth(
     .. testcode:: onion_multi_smooth-test
             :hide:
 
-            assert np.isclose(state_list[0].mean[0], 0.4791087814511593)
+            assert np.isclose(state_list[0].mean[0], 0.41053300302126494)
     """
 
     est = OnionMultiSmooth(
         delta_t=delta_t,
         bins=bins,
         number_of_sigmas=number_of_sigmas,
+        max_area_overlap=max_area_overlap,
     )
     est.fit(X)
 
@@ -123,6 +129,10 @@ class OnionMultiSmooth:
         Sets the thresholds for classifing a signal sequence inside a state:
         the sequence is contained in the state if it is entirely contained
         inside number_of_sigma * state.sigms times from state.mean.
+
+    max_area_overlap : float, default=0.8
+        Thresold to consider two Gaussian states overlapping, and thus merge
+        them together.
 
     Attributes
     ----------
@@ -163,7 +173,7 @@ class OnionMultiSmooth:
             :hide:
 
             assert np.isclose(
-                clusterer.state_list_[0].mean[0], 0.6257886444256409)
+                clusterer.state_list_[0].mean[0], 0.6329007600368665)
     """
 
     def __init__(
@@ -171,10 +181,12 @@ class OnionMultiSmooth:
         delta_t: int,
         bins: str | int = "auto",
         number_of_sigmas: float = 3.0,
+        max_area_overlap: float = 0.8,
     ):
         self.delta_t = delta_t
         self.bins = bins
         self.number_of_sigmas = number_of_sigmas
+        self.max_area_overlap = max_area_overlap
 
     def fit(self, X, y=None):
         """Performs onion clustering on the data array 'X'.
@@ -212,6 +224,7 @@ class OnionMultiSmooth:
             self.delta_t,
             self.bins,
             self.number_of_sigmas,
+            self.max_area_overlap,
         )
 
         return self
@@ -237,6 +250,7 @@ class OnionMultiSmooth:
             "delta_t": self.delta_t,
             "bins": self.bins,
             "number_of_sigmas": self.number_of_sigmas,
+            "max_area_overlap": self.max_area_overlap,
         }
 
     def set_params(self, **params):

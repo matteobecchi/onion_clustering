@@ -12,6 +12,8 @@ import pytest
 
 from tropea_clustering import onion_multi_smooth, onion_uni_smooth, plot_smooth
 
+# ---------------- Fixtures ----------------
+
 
 @pytest.fixture
 def original_wd() -> Generator[Path, None, None]:
@@ -34,7 +36,9 @@ def temp_dir(original_wd: Path) -> Generator[Path, None, None]:
         os.chdir(original_wd)  # Restore the original working directory
 
 
-# Define the actual test
+# ---------------- Tests ----------------
+
+
 def test_output_files(original_wd: Path, temp_dir: Path):
     ### Set all the analysis parameters ###
     rng = np.random.default_rng(12345)
@@ -68,7 +72,6 @@ def test_output_files(original_wd: Path, temp_dir: Path):
         plot_smooth.plot_output_uni(out_path, input_data, state_list_u)
         plot_smooth.plot_one_trj_uni(out_path, 0, input_data, labels)
         plot_smooth.plot_state_populations(out_path, labels)
-        plot_smooth.plot_sankey(out_path, labels, [1, 3, 5, 7])
 
         state_list_m, labels = onion_multi_smooth(input_data_2d, delta_t)
 
