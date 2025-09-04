@@ -96,6 +96,8 @@ def gauss_fit_max(
         lower, upper = bounds[dim]
         mask &= (flat_m[:, dim] >= lower) & (flat_m[:, dim] < upper)
 
+    if flat_m[mask].shape[0] < 2:
+        return None  # GMM requires at least 2 samples
     gmm = GaussianMixture(n_components=1, random_state=0).fit(flat_m[mask])
     popt_min = [gmm.means_[0], gmm.covariances_[0], gmm.score(flat_m[mask])]
     flag_min = gmm.converged_

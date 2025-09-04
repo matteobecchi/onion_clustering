@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tropea-clustering"
-version = "2.1.0"
+version = "2.1.1"
 description = "Code for unsupervised clustering of time-correlated data."
 # license = "MIT"
 maintainers = [{ name = "Matteo Becchi", email = "bechmath@gmail.com" }]
