@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If this software is used, please cite it as below."
+title: "Onion Clustering"
+version: "2.1.1"
+date-released: "2025-09-04"
+authors:
+  - family-names: "Becchi"
+    given-names: "Matteo"
+    email: "bechmath@gmail.com"
+license: MIT
+repository-code: "https://github.com/matteobecchi/onion_clustering"
