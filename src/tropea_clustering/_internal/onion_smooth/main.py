@@ -241,6 +241,7 @@ def find_stable_trj(
         Fraction of data points classified in this state.
     """
     mask_unclassified = tmp_labels == 0
+    assert state.th_inf is not None and state.th_sup is not None
     mask_inf = matrix >= state.th_inf[0]
     mask_sup = matrix <= state.th_sup[0]
     mask = mask_unclassified & mask_inf & mask_sup
@@ -373,6 +374,7 @@ def fit_local_maxima(
         state._build_boundaries(number_of_sigmas)
 
         mask_unclassified = tmp_labels == 0
+        assert state.th_inf is not None and state.th_sup is not None
         mask_inf = matrix >= state.th_inf[0]
         mask_sup = matrix <= state.th_sup[0]
         mask = mask_unclassified & mask_inf & mask_sup

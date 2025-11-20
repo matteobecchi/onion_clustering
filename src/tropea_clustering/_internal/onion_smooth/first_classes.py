@@ -4,7 +4,7 @@ Contains the classes used for storing parameters and system states.
 
 # Author: Becchi Matteo <bechmath@gmail.com>
 
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass
 
 import numpy as np
 
@@ -64,14 +64,19 @@ class StateUni:
     area: float
     r_2: float
     perc: float = 0.0
-    peak: float = field(init=False)
-    th_inf: np.ndarray = field(init=False)
-    th_sup: np.ndarray = field(init=False)
+    peak: float | None = None
+    th_inf: list[float] | None = None
+    th_sup: list[float] | None = None
 
     def __post_init__(self):
-        self.peak = self.area / self.sigma / np.sqrt(np.pi)
-        self.th_inf = [self.mean - 2.0 * self.sigma, -1]
-        self.th_sup = [self.mean + 2.0 * self.sigma, -1]
+        if self.peak is None:
+            self.peak = self.area / self.sigma / np.sqrt(np.pi)
+
+        if self.th_inf is None:
+            self.th_inf = [self.mean - 2.0 * self.sigma, -1]
+
+        if self.th_sup is None:
+            self.th_sup = [self.mean + 2.0 * self.sigma, -1]
 
     def _build_boundaries(self, number_of_sigmas: float):
         """
@@ -83,8 +88,8 @@ class StateUni:
         number of sigmas : float
             How many sigmas the thresholds are far from the mean.
         """
-        self.th_inf = np.array([self.mean - number_of_sigmas * self.sigma, -1])
-        self.th_sup = np.array([self.mean + number_of_sigmas * self.sigma, -1])
+        self.th_inf = [self.mean - number_of_sigmas * self.sigma, -1]
+        self.th_sup = [self.mean + number_of_sigmas * self.sigma, -1]
 
     def get_attributes(self):
         """
