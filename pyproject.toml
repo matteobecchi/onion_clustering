@@ -15,6 +15,7 @@ dependencies = [
     "matplotlib",
     "plotly",
     "kaleido",
+    "tqdm",
 ]
 requires-python = ">=3.9"
 readme = "README.md"
@@ -60,6 +61,7 @@ module = [
     'tropea_clustering.*',
     'sklearn.base',
     'scipy.*',
+    'tqdm.*',
     'plotly.*',
     'matplotlib.*',
     'sklearn.utils.*',
