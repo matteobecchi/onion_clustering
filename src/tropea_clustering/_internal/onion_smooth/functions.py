@@ -244,7 +244,7 @@ def relabel_states(
     return all_the_labels, relevant_states
 
 
-def find_intersection(st_0: StateUni, st_1: StateUni) -> tuple[float, int]:
+def find_intersection(st_0: StateUni, st_1: StateUni) -> list[float]:
     """
     Finds the intersection between two Gaussians.
 
@@ -276,19 +276,19 @@ def find_intersection(st_0: StateUni, st_1: StateUni) -> tuple[float, int]:
         only_th = (st_0.mean + st_1.mean) / 2 - st_0.sigma**2 / 2 / (
             st_1.mean - st_0.mean
         ) * np.log(st_0.area / st_1.area)
-        return only_th, 1
+        return [only_th, 1]
     if delta >= 0:
         th_plus = (-coeff_b + np.sqrt(delta)) / (2 * coeff_a)
         th_minus = (-coeff_b - np.sqrt(delta)) / (2 * coeff_a)
         intercept_plus = gaussian(th_plus, st_0.mean, st_0.sigma, st_0.area)
         intercept_minus = gaussian(th_minus, st_0.mean, st_0.sigma, st_0.area)
         if intercept_plus >= intercept_minus:
-            return th_plus, 1
-        return th_minus, 1
+            return [th_plus, 1]
+        return [th_minus, 1]
     th_aver = (st_0.mean / st_0.sigma + st_1.mean / st_1.sigma) / (
         1 / st_0.sigma + 1 / st_1.sigma
     )
-    return th_aver, 2
+    return [th_aver, 2]
 
 
 def shared_area_between_gaussians(
@@ -384,20 +384,12 @@ def final_state_settings(
     if len(list_of_states) == 0:
         return list_of_states
 
-    list_of_states[0].th_inf[0] = m_range[0]
-    list_of_states[0].th_inf[1] = 0
-
+    list_of_states[0].th_inf = [m_range[0], 0]
     for i in range(len(list_of_states) - 1):
-        th_val, th_type = find_intersection(
-            list_of_states[i], list_of_states[i + 1]
-        )
-        list_of_states[i].th_sup[0] = th_val
-        list_of_states[i].th_sup[1] = th_type
-        list_of_states[i + 1].th_inf[0] = th_val
-        list_of_states[i + 1].th_inf[1] = th_type
-
-    list_of_states[-1].th_sup[0] = m_range[1]
-    list_of_states[-1].th_sup[1] = 0
+        tmp_th = find_intersection(list_of_states[i], list_of_states[i + 1])
+        list_of_states[i].th_sup = tmp_th
+        list_of_states[i + 1].th_inf = tmp_th
+    list_of_states[-1].th_sup = [m_range[1], 0]
 
     return list_of_states
 
@@ -444,6 +436,8 @@ def set_final_states(
                     st_0.sigma,
                 )
                 thresh = area_max_overlap
+                assert st_0.peak is not None
+                assert st_1.peak is not None
                 if shared_area_1 > thresh >= shared_area_2:
                     proposed_merge.append([j, i])
                 elif shared_area_2 > thresh >= shared_area_1:
