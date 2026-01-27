@@ -15,6 +15,7 @@
       :toctree:
       :nosignatures:
    
+      onion_clustering
       onion_multi
       onion_multi_smooth
       onion_uni
@@ -31,6 +32,7 @@
       :template: class.rst
       :nosignatures:
    
+      Onion
       OnionMulti
       OnionMultiSmooth
       OnionUni
