@@ -11,9 +11,9 @@ from numpy.typing import NDArray
 class OnionParams:
     """Contains the hyperparameters of the Onion clustering."""
 
-    bins: Literal["auto"] | int = "auto"
-    number_of_sigmas: float = 3.0
-    max_area_overlap: float = 0.8
+    bins: Literal["auto"] | int
+    number_of_sigmas: float
+    max_area_overlap: float
 
     def __post_init__(self):
         if isinstance(self.bins, int) and self.bins <= 1:
