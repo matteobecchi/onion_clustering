@@ -43,6 +43,10 @@ def test_onion(input_data_2d: np.ndarray):
     # Check clustering output
     this_dir = Path(__file__).parent
     expected = np.load(this_dir / "output_multi_smooth/labels.npy")
+    mask_0 = expected == 0
+    mask_1 = expected == 1
+    expected[mask_1] = 0
+    expected[mask_0] = 1
     assert_array_equal(labels, expected)
 
 

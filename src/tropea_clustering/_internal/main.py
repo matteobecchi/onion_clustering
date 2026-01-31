@@ -160,21 +160,18 @@ def find_stable_trj(
     """
     mask_unclassified = data.labels == -1
 
-    data_copy = copy.deepcopy(data)
+    m_clean = data.data.copy()
     l_cholesky = cholesky(state["covariance"], lower=True)
     l_inv = np.linalg.inv(l_cholesky)
-    rescaled = ((data_copy.data - state["mean"]) @ l_inv.T) / np.sqrt(
-        data_copy.ndims,
-    )
+    rescaled = ((m_clean - state["mean"]) @ l_inv.T) / np.sqrt(data.ndims)
     squared_distances = np.sum(rescaled**2, axis=2)
 
     mask_dist = squared_distances <= params.number_of_sigmas**2
-    print(mask_dist)
 
     mask = mask_unclassified & mask_dist
 
-    mask_stable = np.zeros_like(data_copy.labels, dtype=bool)
-    for i, _ in enumerate(data_copy.data):
+    mask_stable = np.zeros_like(data.labels, dtype=bool)
+    for i, _ in enumerate(data.data):
         row_mask = mask[i]
         padded = np.concatenate(([False], row_mask, [False]))
         diff = np.diff(padded.astype(int))
@@ -185,7 +182,8 @@ def find_stable_trj(
             if end - start >= delta_t:
                 mask_stable[i, start:end] = True
 
-    data_copy.labels[mask_stable] = states_counter + 1
+    data_copy = copy.deepcopy(data)
+    data_copy.labels[mask_stable] = states_counter
     fraction = np.sum(mask_stable) / mask_stable.size
 
     return data_copy, fraction
