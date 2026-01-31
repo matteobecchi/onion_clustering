@@ -183,7 +183,8 @@ def find_stable_trj(
                 mask_stable[i, start:end] = True
 
     data_copy = copy.deepcopy(data)
-    data_copy.labels[mask_stable] = states_counter
+    if data_copy.labels is not None:
+        data_copy.labels[mask_stable] = states_counter
     fraction = np.sum(mask_stable) / mask_stable.size
 
     return data_copy, fraction
