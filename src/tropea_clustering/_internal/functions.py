@@ -474,7 +474,7 @@ def set_final_states(
             best_merge.append(candidate_merge[0])
         else:
             importance = [
-                list_of_states[pair[1]].perc for pair in candidate_merge
+                list_of_states[pair[1]]["perc"] for pair in candidate_merge
             ]
             best_merge.append(candidate_merge[np.argmax(importance)])
 
@@ -627,7 +627,7 @@ def relabel_states_2d(
             best_merge.append(candidate_merge[0])
         else:
             importance = [
-                sorted_states[pair[1]].perc for pair in candidate_merge
+                sorted_states[pair[1]]["perc"] for pair in candidate_merge
             ]
             best_merge.append(candidate_merge[np.argmax(importance)])
 

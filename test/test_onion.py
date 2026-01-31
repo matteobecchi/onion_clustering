@@ -38,7 +38,7 @@ def test_onion(input_data_2d: np.ndarray):
     labels = on_cl.fit_predict(input_data_2d, delta_t)
 
     # Test functional interface
-    # _ = onion_clustering(input_data_2d, delta_t)
+    _ = onion_clustering(input_data_2d, delta_t)
 
     # Check clustering output
     this_dir = Path(__file__).parent
