@@ -1,15 +1,14 @@
 """Code for Onion clustering of time-series data."""
 
+import copy
+
 import numpy as np
 from numpy.typing import NDArray
 from scipy.linalg import cholesky
 from sklearn.mixture import GaussianMixture
 
 from tropea_clustering._internal.classes import OnionData, OnionParams
-from tropea_clustering._internal.onion_smooth.first_classes import (
-    StateMulti,
-)
-from tropea_clustering._internal.onion_smooth.functions import (
+from tropea_clustering._internal.functions import (
     find_half_height_around_max,
     find_minima_around_max,
     moving_average_2d,
@@ -18,48 +17,25 @@ from tropea_clustering._internal.onion_smooth.functions import (
 
 
 def gauss_fit_max(
-    matrix: NDArray[np.float64],
-    tmp_labels: NDArray[np.int64],
-    m_limits: NDArray[np.float64],
-    bins: int | str,
-    number_of_sigmas: float,
-) -> StateMulti | None:
+    data: OnionData,
+    params: OnionParams,
+) -> dict | None:
     """
     Selection of the optimal region and parameters in order to fit a state.
 
     Parameters
     ----------
-    matrix : ndarray of shape (n_particles, n_frames)
-        The time-series data to cluster.
-
-    tmp_labels : ndarray of shape (n_particles, n_frames)
-        Temporary labels for each frame. Unclassified points are given
-        the label "0".
-
-    m_limits : ndarray
-        The min and max of the data points, for each feature.
-
-    bins : int, default="auto"
-        The number of bins used for the construction of the histograms.
-        Can be an integer value, or "auto".
-        If "auto", the default of numpy.histogram_bin_edges is used
-        (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
-
-    number_of_sigmas : float, default=3.0
-        Sets the thresholds for classifing a signal sequence inside a state:
-        the sequence is contained in the state if it is entirely contained
-        inside number_of_sigmas * state.sigmas times from state.mean.
 
     Returns
     -------
-    state : StateMulti | None
+    state : dict | None
         It is None if the fit failed.
     """
-    mask = tmp_labels == 0
-    flat_m = matrix[mask]
-    if bins == "auto":
-        bins = max(int(np.power(matrix.size, 1 / 3) * 2), 10)
-    counts, edges = np.histogramdd(flat_m, bins=bins, density=True)
+    mask = data.labels == -1
+    flat_m = data.data[mask]
+    if params.bins == "auto":
+        params.bins = max(int(np.power(data.data.size, 1 / 3) * 2), 10)
+    counts, edges = np.histogramdd(flat_m, bins=params.bins, density=True)
 
     gap = 1
     edges_sides = np.array([e.size for e in edges])
@@ -130,19 +106,23 @@ def gauss_fit_max(
     else:
         return None
 
-    state = StateMulti(popt[0], popt[1], popt[2], number_of_sigmas)
+    state = {
+        "mean": popt[0],
+        "covariance": popt[1],
+        "log_likelihood": popt[2],
+        "perc": 0.0,
+    }
 
     return state
 
 
 def find_stable_trj(
-    matrix: NDArray[np.float64],
-    tmp_labels: NDArray[np.int64],
-    state: StateMulti,
+    data: OnionData,
     delta_t: int,
-    lim: int,
-    number_of_sigmas: float,
-) -> tuple[np.ndarray, float]:
+    params: OnionParams,
+    state: dict,
+    states_counter: int,
+) -> tuple[OnionData, float]:
     """
     Identification of sequences contained in a certain state.
 
@@ -178,20 +158,23 @@ def find_stable_trj(
     fraction : float
         Fraction of data points classified in this state.
     """
-    mask_unclassified = tmp_labels == 0
+    mask_unclassified = data.labels == -1
 
-    m_clean = matrix.copy()
-    l_cholesky = cholesky(state.covariance, lower=True)
+    data_copy = copy.deepcopy(data)
+    l_cholesky = cholesky(state["covariance"], lower=True)
     l_inv = np.linalg.inv(l_cholesky)
-    rescaled = ((m_clean - state.mean) @ l_inv.T) / np.sqrt(matrix.shape[2])
+    rescaled = ((data_copy.data - state["mean"]) @ l_inv.T) / np.sqrt(
+        data_copy.ndims,
+    )
     squared_distances = np.sum(rescaled**2, axis=2)
 
-    mask_dist = squared_distances <= number_of_sigmas**2
+    mask_dist = squared_distances <= params.number_of_sigmas**2
+    print(mask_dist)
 
     mask = mask_unclassified & mask_dist
 
-    mask_stable = np.zeros_like(tmp_labels, dtype=bool)
-    for i, _ in enumerate(matrix):
+    mask_stable = np.zeros_like(data_copy.labels, dtype=bool)
+    for i, _ in enumerate(data_copy.data):
         row_mask = mask[i]
         padded = np.concatenate(([False], row_mask, [False]))
         diff = np.diff(padded.astype(int))
@@ -202,148 +185,10 @@ def find_stable_trj(
             if end - start >= delta_t:
                 mask_stable[i, start:end] = True
 
-    tmp_labels[mask_stable] = lim + 1
+    data_copy.labels[mask_stable] = states_counter + 1
     fraction = np.sum(mask_stable) / mask_stable.size
 
-    return tmp_labels, fraction
-
-
-def iterative_search(
-    matrix: NDArray[np.float64],
-    delta_t: int,
-    bins: int | str,
-    number_of_sigmas: float,
-    max_area_overlap: float,
-) -> tuple[list[StateMulti], NDArray[np.int64]]:
-    """
-    Iterative search for stable sequences in the trajectory.
-
-    Parameters
-    ----------
-    matrix : ndarray of shape (n_particles, n_frames, n_features)
-        The time-series data to cluster.
-
-    delta_t : int
-        The minimum lifetime required for the clusters.
-
-    bins : int, default="auto"
-        The number of bins used for the construction of the histograms.
-        Can be an integer value, or "auto".
-        If "auto", the default of numpy.histogram_bin_edges is used
-        (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
-
-    number_of_sigmas : float, default=3.0
-        Sets the thresholds for classifing a signal sequence inside a state:
-        the sequence is contained in the state if it is entirely contained
-        inside number_of_sigmas * state.sigmas times from state.mean.
-
-    max_area_overlap : float, default=0.8
-        Thresold to consider two Gaussian states overlapping, and thus merge
-        them together.
-
-    Results
-    -------
-    states_list : List[StateMulti]
-        The list of the identified states.
-
-    labels : ndarray of shape (n_particles, n_frames)
-        Cluster labels for each frame. Unclassified points are given
-        the label "-1".
-    """
-    tmp_labels = np.zeros((matrix.shape[0], matrix.shape[1]), dtype=int)
-    tmp_states_list = []
-    states_counter = 0
-
-    min_vals = matrix.min(axis=(0, 1))  # shape: (n_dims,)
-    max_vals = matrix.max(axis=(0, 1))  # shape: (n_dims,)
-    bounds = np.stack((min_vals, max_vals), axis=1)
-
-    while True:
-        state = gauss_fit_max(
-            matrix,
-            tmp_labels,
-            bounds,
-            bins,
-            number_of_sigmas,
-        )
-        if state is None:
-            break
-
-        tmp_labels, counter = find_stable_trj(
-            matrix,
-            tmp_labels,
-            state,
-            delta_t,
-            states_counter,
-            number_of_sigmas,
-        )
-        if counter == 0.0:
-            break
-
-        state.perc = counter
-        tmp_states_list.append(state)
-        states_counter += 1
-
-    labels, state_list = relabel_states_2d(
-        max_area_overlap,
-        tmp_labels,
-        tmp_states_list,
-    )
-
-    return state_list, labels - 1
-
-
-def _main(
-    matrix: NDArray[np.float64],
-    delta_t: int,
-    bins: int | str,
-    number_of_sigmas: float,
-    max_area_overlap: float,
-) -> tuple[list[StateMulti], NDArray[np.int64]]:
-    """
-    Performs onion clustering on the data array 'matrix' at a give delta_t.
-
-    Parameters
-    ----------
-    matrix : ndarray of shape (n_particles, n_frames, n_features)
-        The time-series data to cluster.
-
-    delta_t : int
-        The minimum lifetime required for the clusters.
-
-    bins : int, default="auto"
-        The number of bins used for the construction of the histograms.
-        Can be an integer value, or "auto".
-        If "auto", the default of numpy.histogram_bin_edges is used
-        (see https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html#numpy.histogram_bin_edges).
-
-    number_of_sigmas : float, default=3.0
-        Sets the thresholds for classifing a signal sequence inside a state:
-        the sequence is contained in the state if it is entirely contained
-        inside number_of_sigmas * state.sigmas times from state.mean.
-
-    max_area_overlap : float, default=0.8
-        Thresold to consider two Gaussian states overlapping, and thus merge
-        them together.
-
-    Returns
-    -------
-    states_list : List[StateMulti]
-        The list of the identified states.
-
-    labels : ndarray of shape (n_particles, n_frames)
-        Cluster labels for each frame. Unclassified points are given
-        the label "-1".
-    """
-    tmp_state_list, tmp_labels = iterative_search(
-        matrix,
-        delta_t,
-        bins,
-        number_of_sigmas,
-        max_area_overlap,
-    )
-
-    return tmp_state_list, tmp_labels
+    return data_copy, fraction
 
 
 def perform_onion_clustering(
@@ -352,7 +197,38 @@ def perform_onion_clustering(
     params: OnionParams,
 ) -> tuple[list[dict], NDArray[np.int64]]:
     """The main function, to be written."""
+    tmp_state_list = []
+    data_copy = copy.deepcopy(data)
 
-    tmp_list: list[dict] = []
-    tmp_labels = -np.ones((10, 10), dtype=int)
-    return tmp_list, tmp_labels
+    states_counter = 0
+    while True:
+        state = gauss_fit_max(
+            data_copy,
+            params,
+        )
+        if state is None:
+            break
+
+        data_copy, fraction = find_stable_trj(
+            data_copy,
+            delta_t,
+            params,
+            state,
+            states_counter,
+        )
+        if fraction == 0.0:
+            break
+
+        state["perc"] = fraction
+        tmp_state_list.append(state)
+        states_counter += 1
+
+    print(tmp_state_list)
+
+    labels, state_list = relabel_states_2d(
+        params.max_area_overlap,
+        data_copy.labels,
+        tmp_state_list,
+    )
+
+    return state_list, labels

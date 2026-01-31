@@ -80,14 +80,14 @@ def onion_clustering(
             assert labels[0][0] == -1
     """
 
-    est = Onion(
+    on_cl = Onion(
         bins=bins,
         number_of_sigmas=number_of_sigmas,
         max_area_overlap=max_area_overlap,
     )
-    est.fit(X, delta_t=delta_t)
+    on_cl.fit(X, delta_t=delta_t)
 
-    return est.labels
+    return on_cl.labels
 
 
 class Onion:
@@ -204,7 +204,7 @@ class Onion:
 
         return self
 
-    def fit_predict(self, X, delta_t):
+    def fit_predict(self, X, delta_t) -> NDArray[np.int64]:
         """Computes clusters on the data array 'X' and returns labels.
 
         Parameters

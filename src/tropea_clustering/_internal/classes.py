@@ -31,12 +31,22 @@ class OnionData:
     """Contains the data to cluster, and their labels."""
 
     data: NDArray[np.float64]
+    bounds: NDArray[np.float64] | None = None
     labels: NDArray[np.int64] | None = None
+    ndims: int = 0
 
     def __post_init__(self):
+        if self.ndims == 0:
+            self.ndims = self.data.shape[2]
+
         if self.labels is None:
             self.labels = np.full(
                 self.data.shape[:2],
-                -1.0,
+                -1,
                 dtype=np.int64,
             )
+
+        min_vals = self.data.min(axis=(0, 1))  # shape: (n_dims,)
+        max_vals = self.data.max(axis=(0, 1))  # shape: (n_dims,)
+        if self.bounds is None:
+            self.bounds = np.stack((min_vals, max_vals), axis=1)
