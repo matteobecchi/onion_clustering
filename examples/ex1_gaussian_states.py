@@ -24,8 +24,6 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
-
-from tropea_clustering import OnionMultiSmooth, OnionUniSmooth
 from tropea_clustering.plot_smooth import (
     plot_one_trj_multi,
     plot_one_trj_uni,
@@ -35,6 +33,8 @@ from tropea_clustering.plot_smooth import (
     plot_state_populations,
     plot_time_res_analysis,
 )
+
+from tropea_clustering import OnionMultiSmooth, OnionUniSmooth
 
 
 def gaussian_2d(x, y, mean, cov):

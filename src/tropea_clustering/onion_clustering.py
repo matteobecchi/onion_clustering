@@ -1,38 +1,35 @@
-"""onion-clustering for univariate time-series."""
+"""Clustering object for Onion clustering."""
 
-# Author: Becchi Matteo <bechmath@gmail.com>
-# Reference: https://www.pnas.org/doi/abs/10.1073/pnas.2403771121
+from typing import Literal
 
 import numpy as np
 from numpy.typing import NDArray
 
-from tropea_clustering._internal.onion_smooth.main import StateUni
-from tropea_clustering._internal.onion_smooth.main import _main as _onion_inner
+from tropea_clustering._internal.main import (
+    fit_onion_clustering,
+    fit_predict_onion_clustering,
+)
 
 
-def onion_uni_smooth(
+def onion_clustering(
     X: NDArray[np.float64],
-    delta_t: int,
-    bins: str | int = "auto",
+    tau: int,
+    bins: Literal["auto"] | int = "auto",
     number_of_sigmas: float = 3.0,
     max_area_overlap: float = 0.8,
-) -> tuple[list[StateUni], NDArray[np.int64]]:
+) -> NDArray[np.int64]:
     """
     Performs onion clustering on the data array 'X'.
 
     Returns an array of integer labels, one for each frame.
     Unclassified frames are labelled "-1".
 
-    .. note::
-        This function is currently in beta testing. The output could change
-        in the future. Use with caution.
-
     Parameters
     ----------
-    X : ndarray of shape (n_particles, n_frames)
+    X : ndarray of shape (n_particles, n_frames, n_features)
         The time-series data to cluster.
 
-    delta_t : int
+    tau : int
         The minimum lifetime required for the clusters. Also referred to as
         the "time resolution" of the clustering analysis.
 
@@ -53,10 +50,6 @@ def onion_uni_smooth(
 
     Returns
     -------
-    states_list : List[StateUni]
-        The list of the identified states. Refer to the documentation of
-        StateUni for accessing the information on the states.
-
     labels : ndarray of shape (n_particles, n_frames)
         Cluster labels for each frame. Unclassified points are given
         the label "-1".
@@ -64,55 +57,52 @@ def onion_uni_smooth(
     Example
     -------
 
-    .. testcode:: onion_uni_smooth-test
+    .. testcode:: onion-test
 
         import numpy as np
-        from tropea_clustering import onion_uni_smooth
+        from tropea_clustering import onion_clustering
 
         # Select time resolution
-        delta_t = 5
+        delta_t = 2
 
         # Create random input data
         np.random.seed(1234)
+        n_features = 2
         n_particles = 5
         n_steps = 1000
 
-        input_data = np.random.rand(n_particles, n_steps)
+        input_data = np.random.rand(n_particles, n_steps, n_features)
 
         # Run Onion Clustering
-        state_list, labels = onion_uni_smooth(input_data, delta_t)
+        labels = onion_clustering(input_data, delta_t)
 
-    .. testcode:: onion_uni_smooth-test
+    .. testcode:: onion-test
             :hide:
 
-            assert np.isclose(state_list[0].mean, 0.5789299719781493)
+            assert labels[0][0] == -1
     """
 
-    est = OnionUniSmooth(
-        delta_t=delta_t,
+    on_cl = OnionClustering(
+        tau=tau,
         bins=bins,
         number_of_sigmas=number_of_sigmas,
         max_area_overlap=max_area_overlap,
     )
-    est.fit(X)
+    on_cl.fit(X)
 
-    return est.state_list_, est.labels_
+    return on_cl.labels
 
 
-class OnionUniSmooth:
+class OnionClustering:
     """
     Performs onion clustering on a data array.
 
     Returns an array of integer labels, one for each frame.
     Unclassified frames are labelled "-1".
 
-    .. note::
-        This class is currently in beta testing. Its operations could change
-        in the future. Use with caution.
-
     Parameters
     ----------
-    delta_t : int
+    tau : int
         The minimum lifetime required for the clusters. Also referred to as
         the "time resolution" of the clustering analysis.
 
@@ -125,7 +115,7 @@ class OnionUniSmooth:
     number_of_sigmas : float, default=3.0
         Sets the thresholds for classifing a signal sequence inside a state:
         the sequence is contained in the state if it is entirely contained
-        inside number_of_sigmas * state.sigmas times from state.mean.
+        inside number_of_sigma * state.sigms times from state.mean.
 
     max_area_overlap : float, default=0.8
         Thresold to consider two Gaussian states overlapping, and thus merge
@@ -133,61 +123,69 @@ class OnionUniSmooth:
 
     Attributes
     ----------
-    states_list_ : List[StateUni]
-        The list of the identified states. Refer to the documentation of
-        StateUni for accessing the information on the states.
+    input_data : ndarray of shape (n_particles, n_frames, n_features)
+        The input data array.
 
-    labels_ : ndarray of shape (n_particles, n_frames)
+    params : dict
+        The parameters used for the clustering.
+
+    state_list : List[dict]
+        The list of the identified states.
+
+    labels: ndarray of shape (n_particles, n_frames)
         Cluster labels for each frame. Unclassified points are given
         the label "-1".
 
     Example
     -------
 
-    .. testcode:: OnionUniSmooth-test
+    .. testcode:: Onion-test
 
         import numpy as np
-        from tropea_clustering import OnionUniSmooth
+        from tropea_clustering import Onion
+
+        # Select time resolution
+        tau = 2
 
         # Create random input data
         np.random.seed(1234)
+        n_features = 2
         n_particles = 5
         n_steps = 1000
 
-        delta_t = 5
-        input_data = np.random.rand(n_particles, n_steps)
+        input_data = np.random.rand(n_particles, n_steps, n_features)
 
         # Run Onion Clustering
-        clusterer = OnionUniSmooth(delta_t)
-        clust_params = {"bins": 100, "number_of_sigmas": 3.0}
-        clusterer.set_params(**clust_params)
+        clust_params = {"tau": 2, "bins": 100, "number_of_sigmas": 2.0}
+        clusterer = OnionClustering(**clust_params)
         clusterer.fit(input_data)
 
-    .. testcode:: OnionUniSmooth-test
+    .. testcode:: Onion-test
             :hide:
 
-            assert np.isclose(
-                clusterer.state_list_[0].mean, 0.5789299753284055)
+            assert clusterer.labels[0][0] == -1
     """
 
     def __init__(
         self,
-        delta_t: int,
-        bins: str | int = "auto",
+        tau: int,
+        bins: Literal["auto"] | int = "auto",
         number_of_sigmas: float = 3.0,
         max_area_overlap: float = 0.8,
-    ):
-        self.delta_t = delta_t
-        self.bins = bins
-        self.number_of_sigmas = number_of_sigmas
-        self.max_area_overlap = max_area_overlap
+    ) -> None:
+        self.params = {
+            "tau": tau,
+            "bins": bins,
+            "number_of_sigmas": number_of_sigmas,
+            "max_area_overlap": max_area_overlap,
+        }
 
-    def fit(self, X, y=None):
+    def fit(self, X: NDArray[np.float64]) -> None:
         """Performs onion clustering on the data array 'X'.
 
         Parameters
         ----------
-        X : ndarray of shape (n_particles, n_frames)
+        X : ndarray of shape (n_particles, n_frames, n_features)
             The time-series data to cluster.
 
         Returns
@@ -195,9 +193,8 @@ class OnionUniSmooth:
         self : object
             A fitted instance of self.
         """
-
-        if X.ndim != 2:
-            raise ValueError("Expected 2-dimensional input data.")
+        if X.ndim < 2 or X.ndim > 3:
+            raise ValueError("Expected 2- or 3-dimensional input data.")
 
         if X.shape[0] == 0:
             raise ValueError("Empty dataset.")
@@ -214,41 +211,28 @@ class OnionUniSmooth:
 
         X = X.copy()  # copy to avoid in-place modification
 
-        self.state_list_, self.labels_ = _onion_inner(
+        self.state_list, self.labels = fit_onion_clustering(
             X,
-            self.delta_t,
-            self.bins,
-            self.number_of_sigmas,
-            self.max_area_overlap,
+            self.params,
         )
 
         return self
 
-    def fit_predict(self, X, y=None):
+    def fit_predict(self, X: NDArray[np.float64]) -> NDArray[np.int64]:
         """Computes clusters on the data array 'X' and returns labels.
 
         Parameters
         ----------
-        X : ndarray of shape (n_particles, n_frames)
+        X : ndarray of shape (n_particles, n_frames, n_features)
             The time-series data to cluster.
 
         Returns
         -------
-        labels : ndarray of shape (n_particles, n_frames)
+        labels: ndarray of shape (n_particles, n_frames)
             Cluster labels for each frame. Unclassified points are given
             the label "-1".
         """
-        return self.fit(X).labels_
 
-    def get_params(self, deep=True):
-        return {
-            "delta_t": self.delta_t,
-            "bins": self.bins,
-            "number_of_sigmas": self.number_of_sigmas,
-            "max_area_overlap": self.max_area_overlap,
-        }
+        _, labels = fit_predict_onion_clustering(X)
 
-    def set_params(self, **params):
-        for param, value in params.items():
-            setattr(self, param, value)
-        return self
+        return labels

@@ -2,15 +2,11 @@
 
 # Author: Becchi Matteo <bechmath@gmail.com>
 
-from multiprocessing.sharedctypes import Value
-
 import numpy as np
 from numpy.typing import NDArray
 from scipy.integrate import quad
 from scipy.stats import chi2
-
 from tropea_clustering._internal.onion_smooth.first_classes import (
-    StateMulti,
     StateUni,
 )
 

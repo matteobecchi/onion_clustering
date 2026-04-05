@@ -13,8 +13,6 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
-
-from tropea_clustering import OnionUniSmooth
 from tropea_clustering.plot import (
     plot_one_trj_uni,
     plot_output_uni,
@@ -23,6 +21,8 @@ from tropea_clustering.plot import (
     plot_state_populations,
     plot_time_res_analysis,
 )
+
+from tropea_clustering import OnionUniSmooth
 
 
 def main():

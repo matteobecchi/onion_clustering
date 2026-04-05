@@ -12,12 +12,12 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
-
-from tropea_clustering import OnionMultiSmooth
 from tropea_clustering.plot_smooth import (
     plot_pop_fractions,
     plot_time_res_analysis,
 )
+
+from tropea_clustering import OnionMultiSmooth
 
 
 def gaussian_2d(x, y, mean, cov):

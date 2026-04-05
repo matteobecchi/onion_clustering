@@ -1,24 +1,21 @@
 """Code for Onion clustering of time-series data."""
 
-import copy
-
 import numpy as np
 from numpy.typing import NDArray
 from scipy.linalg import cholesky
 from sklearn.mixture import GaussianMixture
 
-from tropea_clustering._internal.classes import OnionData, OnionParams
 from tropea_clustering._internal.functions import (
     find_half_height_around_max,
     find_minima_around_max,
     moving_average_2d,
-    relabel_states_2d,
 )
 
 
 def gauss_fit_max(
-    data: OnionData,
-    params: OnionParams,
+    data: NDArray[np.float64],
+    labels: NDArray[np.int64],
+    params: dict,
 ) -> dict | None:
     """
     Selection of the optimal region and parameters in order to fit a state.
@@ -31,11 +28,11 @@ def gauss_fit_max(
     state : dict | None
         It is None if the fit failed.
     """
-    mask = data.labels == -1
-    flat_m = data.data[mask]
-    if params.bins == "auto":
-        params.bins = max(int(np.power(data.data.size, 1 / 3) * 2), 10)
-    counts, edges = np.histogramdd(flat_m, bins=params.bins, density=True)
+    mask = labels == -1
+    flat_m = data[mask]
+    if params["bins"] == "auto":
+        params["bins"] = max(int(np.power(data.size, 1 / 3) * 2), 10)
+    counts, edges = np.histogramdd(flat_m, bins=params["bins"], density=True)
 
     gap = 1
     edges_sides = np.array([e.size for e in edges])
@@ -117,12 +114,11 @@ def gauss_fit_max(
 
 
 def find_stable_trj(
-    data: OnionData,
-    delta_t: int,
-    params: OnionParams,
+    data: NDArray[np.float64],
     state: dict,
-    states_counter: int,
-) -> tuple[OnionData, float]:
+    labels: NDArray[np.int64],
+    params: dict,
+) -> tuple[NDArray[np.int64], float]:
     """
     Identification of sequences contained in a certain state.
 
@@ -158,20 +154,20 @@ def find_stable_trj(
     fraction : float
         Fraction of data points classified in this state.
     """
-    mask_unclassified = data.labels == -1
+    mask_unclassified = labels == -1
 
-    m_clean = data.data.copy()
+    m_clean = data.copy()
     l_cholesky = cholesky(state["covariance"], lower=True)
     l_inv = np.linalg.inv(l_cholesky)
-    rescaled = ((m_clean - state["mean"]) @ l_inv.T) / np.sqrt(data.ndims)
+    rescaled = ((m_clean - state["mean"]) @ l_inv.T) / np.sqrt(data.shape[2])
     squared_distances = np.sum(rescaled**2, axis=2)
 
-    mask_dist = squared_distances <= params.number_of_sigmas**2
+    mask_dist = squared_distances <= params["number_of_sigmas"] ** 2
 
     mask = mask_unclassified & mask_dist
 
-    mask_stable = np.zeros_like(data.labels, dtype=bool)
-    for i, _ in enumerate(data.data):
+    mask_stable = np.zeros_like(labels, dtype=bool)
+    for i, _ in enumerate(data):
         row_mask = mask[i]
         padded = np.concatenate(([False], row_mask, [False]))
         diff = np.diff(padded.astype(int))
@@ -179,55 +175,56 @@ def find_stable_trj(
         ends = np.where(diff == -1)[0]
 
         for start, end in zip(starts, ends):
-            if end - start >= delta_t:
+            if end - start >= params["tau"]:
                 mask_stable[i, start:end] = True
 
-    data_copy = copy.deepcopy(data)
-    if data_copy.labels is not None:
-        data_copy.labels[mask_stable] = states_counter
+    labels[mask_stable] = np.max(labels) + 1
     fraction = np.sum(mask_stable) / mask_stable.size
 
-    return data_copy, fraction
+    return labels, fraction
 
 
-def perform_onion_clustering(
-    data: OnionData,
-    delta_t: int,
-    params: OnionParams,
+def fit_onion_clustering(
+    data: np.ndarray,
+    params: dict,
 ) -> tuple[list[dict], NDArray[np.int64]]:
     """The main function, to be written."""
-    tmp_state_list = []
-    data_copy = copy.deepcopy(data)
 
-    states_counter = 0
+    state_list = []
+    labels = -1 * np.ones(data.shape[:2], dtype=np.int64)
+
     while True:
         state = gauss_fit_max(
-            data_copy,
-            params,
+            data=data,
+            labels=labels,
+            params=params,
         )
         if state is None:
             break
 
-        data_copy, fraction = find_stable_trj(
-            data_copy,
-            delta_t,
-            params,
-            state,
-            states_counter,
+        labels, fraction = find_stable_trj(
+            data=data,
+            state=state,
+            labels=labels,
+            params=params,
         )
         if fraction == 0.0:
             break
 
         state["perc"] = fraction
-        tmp_state_list.append(state)
-        states_counter += 1
+        state_list.append(state)
 
-    print(tmp_state_list)
-
-    labels, state_list = relabel_states_2d(
-        params.max_area_overlap,
-        data_copy.labels,
-        tmp_state_list,
-    )
+    # labels, state_list = relabel_states_2d(
+    #     params.max_area_overlap,
+    #     data_copy.labels,
+    #     state_list,
+    # )
 
     return state_list, labels
+
+
+def fit_predict_onion_clustering(
+    data: np.ndarray,
+) -> NDArray[np.int64]:
+    labels = -1 * np.ones(data.shape[:2], dtype=np.int64)
+    return labels
