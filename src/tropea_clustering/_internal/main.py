@@ -223,7 +223,7 @@ def fit_onion_clustering(
     return state_list, labels
 
 
-def fit_predict_onion_clustering(
+def predict_onion_clustering(
     data: np.ndarray,
 ) -> NDArray[np.int64]:
     labels = -1 * np.ones(data.shape[:2], dtype=np.int64)
