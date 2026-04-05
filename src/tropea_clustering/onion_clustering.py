@@ -7,7 +7,7 @@ from numpy.typing import NDArray
 
 from tropea_clustering._internal.main import (
     fit_onion_clustering,
-    fit_predict_onion_clustering,
+    predict_onion_clustering,
 )
 
 
