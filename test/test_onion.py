@@ -8,6 +8,68 @@ from numpy.testing import assert_array_equal
 
 from tropea_clustering import OnionClustering, onion_clustering
 
+
+def _plot_cluster_labels(
+    X: np.ndarray,
+    labels: np.ndarray,
+    frame: int | None = 0,
+    title: str | None = None,
+) -> None:
+    """Plot 2D points colored by cluster label.
+
+    If frame is None, the first two axes of X are flattened and all points are
+    plotted together. Otherwise, a single time frame is plotted.
+    """
+    import matplotlib.pyplot as plt
+
+    if X.ndim != 3 or X.shape[2] != 2:
+        raise ValueError("X must be a 3D array with the last dimension equal to 2.")
+    if labels.shape != X.shape[:2] and labels.shape != (np.prod(X.shape[:2]),):
+        raise ValueError("labels must have shape (n1, n2) or (n1*n2,) and match X.")
+
+    if frame is None:
+        X_flat = X.reshape(-1, 2)
+        labels_flat = labels.reshape(-1) if labels.ndim == 2 else labels
+        x = X_flat[:, 0]
+        y = X_flat[:, 1]
+        plotted_labels = labels_flat
+        title = title or "Flattened cluster labels"
+    else:
+        if labels.shape != X.shape[:2]:
+            raise ValueError("frame plotting requires labels with shape (n_particles, n_frames).")
+        if frame < 0 or frame >= X.shape[1]:
+            raise IndexError("frame is out of bounds.")
+
+        x = X[:, frame, 0]
+        y = X[:, frame, 1]
+        plotted_labels = labels[:, frame]
+        title = title or f"Frame {frame} cluster labels"
+
+    unique_labels = np.unique(plotted_labels)
+    cmap = plt.get_cmap("tab10")
+    for idx, label in enumerate(unique_labels):
+        mask = plotted_labels == label
+        color = "lightgray" if label == -1 else cmap(idx % cmap.N)
+        label_name = "unclassified" if label == -1 else f"cluster {int(label)}"
+        plt.scatter(
+            x[mask],
+            y[mask],
+            c=[color],
+            label=label_name,
+            s=15,
+            alpha=0.8,
+            edgecolors="k",
+            linewidths=0.2,
+        )
+
+    plt.title(title)
+    plt.xlabel("feature 0")
+    plt.ylabel("feature 1")
+    plt.legend(loc="best", fontsize="small")
+    plt.gca().set_aspect("equal", adjustable="box")
+    plt.show()
+
+
 # ---------------- Fixtures ----------------
 
 
@@ -48,6 +110,22 @@ def test_onion(input_data_2d: np.ndarray):
     expected[mask_1] = 0
     expected[mask_0] = 1
     assert_array_equal(on_cl.labels, expected)
+
+
+def test_debug_plot_cluster_labels(input_data_2d: np.ndarray):
+    import matplotlib.pyplot as plt
+
+    on_cl = OnionClustering(tau=10, bins=50)
+    on_cl.fit(input_data_2d)
+
+    _plot_cluster_labels(
+        input_data_2d,
+        on_cl.labels,
+        frame=None,
+        title="Debug cluster labels",
+    )
+    # Don't close plots so they can be seen
+    # plt.close("all")
 
 
 def test_wrong_input():
