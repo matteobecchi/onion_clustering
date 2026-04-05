@@ -6,9 +6,6 @@ import numpy as np
 from numpy.typing import NDArray
 from scipy.integrate import quad
 from scipy.stats import chi2
-from tropea_clustering._internal.onion_smooth.first_classes import (
-    StateUni,
-)
 
 
 def moving_average_2d(
@@ -201,8 +198,8 @@ def find_half_height_around_max(
 
 def relabel_states(
     all_the_labels: NDArray[np.int64],
-    states_list: list[StateUni],
-) -> tuple[NDArray[np.int64], list[StateUni]]:
+    states_list: list[dict],
+) -> tuple[NDArray[np.int64], list[dict]]:
     """
     Relabel states and update the state list.
 
@@ -222,9 +219,9 @@ def relabel_states(
     relevant_states : List[StateUni]
         Updated list of StateUni objects representing different states.
     """
-    relevant_states = [state for state in states_list if state.perc != 0.0]
+    relevant_states = [state for state in states_list if state["perc"] != 0.0]
 
-    relevant_states.sort(key=lambda x: x.mean)
+    relevant_states.sort(key=lambda x: x["mean"])
 
     state_mapping = {
         state_index: index + 1
@@ -242,13 +239,13 @@ def relabel_states(
     return all_the_labels, relevant_states
 
 
-def find_intersection(st_0: StateUni, st_1: StateUni) -> list[float]:
+def find_intersection(st_0: dict, st_1: dict) -> list[float]:
     """
     Finds the intersection between two Gaussians.
 
     Parameters
     ----------
-    st_0, st_1 : StateUni
+    st_0, st_1 : dict
         The two states we are computing the intersection between.
 
     Returns
@@ -261,30 +258,38 @@ def find_intersection(st_0: StateUni, st_1: StateUni) -> list[float]:
         two Gaussians exists, type 2 if it does not exist and the weighted
         average between the means is returned.
     """
-    coeff_a = st_1.sigma**2 - st_0.sigma**2
-    coeff_b = -2 * (st_0.mean * st_1.sigma**2 - st_1.mean * st_0.sigma**2)
-    tmp_c = np.log(st_0.area * st_1.sigma / st_1.area / st_0.sigma)
+    coeff_a = st_1["sigma"] ** 2 - st_0["sigma"] ** 2
+    coeff_b = -2 * (
+        st_0["mean"] * st_1["sigma"] ** 2 - st_1["mean"] * st_0["sigma"] ** 2
+    )
+    tmp_c = np.log(st_0["area"] * st_1["sigma"] / st_1["area"] / st_0["sigma"])
     coeff_c = (
-        (st_0.mean * st_1.sigma) ** 2
-        - (st_1.mean * st_0.sigma) ** 2
-        - ((st_0.sigma * st_1.sigma) ** 2) * tmp_c
+        (st_0["mean"] * st_1["sigma"]) ** 2
+        - (st_1["mean"] * st_0["sigma"]) ** 2
+        - ((st_0["sigma"] * st_1["sigma"]) ** 2) * tmp_c
     )
     delta = coeff_b**2 - 4 * coeff_a * coeff_c
     if coeff_a == 0.0:
-        only_th = (st_0.mean + st_1.mean) / 2 - st_0.sigma**2 / 2 / (
-            st_1.mean - st_0.mean
-        ) * np.log(st_0.area / st_1.area)
+        only_th = (st_0["mean"] + st_1["mean"]) / 2 - st_0[
+            "sigma"
+        ] ** 2 / 2 / (st_1["mean"] - st_0["mean"]) * np.log(
+            st_0["area"] / st_1["area"]
+        )
         return [only_th, 1]
     if delta >= 0:
         th_plus = (-coeff_b + np.sqrt(delta)) / (2 * coeff_a)
         th_minus = (-coeff_b - np.sqrt(delta)) / (2 * coeff_a)
-        intercept_plus = gaussian(th_plus, st_0.mean, st_0.sigma, st_0.area)
-        intercept_minus = gaussian(th_minus, st_0.mean, st_0.sigma, st_0.area)
+        intercept_plus = gaussian(
+            th_plus, st_0["mean"], st_0["sigma"], st_0["area"]
+        )
+        intercept_minus = gaussian(
+            th_minus, st_0["mean"], st_0["sigma"], st_0["area"]
+        )
         if intercept_plus >= intercept_minus:
             return [th_plus, 1]
         return [th_minus, 1]
-    th_aver = (st_0.mean / st_0.sigma + st_1.mean / st_1.sigma) / (
-        1 / st_0.sigma + 1 / st_1.sigma
+    th_aver = (st_0["mean"] / st_0["sigma"] + st_1["mean"] / st_1["sigma"]) / (
+        1 / st_0["sigma"] + 1 / st_1["sigma"]
     )
     return [th_aver, 2]
 
@@ -358,45 +363,11 @@ def shared_area_between_gaussians(
     return shared_fraction_1, shared_fraction_2
 
 
-def final_state_settings(
-    list_of_states: list[StateUni],
-    m_range: NDArray[np.float64],
-) -> list[StateUni]:
-    """
-    Calculate the final threshold values based on the intercept between
-    neighboring states.
-
-    Parameters
-    ----------
-    list_of_states : list[StateUni]
-        The list of final states.
-
-    m_range : np.ndarray of shape (2,)
-        Range of values in the data matrix.
-
-    Returns
-    -------
-    list_of_states : list[StateUni]
-        Now with the correct thresholds asssigned to each state.
-    """
-    if len(list_of_states) == 0:
-        return list_of_states
-
-    list_of_states[0].th_inf = [m_range[0], 0]
-    for i in range(len(list_of_states) - 1):
-        tmp_th = find_intersection(list_of_states[i], list_of_states[i + 1])
-        list_of_states[i].th_sup = tmp_th
-        list_of_states[i + 1].th_inf = tmp_th
-    list_of_states[-1].th_sup = [m_range[1], 0]
-
-    return list_of_states
-
-
 def set_final_states(
-    list_of_states: list[StateUni],
+    list_of_states: list[dict],
     all_the_labels: np.ndarray,
     area_max_overlap: float,
-) -> tuple[list[StateUni], NDArray[np.int64]]:
+) -> tuple[list[dict], NDArray[np.int64]]:
     """
     Assigns final states and relabels labels based on specific criteria.
 
@@ -426,16 +397,16 @@ def set_final_states(
             if j > i:
                 # Condition 1: area overlap
                 shared_area_1, shared_area_2 = shared_area_between_gaussians(
-                    st_1.area,
-                    st_1.mean,
-                    st_1.sigma,
-                    st_0.area,
-                    st_0.mean,
-                    st_0.sigma,
+                    st_1["area"],
+                    st_1["mean"],
+                    st_1["sigma"],
+                    st_0["area"],
+                    st_0["mean"],
+                    st_0["sigma"],
                 )
                 thresh = area_max_overlap
-                assert st_0.peak is not None
-                assert st_1.peak is not None
+                assert st_0["peak"] is not None
+                assert st_1["peak"] is not None
                 if shared_area_1 > thresh >= shared_area_2:
                     proposed_merge.append([j, i])
                 elif shared_area_2 > thresh >= shared_area_1:
@@ -446,15 +417,15 @@ def set_final_states(
                     )
                 # Condition 2: mean proximity
                 elif (
-                    st_0.peak > st_1.peak
-                    and np.abs(st_0.mean - st_1.mean) < st_0.sigma
-                    and st_1.sigma < 2 * st_0.sigma
+                    st_0["peak"] > st_1["peak"]
+                    and np.abs(st_0["mean"] - st_1["mean"]) < st_0["sigma"]
+                    and st_1["sigma"] < 2 * st_0["sigma"]
                 ):
                     proposed_merge.append([j, i])
                 elif (
-                    st_1.peak > st_0.peak
-                    and np.abs(st_0.mean - st_1.mean) < st_1.sigma
-                    and st_0.sigma < 2 * st_1.sigma
+                    st_1["peak"] > st_0["peak"]
+                    and np.abs(st_0["mean"] - st_1["mean"]) < st_1["sigma"]
+                    and st_0["sigma"] < 2 * st_1["sigma"]
                 ):
                     proposed_merge.append([i, j])
 
@@ -516,7 +487,7 @@ def set_final_states(
     ]
 
     for i, state in enumerate(updated_states):
-        state.perc = np.sum(all_the_labels == i) / all_the_labels.size
+        state["perc"] = np.sum(all_the_labels == i) / all_the_labels.size
 
     return updated_states, all_the_labels
 
