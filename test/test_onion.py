@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 from numpy.testing import assert_array_equal
 
-from tropea_clustering import Onion, onion_clustering
+from tropea_clustering import OnionClustering, onion_clustering
 
 # ---------------- Fixtures ----------------
 
@@ -31,14 +31,14 @@ def input_data_2d() -> np.ndarray:
 
 
 def test_onion(input_data_2d: np.ndarray):
-    delta_t = 10
+    tau = 10
 
     # Test class interface
-    on_cl = Onion(bins=50)
-    labels = on_cl.fit_predict(input_data_2d, delta_t)
+    on_cl = OnionClustering(tau=tau, bins=50)
+    on_cl.fit(input_data_2d)
 
     # Test functional interface
-    _ = onion_clustering(input_data_2d, delta_t)
+    _ = onion_clustering(input_data_2d, tau=tau)
 
     # Check clustering output
     this_dir = Path(__file__).parent
@@ -47,24 +47,20 @@ def test_onion(input_data_2d: np.ndarray):
     mask_1 = expected == 1
     expected[mask_1] = 0
     expected[mask_0] = 1
-    assert_array_equal(labels, expected)
+    assert_array_equal(on_cl.labels, expected)
 
 
 def test_wrong_input():
-    on_cl = Onion()
-
-    # input_data = np.ones((10, 10))  # 2D array
-    # with pytest.raises(ValueError, match="Expected 3-dimensional input data."):
-    #     on_cl.fit(input_data, delta_t=10)
+    on_cl = OnionClustering(tau=10)
 
     input_data1 = np.empty((0, 5, 5))  # empty array
     with pytest.raises(ValueError, match="Empty dataset."):
-        on_cl.fit(input_data1, delta_t=10)
+        on_cl.fit(input_data1)
 
     input_data1 = np.zeros((100, 1, 2))  # just one frame
     with pytest.raises(ValueError, match="n_frames = 1."):
-        on_cl.fit(input_data1, delta_t=10)
+        on_cl.fit(input_data1)
 
     input_data = np.random.rand(3, 4, 2) + 1j * np.random.rand(3, 4, 2)
     with pytest.raises(ValueError, match="Complex data not supported."):
-        on_cl.fit(input_data, delta_t=10)
+        on_cl.fit(input_data)

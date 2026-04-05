@@ -216,8 +216,6 @@ class OnionClustering:
             self.params,
         )
 
-        return self
-
     def fit_predict(self, X: NDArray[np.float64]) -> NDArray[np.int64]:
         """Computes clusters on the data array 'X' and returns labels.
 
