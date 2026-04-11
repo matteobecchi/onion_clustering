@@ -9,6 +9,7 @@ from tropea_clustering._internal.functions import (
     find_half_height_around_max,
     find_minima_around_max,
     moving_average_2d,
+    relabel_states_2d,
 )
 
 
@@ -214,11 +215,11 @@ def fit_onion_clustering(
         state["perc"] = fraction
         state_list.append(state)
 
-    # labels, state_list = relabel_states_2d(
-    #     params.max_area_overlap,
-    #     data_copy.labels,
-    #     state_list,
-    # )
+    labels, state_list = relabel_states_2d(
+        params["max_area_overlap"],
+        labels,
+        state_list,
+    )
 
     return state_list, labels
 
