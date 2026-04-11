@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from numpy.testing import assert_array_equal
@@ -20,12 +21,15 @@ def _plot_cluster_labels(
     If frame is None, the first two axes of X are flattened and all points are
     plotted together. Otherwise, a single time frame is plotted.
     """
-    import matplotlib.pyplot as plt
 
     if X.ndim != 3 or X.shape[2] != 2:
-        raise ValueError("X must be a 3D array with the last dimension equal to 2.")
+        raise ValueError(
+            "X must be a 3D array with the last dimension equal to 2."
+        )
     if labels.shape != X.shape[:2] and labels.shape != (np.prod(X.shape[:2]),):
-        raise ValueError("labels must have shape (n1, n2) or (n1*n2,) and match X.")
+        raise ValueError(
+            "labels must have shape (n1, n2) or (n1*n2,) and match X."
+        )
 
     if frame is None:
         X_flat = X.reshape(-1, 2)
@@ -36,7 +40,9 @@ def _plot_cluster_labels(
         title = title or "Flattened cluster labels"
     else:
         if labels.shape != X.shape[:2]:
-            raise ValueError("frame plotting requires labels with shape (n_particles, n_frames).")
+            raise ValueError(
+                "frame plotting requires labels with shape (n_particles, n_frames)."
+            )
         if frame < 0 or frame >= X.shape[1]:
             raise IndexError("frame is out of bounds.")
 
@@ -76,16 +82,28 @@ def _plot_cluster_labels(
 @pytest.fixture(scope="module")
 def input_data_2d() -> np.ndarray:
     np.random.seed(42)
-    mu1 = np.array([0.0, 0.0])
     cov1 = np.array([[0.05, 0.02], [0.02, 0.02]])
-    mu2 = np.array([1.0, 1.0])
     cov2 = np.array([[0.1, -0.03], [-0.03, 0.05]])
+
     list_data_2d = []
     for _ in range(100):
-        points1 = np.random.multivariate_normal(mu1, cov1, size=500)
-        points2 = np.random.multivariate_normal(mu2, cov2, size=500)
-        time_series = np.vstack([points1, points2])
-        list_data_2d.append(time_series)
+        time_series = []
+        for t in range(500):
+            # Metastable states: salta tra (0, 0) e (1, 1) ogni 50 time steps
+            state = (
+                np.array([0.0, 0.0])
+                if (t // 50) % 2 == 0
+                else np.array([1.0, 1.0])
+            )
+
+            # Aggiungi noise gaussiano alternando tra cov1 e cov2
+            cov = cov1 if (t // 50) % 2 == 0 else cov2
+            noise = np.random.multivariate_normal([0, 0], cov)
+            point = state + noise
+            time_series.append(point)
+
+        list_data_2d.append(np.array(time_series))
+
     return np.array(list_data_2d)
 
 
@@ -113,8 +131,6 @@ def test_onion(input_data_2d: np.ndarray):
 
 
 def test_debug_plot_cluster_labels(input_data_2d: np.ndarray):
-    import matplotlib.pyplot as plt
-
     on_cl = OnionClustering(tau=10, bins=50)
     on_cl.fit(input_data_2d)
 
